@@ -211,6 +211,8 @@ __marimo__/
 *.log              # Any log files
 *.http             # VS Code REST Client files
 secrets.json       # Custom local secrets (if ever used)
+# Prevent secrets from being tracked
+app/config/.env
 
 # --- Custom Allow Rules for KYP-AI ---
 !app/
