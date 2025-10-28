@@ -1,14 +1,15 @@
 # app/rag/router.py
 
-from fastapi import APIRouter, UploadFile, File, Request, Form
-from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi import APIRouter, UploadFile, File, Request
+from fastapi.responses import RedirectResponse, JSONResponse, StreamingResponse
 from pathlib import Path
 import tempfile, os, asyncio, json
 from datetime import datetime
-from app.rag.ingest import ingest_pdf
-from app.config import settings
 import numpy as np
 from openai import AzureOpenAI
+
+from app.rag.ingest import ingest_pdf
+from app.config import settings
 from app.rag.vector_store_faiss import query_faiss_index
 
 router = APIRouter(tags=["RAG - Ingest & Ask (Per Provider)"])
@@ -98,13 +99,12 @@ async def ingest_for_provider(file: UploadFile = File(...), provider_id: str = N
 
 
 # ============================================================
-# 3️⃣ Ask Endpoint (Per Provider RAG) – Now Metadata-Aware
+# 3️⃣ Ask Endpoint (Streaming Response + Metadata Awareness)
 # ============================================================
 @router.post("/ask")
 async def ask_provider_docs(req: dict):
     """
-    Query provider documents + metadata-aware context.
-    Returns answers based on FAISS embeddings and uploaded file metadata.
+    Stream AI answers for a provider using Azure OpenAI and FAISS context.
     """
     question = req.get("query", "")
     provider_id = req.get("provider_id", "")
@@ -114,23 +114,25 @@ async def ask_provider_docs(req: dict):
         return JSONResponse(status_code=400, content={"error": "Missing query or provider_id."})
 
     # --------------------------------------------------------
-    # Embed query
+    # Step 1: Initialize client + embed query
     # --------------------------------------------------------
     client = AzureOpenAI(
         api_key=settings.OPENAI_KEY,
         api_version=settings.OPENAI_API_VERSION,
         azure_endpoint=settings.OPENAI_ENDPOINT,
     )
+
     query_vec = client.embeddings.create(
-        input=question, model=settings.OPENAI_EMBEDDING_DEPLOYMENT
+        input=question,
+        model=settings.OPENAI_EMBEDDING_DEPLOYMENT,
     ).data[0].embedding
 
     provider_dir = Path("app/data/faiss_store") / provider_id
     if not provider_dir.exists():
-        return {"answer": "❌ No FAISS data found for this provider."}
+        return JSONResponse(status_code=404, content={"error": "❌ No FAISS data found for this provider."})
 
     # --------------------------------------------------------
-    # Search FAISS for relevant context
+    # Step 2: Retrieve FAISS context
     # --------------------------------------------------------
     results = await asyncio.to_thread(
         query_faiss_index,
@@ -139,63 +141,69 @@ async def ask_provider_docs(req: dict):
         top_k,
     )
 
+    context_text = "\n".join([r["text"] for r in results]) if results else "No relevant FAISS matches found."
+
     # --------------------------------------------------------
-    # Add metadata context (uploaded files)
+    # Step 3: Add metadata for uploaded files
     # --------------------------------------------------------
-    meta_text = ""
     apps_file = Path("app/data/applications.json")
+    meta_text = ""
     if apps_file.exists():
         apps = json.loads(apps_file.read_text())
         rec = next((r for r in apps if r["id"] == provider_id), None)
         if rec and rec.get("documents"):
             filenames = [d["filename"] for d in rec["documents"]]
-            meta_text = "\n\nProvider has uploaded the following documents:\n" + "\n".join(f"- {f}" for f in filenames)
+            meta_text = "\n\nProvider has uploaded these documents:\n" + "\n".join(f"- {f}" for f in filenames)
         elif rec:
             meta_text = "\n\nProvider has not uploaded any additional documents yet."
 
-    # --------------------------------------------------------
-    # Combine FAISS context with metadata context
-    # --------------------------------------------------------
-    if not results:
-        context_text = "No relevant FAISS matches found."
-        context_preview = []
-    else:
-        context_text = "\n".join([r["text"] for r in results])
-        context_preview = [r["text"][:150] for r in results]
-
-    full_context = context_text + meta_text
+    full_context = f"{context_text}\n{meta_text}"
 
     # --------------------------------------------------------
-    # Generate final AI response
+    # Step 4: Streaming generator (safe and resilient)
     # --------------------------------------------------------
-    completion = client.chat.completions.create(
-        model=settings.OPENAI_CHAT_DEPLOYMENT,
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    "You are an expert assistant that answers strictly from the given context. "
-                    "If the question is about uploaded or attached files, respond with the metadata list provided."
-                ),
-            },
-            {
-                "role": "user",
-                "content": f"Context:\n{full_context}\n\nQuestion: {question}",
-            },
-        ],
-        temperature=0.2,
-    )
+    def generate():
+        try:
+            stream = client.chat.completions.create(
+                model=settings.OPENAI_CHAT_DEPLOYMENT,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": (
+                            "You are an expert assistant that answers strictly from the given context. "
+                            "If the question is about uploaded or attached files, list the files from metadata."
+                        ),
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Context:\n{full_context}\n\nQuestion: {question}",
+                    },
+                ],
+                stream=True,
+                temperature=0.2,
+            )
 
-    answer = completion.choices[0].message.content.strip()
+            # ✅ Robust loop with guards
+            for chunk in stream:
+                # Some chunks may not have choices yet
+                if not hasattr(chunk, "choices") or not chunk.choices:
+                    continue
 
-    return {
-        "answer": answer,
-        "sources": [
-            {"doc_id": r["doc_id"], "score": r["score"]}
-            for r in (results or [])
-        ],
-        "context_preview": context_preview,
-    }
+                choice = chunk.choices[0]
+                if hasattr(choice, "delta") and getattr(choice.delta, "content", None):
+                    yield choice.delta.content
+
+            # End marker
+            yield "[END]"
+
+        except Exception as e:
+            print(f"❌ Error during streaming: {e}")
+            yield f"\n\n❌ Error during streaming: {e}"
+
+    # --------------------------------------------------------
+    # Step 5: Return the stream
+    # --------------------------------------------------------
+    return StreamingResponse(generate(), media_type="text/plain")
 
 
 # ============================================================

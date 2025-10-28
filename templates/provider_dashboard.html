@@ -75,6 +75,7 @@
       line-height: 1.5;
       color: #333;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      min-height: 40px;
     }
     .source {
       font-size: 13px;
@@ -94,7 +95,7 @@
   <p><strong>Application ID:</strong> {{ app_id }}</p>
   <p><strong>Message:</strong> {{ message }}</p>
 
-  <!-- 🧠 Moved Search Section here -->
+  <!-- 🧠 Search Section -->
   <div class="search-section">
     <h3>🔍 Ask Provider Knowledgebase</h3>
     <div class="search-box">
@@ -139,36 +140,61 @@
     </ul>
   {% endif %}
 
-
   <div class="actions">
     <a href="/analyze-html/"><button>⬅ Back to Analysis</button></a>
     <a href="/trust-card/generate_trust_card"><button>🧾 Generate Trust Card</button></a>
   </div>
 </div>
 
-<!-- 🧩 JS for /rag/ask -->
+<!-- 🧩 JS for Streaming RAG Ask -->
 <script>
 document.getElementById("search-btn").addEventListener("click", async (e) => {
   e.preventDefault();
   const query = document.getElementById("query").value.trim();
   const answerDiv = document.getElementById("answer");
+
   if (!query) {
     answerDiv.innerHTML = "<em>Please enter a question.</em>";
     return;
   }
-  answerDiv.innerHTML = "⏳ Searching knowledgebase...";
+
+  answerDiv.innerHTML = "⏳ Thinking...";
   try {
     const response = await fetch("/rag/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, provider_id: "{{ app_id }}" }),
+      body: JSON.stringify({
+        query: query,
+        provider_id: "{{ app_id }}",
+        top_k: 3
+      }),
     });
-    const data = await response.json();
-    const answer = data.answer || "No answer found.";
-    const sources = data.sources || [];
-    const srcList = sources.map(s => `<div class='source'>📘 ${s.doc_id} (score: ${s.score.toFixed(2)})</div>`).join("");
-    answerDiv.innerHTML = `<strong>💬 Answer:</strong><br>${answer}${srcList}`;
+
+    if (!response.ok) {
+      throw new Error("Network error");
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    answerDiv.innerHTML = "";
+    let fullText = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+      fullText += chunk;
+      answerDiv.innerHTML = fullText
+        .replace(/\n/g, "<br>")
+        .replace("[END]", "");
+      
+      // optional: scroll to bottom as text grows
+      answerDiv.scrollTop = answerDiv.scrollHeight;
+    }
+
   } catch (err) {
+    console.error("❌ Error fetching stream:", err);
     answerDiv.innerHTML = "❌ Error fetching answer.";
   }
 });
