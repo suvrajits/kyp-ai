@@ -19,12 +19,33 @@
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     }
     h2 { color: #333; margin-top: 0; }
+
+    /* 🩵 Status styles */
     .status {
-      font-size: 18px; padding: 10px; border-radius: 6px;
-      display: inline-block; margin-bottom: 10px;
+      font-size: 18px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      border: 1px solid transparent;
     }
-    .approved { background: #d1f2d1; color: #146314; }
-    .rejected { background: #f8d7da; color: #8a0000; }
+
+    .accepted {
+      background: #d6ecff;
+      color: #004c91;
+      border-color: #b3d9ff;
+    }
+    .approved {
+      background: #d1f2d1;
+      color: #146314;
+    }
+    .rejected {
+      background: #f8d7da;
+      color: #8a0000;
+    }
+
     .box {
       background: #f8f9fa;
       border-radius: 8px;
@@ -34,18 +55,29 @@
     .label { font-weight: bold; color: #555; }
     .actions { margin-top: 30px; text-align: center; }
     button {
-      background-color: #0077cc; color: white;
-      border: none; padding: 10px 20px;
-      border-radius: 8px; font-size: 15px;
-      cursor: pointer; margin: 10px;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      margin: 10px;
+      transition: background 0.2s ease;
     }
-    button:hover { opacity: 0.9; }
+    button:hover {
+      background-color: #005fa3;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
     input[type="file"] {
-      padding: 10px; background: #f9f9f9;
-      border: 1px solid #ccc; border-radius: 6px;
+      padding: 10px;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 6px;
       width: 100%;
     }
-    /* 🧠 Search section styles */
+
+    /* 🧠 Search section */
     .search-section {
       margin: 25px 0;
       padding: 20px;
@@ -55,15 +87,18 @@
     }
     .search-box { display: flex; gap: 10px; }
     #query {
-      flex: 1; padding: 10px;
+      flex: 1;
+      padding: 10px;
       border-radius: 6px;
       border: 1px solid #bbb;
       font-size: 15px;
     }
     #search-btn {
       background-color: #0077cc;
-      color: white; padding: 10px 20px;
-      border: none; border-radius: 6px;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
     }
     #search-btn:hover { background-color: #005fa3; }
@@ -77,25 +112,29 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       min-height: 40px;
     }
-    .source {
-      font-size: 13px;
-      color: #777;
-      margin-top: 6px;
-    }
   </style>
 </head>
 <body>
 <div class="container">
   <h2>Provider Application Dashboard</h2>
 
-  <div class="status {{ 'approved' if 'Approved' in status else 'rejected' }}">
+  <!-- Dynamic Status Badge -->
+  <div class="status
+    {% if 'Accepted' in status %}
+        accepted
+    {% elif 'Approved' in status %}
+        approved
+    {% else %}
+        rejected
+    {% endif %}
+  ">
     {{ status }}
   </div>
 
   <p><strong>Application ID:</strong> {{ app_id }}</p>
   <p><strong>Message:</strong> {{ message }}</p>
 
-  <!-- 🧠 Search Section -->
+  <!-- Ask Section -->
   <div class="search-section">
     <h3>🔍 Ask Provider Knowledgebase</h3>
     <div class="search-box">
@@ -125,17 +164,17 @@
   </form>
 
   {% if documents %}
-    <h5 class="mt-4">📄 Uploaded Documents</h5>
-    <ul class="list-group mb-3">
+    <h5>📄 Uploaded Documents</h5>
+    <ul>
     {% for doc in documents %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <li>
         <span>{{ doc.filename }}</span>
-        <form method="post" action="/dashboard/delete-document" style="margin:0;">
-        <input type="hidden" name="app_id" value="{{ app_id }}">
-        <input type="hidden" name="filename" value="{{ doc.filename }}">
-        <button type="submit" class="btn btn-sm btn-danger">🗑️ Delete</button>
+        <form method="post" action="/dashboard/delete-document" style="display:inline;">
+          <input type="hidden" name="app_id" value="{{ app_id }}">
+          <input type="hidden" name="filename" value="{{ doc.filename }}">
+          <button type="submit">🗑️ Delete</button>
         </form>
-    </li>
+      </li>
     {% endfor %}
     </ul>
   {% endif %}
@@ -146,7 +185,7 @@
   </div>
 </div>
 
-<!-- 🧩 JS for Streaming RAG Ask -->
+<!-- JS for streaming RAG Ask -->
 <script>
 document.getElementById("search-btn").addEventListener("click", async (e) => {
   e.preventDefault();
@@ -170,10 +209,7 @@ document.getElementById("search-btn").addEventListener("click", async (e) => {
       }),
     });
 
-    if (!response.ok) {
-      throw new Error("Network error");
-    }
-
+    if (!response.ok) throw new Error("Network error");
     const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
     answerDiv.innerHTML = "";
@@ -182,17 +218,10 @@ document.getElementById("search-btn").addEventListener("click", async (e) => {
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-
       const chunk = decoder.decode(value, { stream: true });
       fullText += chunk;
-      answerDiv.innerHTML = fullText
-        .replace(/\n/g, "<br>")
-        .replace("[END]", "");
-      
-      // optional: scroll to bottom as text grows
-      answerDiv.scrollTop = answerDiv.scrollHeight;
+      answerDiv.innerHTML = fullText.replace(/\n/g, "<br>").replace("[END]", "");
     }
-
   } catch (err) {
     console.error("❌ Error fetching stream:", err);
     answerDiv.innerHTML = "❌ Error fetching answer.";

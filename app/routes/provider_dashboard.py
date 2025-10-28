@@ -18,6 +18,7 @@ APPLICATIONS_FILE = DATA_DIR / "applications.json"
 
 # ---------- Utility Helpers ----------
 def load_applications() -> list:
+    """Load all persisted provider applications."""
     if APPLICATIONS_FILE.exists():
         try:
             return json.loads(APPLICATIONS_FILE.read_text())
@@ -27,33 +28,31 @@ def load_applications() -> list:
 
 
 def save_applications(records: list):
+    """Save all provider application records to disk."""
     APPLICATIONS_FILE.write_text(json.dumps(records, indent=2))
 
 
 def provider_already_exists(provider: dict, existing: list) -> dict | None:
-    """Return existing record if provider already approved."""
+    """Detect duplicate providers by license, registration, or name."""
     key_fields = ["license_number", "registration_id", "provider_name"]
     for rec in existing:
         p = rec.get("provider", {})
-        if any(
-            provider.get(k) and provider.get(k) == p.get(k)
-            for k in key_fields
-        ):
+        if any(provider.get(k) and provider.get(k) == p.get(k) for k in key_fields):
             return rec
     return None
 
 
-# ---------- Approve / Create Application ----------
+# ---------- Create / Approve Provider Application ----------
 @router.post("/create-application")
 async def create_application(request: Request, provider_data: str = Form(...)):
     """
-    Create new provider application (persistent JSON storage).
-    If provider already exists, auto-ingest its FAISS profile if missing.
+    Create or reuse a provider application.
+    - If provider already exists, mark as ✅ 'Previously Approved'
+    - If new, mark as 🩵 'Application Accepted'
     """
     from app.rag.ingest import embed_texts
     from app.rag.vector_store_faiss import save_faiss_index
     import numpy as np, faiss
-    from pathlib import Path
 
     try:
         provider = json.loads(provider_data)
@@ -63,20 +62,23 @@ async def create_application(request: Request, provider_data: str = Form(...)):
     existing = load_applications()
     duplicate = provider_already_exists(provider, existing)
 
-    # ✅ Handle already approved provider
+    # 🟢 Existing Provider → Previously Approved
     if duplicate:
         provider_id = duplicate["id"]
         provider_dir = Path("app/data/faiss_store") / provider_id
         provider_dir.mkdir(parents=True, exist_ok=True)
-        index_files = list(provider_dir.glob("*.index"))
 
-        # ✅ Auto-ingest provider info if FAISS data missing
+        index_files = list(provider_dir.glob("*.index"))
         if not index_files:
             print(f"📘 Auto-ingesting FAISS data for existing provider {provider_id}")
             text_summary = " ".join([f"{k}: {v}" for k, v in duplicate["provider"].items()])
             vectors = embed_texts([text_summary])
             faiss.normalize_L2(vectors)
-            save_faiss_index(vectors, [text_summary], doc_id="provider_profile", provider_dir=str(provider_dir))
+            save_faiss_index(
+                vectors, [text_summary],
+                doc_id="provider_profile",
+                provider_dir=str(provider_dir)
+            )
         else:
             print(f"✅ FAISS index already exists for provider {provider_id}")
 
@@ -86,28 +88,27 @@ async def create_application(request: Request, provider_data: str = Form(...)):
                 "request": request,
                 "app_id": provider_id,
                 "provider": duplicate["provider"],
-                "status": "Approved",
+                "status": "Application Accepted",
                 "documents": duplicate.get("documents", []),
-                "message": "ℹ️ This provider was already approved earlier.",
+                "message": "ℹ️ This provider was already verified and approved earlier.",
             },
         )
 
-    # ✅ New provider approval path
+    # 🩵 New Provider → Application Accepted
     app_id = f"APP-{datetime.now().strftime('%Y%m%d')}-{random.randint(10000,99999)}"
     record = {
         "id": app_id,
         "provider": provider,
         "created_at": datetime.now().isoformat(),
-        "status": "Approved",
+        "status": "Application Accepted",
         "documents": [],
     }
     existing.append(record)
     save_applications(existing)
 
-    # ✅ Persist in app.state
     request.app.state.current_application = record
 
-    # ✅ Auto-ingest provider info immediately on approval
+    # Auto-ingest provider info to FAISS
     try:
         text_summary = " ".join([f"{k}: {v}" for k, v in provider.items()])
         vectors = embed_texts([text_summary])
@@ -115,21 +116,24 @@ async def create_application(request: Request, provider_data: str = Form(...)):
 
         provider_dir = Path("app/data/faiss_store") / app_id
         provider_dir.mkdir(parents=True, exist_ok=True)
-        save_faiss_index(vectors, [text_summary], doc_id="provider_profile", provider_dir=str(provider_dir))
+        save_faiss_index(
+            vectors, [text_summary],
+            doc_id="provider_profile",
+            provider_dir=str(provider_dir)
+        )
         print(f"✅ Embedded provider profile for {app_id}")
     except Exception as e:
         print(f"⚠️ Could not embed provider info: {e}")
 
-    # ✅ Return dashboard
     return templates.TemplateResponse(
         "provider_dashboard.html",
         {
             "request": request,
             "app_id": app_id,
             "provider": provider,
-            "status": "Approved",
+            "status": "Application Accepted",
             "documents": [],
-            "message": "✅ Provider approved successfully and stored permanently.",
+            "message": "✅ Provider application accepted successfully and stored permanently.",
         },
     )
 
@@ -143,17 +147,14 @@ async def view_dashboard(request: Request, app_id: str):
     if not record:
         return HTMLResponse(f"<h3>❌ No provider found for App ID: {app_id}</h3>", status_code=404)
 
-    provider = record["provider"]
-    documents = record.get("documents", [])
-
     return templates.TemplateResponse(
         "provider_dashboard.html",
         {
             "request": request,
-            "app_id": app_id,
-            "provider": provider,
-            "documents": documents,
-            "status": record.get("status", "Approved"),
+            "app_id": record["id"],
+            "provider": record["provider"],
+            "documents": record.get("documents", []),
+            "status": record.get("status", "Application Accepted"),
             "message": "📄 Dashboard refreshed.",
         },
     )
@@ -162,7 +163,7 @@ async def view_dashboard(request: Request, app_id: str):
 # ---------- Reject Application ----------
 @router.post("/reject-application")
 async def reject_application(request: Request, rejection_reason: str = Form(...)):
-    """Reject provider license and record reason (in-memory only for now)."""
+    """Reject provider license and show reason."""
     rejection_entry = {
         "timestamp": datetime.now().isoformat(),
         "reason": rejection_reason,
@@ -178,13 +179,11 @@ async def reject_application(request: Request, rejection_reason: str = Form(...)
     )
 
 
+# ---------- Delete Document ----------
 @router.post("/delete-document")
 async def delete_document(request: Request, app_id: str = Form(...), filename: str = Form(...)):
-    """
-    Delete a specific document (PDF + FAISS index) from provider data.
-    """
-    from pathlib import Path
-    import json, os
+    """Delete a specific uploaded document and related FAISS index."""
+    import os
 
     apps = load_applications()
     record = next((r for r in apps if r["id"] == app_id), None)
@@ -194,23 +193,24 @@ async def delete_document(request: Request, app_id: str = Form(...), filename: s
     provider_dir = Path("app/data/faiss_store") / app_id
     deleted_any = False
 
-    # ✅ Remove related FAISS files
-    for fname in os.listdir(provider_dir) if provider_dir.exists() else []:
-        if filename.split(".")[0] in fname:
-            try:
-                os.remove(provider_dir / fname)
-                deleted_any = True
-                print(f"🗑️ Deleted {fname}")
-            except Exception as e:
-                print(f"⚠️ Error deleting {fname}: {e}")
+    if provider_dir.exists():
+        for fname in os.listdir(provider_dir):
+            if filename.split(".")[0] in fname:
+                try:
+                    os.remove(provider_dir / fname)
+                    deleted_any = True
+                    print(f"🗑️ Deleted {fname}")
+                except Exception as e:
+                    print(f"⚠️ Error deleting {fname}: {e}")
 
-    # ✅ Remove from record
-    docs = record.get("documents", [])
-    record["documents"] = [d for d in docs if d["filename"] != filename]
-
+    # Update record
+    record["documents"] = [d for d in record.get("documents", []) if d["filename"] != filename]
     save_applications(apps)
 
-    message = f"✅ Deleted document '{filename}' and its FAISS index." if deleted_any else f"⚠️ No FAISS files found for '{filename}'."
+    msg = (
+        f"✅ Deleted document '{filename}' and its FAISS index."
+        if deleted_any else f"⚠️ No FAISS files found for '{filename}'."
+    )
 
     return templates.TemplateResponse(
         "provider_dashboard.html",
@@ -219,7 +219,7 @@ async def delete_document(request: Request, app_id: str = Form(...), filename: s
             "app_id": app_id,
             "provider": record["provider"],
             "documents": record["documents"],
-            "status": record.get("status", "Approved"),
-            "message": message,
+            "status": record.get("status", "Application Accepted"),
+            "message": msg,
         },
     )
