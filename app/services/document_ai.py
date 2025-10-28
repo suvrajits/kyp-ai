@@ -3,7 +3,6 @@
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
 from app.config.settings import AZURE_ENDPOINT, AZURE_KEY
-import io
 
 client = DocumentAnalysisClient(
     endpoint=AZURE_ENDPOINT,
@@ -11,24 +10,39 @@ client = DocumentAnalysisClient(
 )
 
 def analyze_document(file_bytes: bytes):
+    """
+    Runs Azure Document Intelligence 'prebuilt-document' and returns a dict with:
+      - key_value_pairs: [{"key": "...", "value": "..."}]
+      - paragraphs: ["...", "..."]
+      - raw_text: single concatenated string for downstream regex parsing
+    """
     try:
         poller = client.begin_analyze_document("prebuilt-document", document=file_bytes)
         result = poller.result()
 
         extracted = {}
 
-        # ✅ Try key-value pairs first (like for invoices or forms)
+        kvs = []
         if hasattr(result, "key_value_pairs") and result.key_value_pairs:
-            kvs = []
             for kv in result.key_value_pairs:
-                key = kv.key.content if kv.key else ""
-                value = kv.value.content if kv.value else ""
-                kvs.append({"key": key, "value": value})
-            extracted["key_value_pairs"] = kvs
+                key = (kv.key.content or "").strip() if kv.key else ""
+                value = (kv.value.content or "").strip() if kv.value else ""
+                if key or value:
+                    kvs.append({"key": key, "value": value})
 
-        # ✅ Also include raw text (fallback for generic documents like certificates)
-        paragraphs = [p.content for p in result.paragraphs] if hasattr(result, "paragraphs") else []
-        extracted["paragraphs"] = paragraphs
+        paras = []
+        if hasattr(result, "paragraphs") and result.paragraphs:
+            for p in result.paragraphs:
+                if p and p.content:
+                    paras.append(p.content.strip())
+
+        extracted["key_value_pairs"] = kvs
+        extracted["paragraphs"] = paras
+
+        # Build a convenient raw_text for regex-based parsing downstream
+        lines_from_kv = [f"{kv['key']}: {kv['value']}".strip(": ").strip() for kv in kvs if kv.get("key") or kv.get("value")]
+        raw_text = " \n".join(lines_from_kv + paras).strip()
+        extracted["raw_text"] = raw_text
 
         return extracted
 

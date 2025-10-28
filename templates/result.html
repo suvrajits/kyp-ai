@@ -2,11 +2,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Provider Verification Result</title>
+  <meta charset="UTF-8" />
+  <title>Provider Verification Summary</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: "Segoe UI", Arial, sans-serif;
       background: #eef2f5;
       padding: 40px;
     }
@@ -14,105 +14,172 @@
       background: white;
       padding: 30px;
       border-radius: 12px;
-      max-width: 900px;
+      max-width: 960px;
       margin: auto;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     }
-    h2 { color: #333; margin-top: 0; }
+    h2, h3 {
+      color: #333;
+      margin-top: 0;
+    }
     .status {
-      font-size: 18px; padding: 10px; border-radius: 6px;
-      display: inline-block; margin-bottom: 20px;
+      font-size: 17px;
+      padding: 8px 14px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 20px;
+      font-weight: 600;
     }
     .matched { background: #d1f2d1; color: #146314; }
     .review { background: #fff0d6; color: #8a5700; }
-    .confidence-bar {
-      background: #ddd; border-radius: 8px; overflow: hidden;
-      height: 20px; margin-bottom: 20px;
+
+    /* progress bar */
+    .progress {
+      width: 100%;
+      background: #e5e9ee;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 18px;
+      margin-bottom: 10px;
     }
-    .confidence-fill {
-      background: #0077cc; height: 100%; text-align: center;
-      color: white; font-size: 14px; white-space: nowrap;
+    .progress-fill {
+      background: #0077cc;
+      height: 100%;
+      color: #fff;
+      font-size: 13px;
+      text-align: center;
+      line-height: 18px;
+      transition: width 0.4s ease;
     }
+
     .grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
     }
     .box {
-      background: #f8f9fa; border-radius: 8px; padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 14px;
+      border: 1px solid #e0e3e7;
     }
-    .label { font-weight: bold; color: #555; }
-    .value { color: #222; }
-    .actions { text-align: center; margin-top: 40px; }
+    .box.bad {
+      background: #fdecea;
+      border-color: #e74c3c;
+    }
+    .label {
+      font-weight: bold;
+      color: #555;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    .value {
+      color: #111;
+      font-size: 15px;
+      word-break: break-word;
+    }
+
+    .divider {
+      border-top: 1px solid #ddd;
+      margin: 36px 0 28px;
+    }
+
+    .actions {
+      text-align: center;
+      margin-top: 25px;
+    }
     button {
-      background-color: #0077cc; color: white;
-      padding: 12px 24px; border: none; border-radius: 8px;
-      cursor: pointer; font-size: 16px; margin: 10px;
+      background-color: #0077cc;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      margin: 8px;
+      transition: background 0.2s ease;
     }
+    button:hover { background: #005fa3; }
     button.reject { background-color: #cc3300; }
     button.trust { background-color: #444; }
-    button:hover { opacity: 0.9; }
+
     textarea {
-      width: 100%; height: 80px; border-radius: 8px;
-      padding: 10px; border: 1px solid #ccc; margin-top: 10px;
-      font-size: 14px; resize: vertical;
+      width: 100%;
+      height: 80px;
+      border-radius: 8px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+      font-size: 14px;
+      resize: vertical;
     }
+
     .meta {
-      text-align: right; font-size: 13px; color: #777; margin-top: 20px;
-    }
-    .divider {
-      border-top: 1px solid #ddd; margin: 40px 0 30px 0;
+      text-align: right;
+      font-size: 13px;
+      color: #777;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
 <div class="container">
   <h2>Provider Verification Summary</h2>
-
   <p><strong>File:</strong> {{ filename }}</p>
 
   <div class="status {{ 'matched' if status == 'Matched' else 'review' }}">
     {{ status }}
   </div>
 
-  <div class="confidence-bar"> <div class="confidence-fill" style="width: '{{ (confidence * 100) | round(2) }}%';"> {{ (confidence * 100)|round(2) }}% </div> </div>
+  <!-- progress bar -->
+  <div class="progress">
+    <div class="progress-fill" style="width: '{{ (confidence * 100) | round(0) }}%';">
+        {{ (confidence * 100) | round(0) }}%
+    </div>
+  </div>
 
   <h3>📜 Extracted Provider Details</h3>
   <div class="grid">
     {% for key, value in structured.items() %}
-      <div class="box">
+      <div class="box {% if not value or value == 'None' %}bad{% endif %}">
         <div class="label">{{ key.replace("_", " ")|title }}</div>
-        <div class="value">{{ value }}</div>
-      </div>
-    {% endfor %}
-  </div>
-
-  <h3>📁 Registry Match</h3>
-  <div class="grid">
-    {% for key, value in matched.items() %}
-      <div class="box">
-        <div class="label">{{ key.replace("_", " ")|title }}</div>
-        <div class="value">{{ value }}</div>
+        <div class="value">{{ value if value else '—' }}</div>
       </div>
     {% endfor %}
   </div>
 
   <div class="divider"></div>
 
-  <!-- ✅ Action Buttons Section -->
-  <div class="actions">
+  <h3>📁 Registry Match</h3>
+  <div class="grid">
+    {% if matched %}
+      {% for key, value in matched.items() %}
+        <div class="box">
+          <div class="label">{{ key.replace("_", " ")|title }}</div>
+          <div class="value">{{ value }}</div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>No matching record found in registry.</p>
+    {% endif %}
+  </div>
 
+  <div class="divider"></div>
+
+  <div class="actions">
     <!-- ✅ Approve Application -->
-    <form id="approve-form" action="/dashboard/create-application" method="post" style="display:inline;">
+    <form action="/dashboard/create-application" method="post" style="display:inline;">
       <input type="hidden" name="provider_data" value='{{ structured | tojson }}'>
       <button type="submit">✅ Approve & Create Application</button>
     </form>
 
     <!-- 🧾 Generate Trust Card -->
-    <form id="trustcard-form" action="/trust-card/generate_trust_card" method="get" style="display:inline;">
-        <button type="submit" class="trust">🧾 Generate Trust Card</button>
+    <form action="/trust-card/generate_trust_card" method="get" style="display:inline;">
+      <button type="submit" class="trust">🧾 Generate Trust Card</button>
     </form>
 
-    <!-- ❌ Reject Application -->
-    <form id="reject-form" action="/dashboard/reject-application" method="post" style="display:inline;">
+    <!-- ❌ Reject -->
+    <form action="/dashboard/reject-application" method="post" style="display:inline;">
       <textarea name="rejection_reason" placeholder="Enter reason for rejection..." required></textarea>
       <input type="hidden" name="provider_data" value='{{ structured | tojson }}'>
       <button type="submit" class="reject">❌ Reject Application</button>
@@ -120,7 +187,7 @@
   </div>
 
   <div class="meta">
-    <p>FAISS embeddings stored for: <strong>{{ provider_id }}</strong></p>
+    <p>FAISS embeddings stored for: <strong>{{ provider_id or 'N/A' }}</strong></p>
   </div>
 </div>
 </body>

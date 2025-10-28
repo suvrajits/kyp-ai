@@ -141,23 +141,57 @@ async def create_application(request: Request, provider_data: str = Form(...)):
 # ---------- View Existing Application ----------
 @router.get("/view/{app_id}", response_class=HTMLResponse)
 async def view_dashboard(request: Request, app_id: str):
-    """Display provider details and uploaded document list."""
+    """
+    Display provider details and uploaded document list.
+    Supports both permanent IDs (APP-...) and temporary IDs (TEMP-ID-...).
+    Ensures legacy records load safely and UI fields remain consistent.
+    """
     apps = load_applications()
-    record = next((r for r in apps if r["id"] == app_id), None)
+
+    # ✅ Match by either `id` or `application_id`
+    record = next(
+        (
+            r
+            for r in apps
+            if str(r.get("id")) == app_id or str(r.get("application_id")) == app_id
+        ),
+        None,
+    )
+
+    # ✅ Graceful handling if record is missing
     if not record:
-        return HTMLResponse(f"<h3>❌ No provider found for App ID: {app_id}</h3>", status_code=404)
+        return HTMLResponse(
+            f"<h3>❌ No provider found for Application ID: {app_id}</h3>",
+            status_code=404,
+        )
+
+    # ✅ Normalize legacy records (some may lack `id`)
+    if not record.get("id") and record.get("application_id"):
+        record["id"] = record["application_id"]
+    elif not record.get("application_id") and record.get("id"):
+        record["application_id"] = record["id"]
+
+    # ✅ Adjust display status for TEMP-ID applications
+    display_status = record.get("status", "Under Review")
+    if str(record["id"]).startswith("TEMP-ID") and display_status == "Application Accepted":
+        display_status = "Under Review"
+
+    # ✅ Defensive field population
+    provider = record.get("provider", {}) or {}
+    documents = record.get("documents", [])
 
     return templates.TemplateResponse(
         "provider_dashboard.html",
         {
             "request": request,
-            "app_id": record["id"],
-            "provider": record["provider"],
-            "documents": record.get("documents", []),
-            "status": record.get("status", "Application Accepted"),
-            "message": "📄 Dashboard refreshed.",
+            "app_id": record.get("id", app_id),
+            "provider": provider,
+            "documents": documents,
+            "status": display_status,
+            "message": "📄 Provider dashboard loaded successfully.",
         },
     )
+
 
 
 # ---------- Reject Application ----------
@@ -221,5 +255,20 @@ async def delete_document(request: Request, app_id: str = Form(...), filename: s
             "documents": record["documents"],
             "status": record.get("status", "Application Accepted"),
             "message": msg,
+        },
+    )
+
+@router.get("/upload-form", response_class=HTMLResponse)
+async def upload_form(request: Request):
+    """
+    Display the provider license upload form + registry grid below it.
+    """
+    apps = load_applications()
+    sorted_apps = sorted(apps, key=lambda x: x.get("created_at", ""), reverse=True)
+    return templates.TemplateResponse(
+        "upload_form.html",
+        {
+            "request": request,
+            "providers": sorted_apps,
         },
     )

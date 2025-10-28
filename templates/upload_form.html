@@ -2,57 +2,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Provider License Verifier</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            padding: 40px;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            width: 480px;
-            text-align: center;
-        }
-        h2 {
-            margin-bottom: 10px;
-        }
-        p {
-            color: #777;
-            margin-bottom: 25px;
-        }
-        input[type="file"] {
-            margin: 20px 0;
-        }
-        button {
-            background-color: #0077cc;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #005fa3;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Provider License Verifier</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 1100px;
+    }
+    h2 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+    p {
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    /* Upload form section */
+    .upload-box {
+      background: #fafbfc;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    input[type="file"] {
+      margin: 20px 0;
+    }
+    button {
+      background-color: #0077cc;
+      color: white;
+      padding: 10px 22px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: background 0.2s ease;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+
+    /* Table styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 14px;
+    }
+    th {
+      background-color: #f2f4f7;
+      color: #333;
+      font-weight: 600;
+    }
+    tr:hover {
+      background: #f9fafc;
+    }
+
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      display: inline-block;
+    }
+    .accepted { background: #d6ecff; color: #004c91; }    /* Light Blue */
+    .review { background: #e3d6ff; color: #4b0082; }      /* Violet */
+    .approved { background: #d1f2d1; color: #146314; }    /* Green */
+    .rejected { background: #f8d7da; color: #8a0000; }    /* Red */
+
+    .view-btn {
+      background: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .view-btn:hover {
+      background: #005fa3;
+    }
+
+    .no-data {
+      color: #777;
+      text-align: center;
+      padding: 10px;
+    }
+  </style>
 </head>
 <body>
 <div class="container">
-    <h2>🧾 Upload Provider License</h2>
-    <p>Upload a scanned license (PDF, PNG, JPEG) to verify it against the registry.</p>
+  <h2>🧾 Provider License Verifier</h2>
+  <p>Upload a scanned license (PDF, PNG, JPEG) to verify it against the registry.</p>
+
+  <!-- Upload Section -->
+  <div class="upload-box">
+    <!-- ✅ Corrected route for HTML analyzer -->
     <form action="/analyze-html/analyze-and-match-html" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" required>
-        <br>
-        <button type="submit">🔍 Analyze & Match</button>
+      <input type="file" name="file" required><br>
+      <button type="submit">🔍 Analyze & Match</button>
     </form>
+  </div>
+
+  <h3>📋 Provider Applications</h3>
+  {% if providers %}
+  <table>
+    <thead>
+      <tr>
+        <th>Provider Name</th>
+        <th>License Number</th>
+        <th>Application ID</th>
+        <th>Status</th>
+        <th>Created At</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for rec in providers %}
+      <tr>
+        <td>{{ rec.provider.provider_name or '—' }}</td>
+        <td>{{ rec.provider.license_number or '—' }}</td>
+        <td>
+          {% if rec.status and ('Accepted' in rec.status or 'Approved' in rec.status or 'Under Review' in rec.status) %}
+            {{ rec.id }}
+          {% else %}
+            —
+          {% endif %}
+        </td>
+        <td>
+          <span class="status-badge
+            {% if 'Accepted' in rec.status %}
+                accepted
+            {% elif 'Under Review' in rec.status %}
+                review
+            {% elif 'Approved' in rec.status %}
+                approved
+            {% else %}
+                rejected
+            {% endif %}
+          ">
+            {{ rec.status }}
+          </span>
+        </td>
+        <td>{{ rec.created_at.split('T')[0] if rec.created_at else '—' }}</td>
+        <td>
+          {% if rec.id %}
+          <a href="/dashboard/view/{{ rec.id }}">
+            <button class="view-btn">View</button>
+          </a>
+          {% else %}
+          <span class="no-data">—</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="no-data">No provider applications found yet.</p>
+  {% endif %}
 </div>
 </body>
 </html>
