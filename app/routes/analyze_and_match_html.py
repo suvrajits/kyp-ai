@@ -70,4 +70,3 @@ async def analyze_and_match_html(request: Request, file: UploadFile = File(...))
         "confidence": confidence,
         "status": status
     })
-

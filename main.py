@@ -2,11 +2,20 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 # Core app modules
 from app.rag.ask_api import router as ask_router
 from app.rag.router import router as rag_router
-from app.routes import upload, match, analyze_and_match, analyze_and_match_html, trust_card
+from app.routes import (
+    upload,
+    match,
+    analyze_and_match,
+    analyze_and_match_html,
+    trust_card,
+    provider_dashboard,   # ✅ Add dashboard router here
+)
 
 # ----------------------------------------------------------
 # Initialize FastAPI
@@ -14,15 +23,24 @@ from app.routes import upload, match, analyze_and_match, analyze_and_match_html,
 app = FastAPI(
     title="ProviderGPT AI",
     description="An Azure OpenAI-powered intelligent document analysis and retrieval system.",
-    version="1.0.0"
+    version="1.2.0",
 )
+
+# ----------------------------------------------------------
+# Static Files & Templates (for HTML UI)
+# ----------------------------------------------------------
+# Mount /static for CSS/JS, optional but safe
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# ✅ Templates are expected at the project root, not inside app/
+templates = Jinja2Templates(directory="templates")
 
 # ----------------------------------------------------------
 # Middleware (CORS for frontend use)
 # ----------------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # ⚠️ Change to frontend origin(s) in production
+    allow_origins=["*"],  # ⚠️ Restrict to frontend origin(s) in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -38,10 +56,13 @@ app.include_router(analyze_and_match_html.router, prefix="/analyze-html", tags=[
 app.include_router(trust_card.router, prefix="/trust-card", tags=["Trust Cards"])
 
 # ----------------------------------------------------------
-# RAG (Retrieval-Augmented Generation) module
+# Unified Provider Dashboard (✅ Fix for 404)
 # ----------------------------------------------------------
-# ✅ These two are the only correct registrations.
-# DO NOT add prefix again inside ask_api.py or router.py
+app.include_router(provider_dashboard.router, prefix="/dashboard", tags=["Provider Dashboard"])
+
+# ----------------------------------------------------------
+# RAG (Retrieval-Augmented Generation)
+# ----------------------------------------------------------
 app.include_router(rag_router, prefix="/rag", tags=["RAG - Ingest"])
 app.include_router(ask_router, prefix="/rag", tags=["RAG - Ask"])
 
@@ -54,5 +75,13 @@ def root():
         "ok": True,
         "app": "ProviderGPT AI",
         "message": "✅ ProviderGPT backend is up and running.",
-        "modules": ["RAG", "Upload", "Match", "Analyze", "Trust Card"]
+        "templates_dir": "templates/ (root-level)",
+        "modules": [
+            "Upload",
+            "Analyze",
+            "Match",
+            "Trust Card",
+            "Provider Dashboard",
+            "RAG (Ingest + Ask)",
+        ],
     }

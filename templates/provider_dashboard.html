@@ -1,0 +1,169 @@
+<!-- templates/provider_dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Provider Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f5;
+      padding: 40px;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 900px;
+      margin: auto;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+    h2 { color: #333; margin-top: 0; }
+    .status {
+      font-size: 18px; padding: 10px; border-radius: 6px;
+      display: inline-block; margin-bottom: 10px;
+    }
+    .approved { background: #d1f2d1; color: #146314; }
+    .rejected { background: #f8d7da; color: #8a0000; }
+    .box {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 10px;
+    }
+    .label { font-weight: bold; color: #555; }
+    .actions { margin-top: 30px; text-align: center; }
+    button {
+      background-color: #0077cc; color: white;
+      border: none; padding: 10px 20px;
+      border-radius: 8px; font-size: 15px;
+      cursor: pointer; margin: 10px;
+    }
+    button:hover { opacity: 0.9; }
+    input[type="file"] {
+      padding: 10px; background: #f9f9f9;
+      border: 1px solid #ccc; border-radius: 6px;
+      width: 100%;
+    }
+    /* 🧠 Search section styles */
+    .search-section {
+      margin: 25px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #f9fafc;
+    }
+    .search-box { display: flex; gap: 10px; }
+    #query {
+      flex: 1; padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #bbb;
+      font-size: 15px;
+    }
+    #search-btn {
+      background-color: #0077cc;
+      color: white; padding: 10px 20px;
+      border: none; border-radius: 6px;
+      cursor: pointer;
+    }
+    #search-btn:hover { background-color: #005fa3; }
+    #answer {
+      margin-top: 15px;
+      background: #fff;
+      border-radius: 6px;
+      padding: 12px;
+      line-height: 1.5;
+      color: #333;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .source {
+      font-size: 13px;
+      color: #777;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Provider Application Dashboard</h2>
+
+  <div class="status {{ 'approved' if 'Approved' in status else 'rejected' }}">
+    {{ status }}
+  </div>
+
+  <p><strong>Application ID:</strong> {{ app_id }}</p>
+  <p><strong>Message:</strong> {{ message }}</p>
+
+  <!-- 🧠 Moved Search Section here -->
+  <div class="search-section">
+    <h3>🔍 Ask Provider Knowledgebase</h3>
+    <div class="search-box">
+      <input type="text" id="query" placeholder="Ask about this provider’s documents or license…" />
+      <button id="search-btn">Ask</button>
+    </div>
+    <div id="answer"></div>
+  </div>
+
+  <h3>📜 Provider Details</h3>
+  {% if provider %}
+    {% for key, value in provider.items() %}
+      <div class="box">
+        <div class="label">{{ key.replace('_',' ')|title }}</div>
+        <div>{{ value }}</div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No provider data available.</p>
+  {% endif %}
+  <hr>
+
+  <h3>📁 Upload Additional Documents</h3>
+  <form action="/rag/{{ app_id }}/ingest" method="post" enctype="multipart/form-data">
+    <input type="file" name="files" multiple required>
+    <button type="submit">📤 Upload & Ingest Selected</button>
+  </form>
+
+  {% if documents %}
+    <h3>📚 Uploaded Documents</h3>
+    <ul>
+      {% for doc in documents %}
+        <li>{{ doc.filename }} <small>({{ doc.uploaded_at }})</small></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <div class="actions">
+    <a href="/analyze-html/"><button>⬅ Back to Analysis</button></a>
+    <a href="/trust-card/generate_trust_card"><button>🧾 Generate Trust Card</button></a>
+  </div>
+</div>
+
+<!-- 🧩 JS for /rag/ask -->
+<script>
+document.getElementById("search-btn").addEventListener("click", async (e) => {
+  e.preventDefault();
+  const query = document.getElementById("query").value.trim();
+  const answerDiv = document.getElementById("answer");
+  if (!query) {
+    answerDiv.innerHTML = "<em>Please enter a question.</em>";
+    return;
+  }
+  answerDiv.innerHTML = "⏳ Searching knowledgebase...";
+  try {
+    const response = await fetch("/rag/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, provider_id: "{{ app_id }}" }),
+    });
+    const data = await response.json();
+    const answer = data.answer || "No answer found.";
+    const sources = data.sources || [];
+    const srcList = sources.map(s => `<div class='source'>📘 ${s.doc_id} (score: ${s.score.toFixed(2)})</div>`).join("");
+    answerDiv.innerHTML = `<strong>💬 Answer:</strong><br>${answer}${srcList}`;
+  } catch (err) {
+    answerDiv.innerHTML = "❌ Error fetching answer.";
+  }
+});
+</script>
+</body>
+</html>

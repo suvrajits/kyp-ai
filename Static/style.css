@@ -1,0 +1,11 @@
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: #f6f8fa;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    color: #0063B1; /* Azure blue */
+}
