@@ -221,3 +221,17 @@ app/config/.env
 !templates/**
 !static/
 !static/**
+# Folders commonly used for FAISS / Chroma / embeddings
+*.faiss
+*.bin
+*.npy
+*.pkl
+*.jsonl
+index/
+indexes/
+data_store/
+vector_store_faiss/
+chroma/
+chroma_db/
+faiss_index/
+embeddings/
