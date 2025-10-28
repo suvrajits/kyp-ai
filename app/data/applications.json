@@ -65,5 +65,23 @@
     "created_at": "2025-10-28T17:13:00.451359",
     "documents": [],
     "id": "TEMP-ID-010"
+  },
+  {
+    "application_id": "TEMP-ID-012",
+    "provider": {
+      "provider_name": "Lotus Heart Care Clinic",
+      "license_number": "DL-CLINIC-2025-223",
+      "specialty": "Cardiology and General Medicine",
+      "state": "Delhi",
+      "issuing_authority": "Delhi Medical",
+      "issue_date": "05-Mar-2025",
+      "expiry_date": "04-Mar-2030",
+      "registration_id": "DMC-CLINIC-2025-223"
+    },
+    "status": "Under Review",
+    "confidence": 0.32,
+    "created_at": "2025-10-28T17:23:52.504995",
+    "documents": [],
+    "id": "TEMP-ID-012"
   }
 ]
