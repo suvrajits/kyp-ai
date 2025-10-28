@@ -176,3 +176,50 @@ async def reject_application(request: Request, rejection_reason: str = Form(...)
             "message": f"❌ Provider License Rejected. Reason: {rejection_reason}",
         },
     )
+
+
+@router.post("/delete-document")
+async def delete_document(request: Request, app_id: str = Form(...), filename: str = Form(...)):
+    """
+    Delete a specific document (PDF + FAISS index) from provider data.
+    """
+    from pathlib import Path
+    import json, os
+
+    apps = load_applications()
+    record = next((r for r in apps if r["id"] == app_id), None)
+    if not record:
+        return HTMLResponse(f"<h3>❌ No provider found for App ID: {app_id}</h3>", status_code=404)
+
+    provider_dir = Path("app/data/faiss_store") / app_id
+    deleted_any = False
+
+    # ✅ Remove related FAISS files
+    for fname in os.listdir(provider_dir) if provider_dir.exists() else []:
+        if filename.split(".")[0] in fname:
+            try:
+                os.remove(provider_dir / fname)
+                deleted_any = True
+                print(f"🗑️ Deleted {fname}")
+            except Exception as e:
+                print(f"⚠️ Error deleting {fname}: {e}")
+
+    # ✅ Remove from record
+    docs = record.get("documents", [])
+    record["documents"] = [d for d in docs if d["filename"] != filename]
+
+    save_applications(apps)
+
+    message = f"✅ Deleted document '{filename}' and its FAISS index." if deleted_any else f"⚠️ No FAISS files found for '{filename}'."
+
+    return templates.TemplateResponse(
+        "provider_dashboard.html",
+        {
+            "request": request,
+            "app_id": app_id,
+            "provider": record["provider"],
+            "documents": record["documents"],
+            "status": record.get("status", "Approved"),
+            "message": message,
+        },
+    )

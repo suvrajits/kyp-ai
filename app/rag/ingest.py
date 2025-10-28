@@ -103,8 +103,14 @@ def ingest_pdf(file_path: str, provider_id: str, doc_name: str = None):
 
             print(f"📄 Processing page {i+1}")
             chunks = chunk_text_streaming([page_text])
-            all_chunks.extend(chunks)
+            # ✅ Add metadata context for each chunk
+            enriched_chunks = [
+                f"Document: {Path(file_path).name} | Page: {i+1}\n\n{text}"
+                for text in chunks
+            ]
+            all_chunks.extend(enriched_chunks)
             token_count += len(page_text.split())
+
 
         print(f"✅ Total chunks created: {len(all_chunks)}, Tokens: {token_count}")
 

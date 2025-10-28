@@ -13,24 +13,8 @@
     "status": "Approved",
     "documents": [
       {
-        "filename": "sample_provider_license.pdf",
-        "uploaded_at": "2025-10-28T11:09:20.722154"
-      },
-      {
         "filename": "provider_guidelines.pdf",
-        "uploaded_at": "2025-10-28T11:09:41.797415"
-      },
-      {
-        "filename": "provider_guidelines.pdf",
-        "uploaded_at": "2025-10-28T11:09:55.645413"
-      },
-      {
-        "filename": "provider_guidelines.pdf",
-        "uploaded_at": "2025-10-28T11:18:12.775219"
-      },
-      {
-        "filename": "provider_guidelines.pdf",
-        "uploaded_at": "2025-10-28T12:03:22.330096"
+        "uploaded_at": "2025-10-28T12:28:52.692600"
       }
     ]
   }
