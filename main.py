@@ -4,8 +4,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from datetime import datetime
+import os
 
-# Core app modules
+# ----------------------------------------------------------
+# 🌐 Import Core Modules
+# ----------------------------------------------------------
 from app.rag.ask_api import router as ask_router
 from app.rag.router import router as rag_router
 from app.routes import (
@@ -14,74 +18,103 @@ from app.routes import (
     analyze_and_match,
     analyze_and_match_html,
     trust_card,
-    provider_dashboard,   # ✅ Add dashboard router here
+    provider_dashboard,
 )
 
 # ----------------------------------------------------------
-# Initialize FastAPI
+# 🚀 Initialize FastAPI App
 # ----------------------------------------------------------
 app = FastAPI(
     title="ProviderGPT AI",
-    description="An Azure OpenAI-powered intelligent document analysis and retrieval system.",
-    version="1.2.0",
+    description=(
+        "An Azure OpenAI-powered intelligent document analysis and provider "
+        "verification system integrating OCR, Registry Matching, and RAG search."
+    ),
+    version="1.3.0",
 )
 
 # ----------------------------------------------------------
-# Static Files & Templates (for HTML UI)
+# 🗂️ Templates & Static Files
 # ----------------------------------------------------------
-# Mount /static for CSS/JS, optional but safe
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Mount static only if directory exists (safety for container deploys)
+if os.path.isdir("static"):
+    app.mount("/static", StaticFiles(directory="static"), name="static")
+else:
+    print("⚠️  Skipping /static mount — directory not found.")
 
-# ✅ Templates are expected at the project root, not inside app/
+# Templates live at the project root
 templates = Jinja2Templates(directory="templates")
 
 # ----------------------------------------------------------
-# Middleware (CORS for frontend use)
+# 🔒 CORS Middleware
 # ----------------------------------------------------------
+# ⚠️ In production, replace ["*"] with your frontend’s domain(s)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # ⚠️ Restrict to frontend origin(s) in production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # ----------------------------------------------------------
-# Core business logic routes
+# 🧩 Include All Routers
 # ----------------------------------------------------------
-app.include_router(upload.router, prefix="/upload", tags=["Upload"])
-app.include_router(match.router, prefix="/match", tags=["Matching"])
-app.include_router(analyze_and_match.router, prefix="/analyze", tags=["Analysis"])
-app.include_router(analyze_and_match_html.router, prefix="/analyze-html", tags=["HTML Analysis"])
-app.include_router(trust_card.router, prefix="/trust-card", tags=["Trust Cards"])
+# Document / Upload / Analyze
+app.include_router(upload.router, prefix="/upload", tags=["Upload & Intake"])
+app.include_router(match.router, prefix="/match", tags=["Registry Matching"])
+app.include_router(analyze_and_match.router, prefix="/analyze", tags=["Text Analysis"])
+app.include_router(analyze_and_match_html.router, prefix="/analyze-html", tags=["UI Analysis"])
 
-# ----------------------------------------------------------
-# Unified Provider Dashboard (✅ Fix for 404)
-# ----------------------------------------------------------
+# Dashboard & Trust
 app.include_router(provider_dashboard.router, prefix="/dashboard", tags=["Provider Dashboard"])
+app.include_router(trust_card.router, prefix="/trust-card", tags=["Trust Card Generation"])
 
-# ----------------------------------------------------------
 # RAG (Retrieval-Augmented Generation)
-# ----------------------------------------------------------
 app.include_router(rag_router, prefix="/rag", tags=["RAG - Ingest"])
 app.include_router(ask_router, prefix="/rag", tags=["RAG - Ask"])
 
 # ----------------------------------------------------------
-# Health Check
+# 🧠 Startup / Shutdown Events
+# ----------------------------------------------------------
+@app.on_event("startup")
+async def on_startup():
+    print("\n" + "=" * 80)
+    print("🚀 PROVIDER GPT BACKEND STARTED")
+    print(f"🕒 {datetime.utcnow().isoformat()} UTC")
+    print("📂 Active Modules:")
+    print("   • Upload / Analyze / Match")
+    print("   • Provider Dashboard")
+    print("   • Trust Card")
+    print("   • RAG (Ask + Ingest)")
+    print("=" * 80 + "\n")
+
+@app.on_event("shutdown")
+async def on_shutdown():
+    print("🧩 Graceful shutdown: releasing any in-memory state / connections.")
+
+
+# ----------------------------------------------------------
+# 🩺 Health Check Route
 # ----------------------------------------------------------
 @app.get("/", tags=["Health"])
 def root():
+    """Simple health check and app summary."""
     return {
         "ok": True,
-        "app": "ProviderGPT AI",
+        "app_name": "ProviderGPT AI",
+        "version": "1.3.0",
+        "timestamp": datetime.utcnow().isoformat(),
         "message": "✅ ProviderGPT backend is up and running.",
-        "templates_dir": "templates/ (root-level)",
-        "modules": [
-            "Upload",
-            "Analyze",
-            "Match",
-            "Trust Card",
+        "modules_loaded": [
+            "Upload & Intake",
+            "Analyze (Document AI + Parser)",
+            "Registry Matching",
             "Provider Dashboard",
-            "RAG (Ingest + Ask)",
+            "Trust Card Generator",
+            "RAG (Ingest & Ask)",
         ],
+        "template_dir": "templates/",
+        "data_dir": "app/data/",
     }
+

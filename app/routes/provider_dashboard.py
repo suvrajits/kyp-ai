@@ -1,11 +1,29 @@
 # app/routes/provider_dashboard.py
 
-from fastapi import APIRouter, Request, Form
+from fastapi import APIRouter, Request, Form, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from pathlib import Path
 from datetime import datetime
-import json, random
+import json, random, os
+
+# 🔹 Unified persistence & utilities
+from app.services.application_store import (
+    load_applications,
+    save_all,
+    upsert_application,
+    find_application,
+    append_message,
+    update_status,   # ✅ NEW
+)
+
+from app.routes.upload import generate_temp_id
+
+# 🔹 Optional RAG embedding (existing)
+from app.rag.ingest import embed_texts
+from app.rag.vector_store_faiss import save_faiss_index
+import faiss, numpy as np
+
 
 router = APIRouter()
 
@@ -13,214 +31,245 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 DATA_DIR = BASE_DIR / "app" / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
-APPLICATIONS_FILE = DATA_DIR / "applications.json"
 
 
-# ---------- Utility Helpers ----------
-def load_applications() -> list:
-    """Load all persisted provider applications."""
-    if APPLICATIONS_FILE.exists():
-        try:
-            return json.loads(APPLICATIONS_FILE.read_text())
-        except Exception:
-            return []
-    return []
-
-
-def save_applications(records: list):
-    """Save all provider application records to disk."""
-    APPLICATIONS_FILE.write_text(json.dumps(records, indent=2))
-
-
-def provider_already_exists(provider: dict, existing: list) -> dict | None:
-    """Detect duplicate providers by license, registration, or name."""
-    key_fields = ["license_number", "registration_id", "provider_name"]
-    for rec in existing:
-        p = rec.get("provider", {})
-        if any(provider.get(k) and provider.get(k) == p.get(k) for k in key_fields):
-            return rec
-    return None
-
-
-# ---------- Create / Approve Provider Application ----------
-@router.post("/create-application")
-async def create_application(request: Request, provider_data: str = Form(...)):
-    """
-    Create or reuse a provider application.
-    - If provider already exists, mark as ✅ 'Previously Approved'
-    - If new, mark as 🩵 'Application Accepted'
-    """
-    from app.rag.ingest import embed_texts
-    from app.rag.vector_store_faiss import save_faiss_index
-    import numpy as np, faiss
-
+# ============================================================
+# 🔍 Utility Functions
+# ============================================================
+def _create_faiss_for_provider(app_id: str, provider: dict):
+    """Embed provider details into FAISS store (used post-approval)."""
     try:
-        provider = json.loads(provider_data)
-    except Exception:
-        provider = {}
-
-    existing = load_applications()
-    duplicate = provider_already_exists(provider, existing)
-
-    # 🟢 Existing Provider → Previously Approved
-    if duplicate:
-        provider_id = duplicate["id"]
-        provider_dir = Path("app/data/faiss_store") / provider_id
+        provider_dir = Path("app/data/faiss_store") / app_id
         provider_dir.mkdir(parents=True, exist_ok=True)
 
-        index_files = list(provider_dir.glob("*.index"))
-        if not index_files:
-            print(f"📘 Auto-ingesting FAISS data for existing provider {provider_id}")
-            text_summary = " ".join([f"{k}: {v}" for k, v in duplicate["provider"].items()])
-            vectors = embed_texts([text_summary])
-            faiss.normalize_L2(vectors)
-            save_faiss_index(
-                vectors, [text_summary],
-                doc_id="provider_profile",
-                provider_dir=str(provider_dir)
-            )
-        else:
-            print(f"✅ FAISS index already exists for provider {provider_id}")
-
-        return templates.TemplateResponse(
-            "provider_dashboard.html",
-            {
-                "request": request,
-                "app_id": provider_id,
-                "provider": duplicate["provider"],
-                "status": "Application Accepted",
-                "documents": duplicate.get("documents", []),
-                "message": "ℹ️ This provider was already verified and approved earlier.",
-            },
-        )
-
-    # 🩵 New Provider → Application Accepted
-    app_id = f"APP-{datetime.now().strftime('%Y%m%d')}-{random.randint(10000,99999)}"
-    record = {
-        "id": app_id,
-        "provider": provider,
-        "created_at": datetime.now().isoformat(),
-        "status": "Application Accepted",
-        "documents": [],
-    }
-    existing.append(record)
-    save_applications(existing)
-
-    request.app.state.current_application = record
-
-    # Auto-ingest provider info to FAISS
-    try:
         text_summary = " ".join([f"{k}: {v}" for k, v in provider.items()])
         vectors = embed_texts([text_summary])
         faiss.normalize_L2(vectors)
-
-        provider_dir = Path("app/data/faiss_store") / app_id
-        provider_dir.mkdir(parents=True, exist_ok=True)
         save_faiss_index(
             vectors, [text_summary],
             doc_id="provider_profile",
             provider_dir=str(provider_dir)
         )
-        print(f"✅ Embedded provider profile for {app_id}")
+        print(f"✅ FAISS profile embedded for {app_id}")
     except Exception as e:
-        print(f"⚠️ Could not embed provider info: {e}")
-
-    return templates.TemplateResponse(
-        "provider_dashboard.html",
-        {
-            "request": request,
-            "app_id": app_id,
-            "provider": provider,
-            "status": "Application Accepted",
-            "documents": [],
-            "message": "✅ Provider application accepted successfully and stored permanently.",
-        },
-    )
+        print(f"⚠️ FAISS embedding failed for {app_id}: {e}")
 
 
-# ---------- View Existing Application ----------
-@router.get("/view/{app_id}", response_class=HTMLResponse)
-async def view_dashboard(request: Request, app_id: str):
+# ============================================================
+# 🟢 CREATE / APPROVE APPLICATION
+# ============================================================
+@router.post("/create-application")
+async def create_application(request: Request, provider_data: str = Form(...)):
     """
-    Display provider details and uploaded document list.
-    Supports both permanent IDs (APP-...) and temporary IDs (TEMP-ID-...).
-    Ensures legacy records load safely and UI fields remain consistent.
+    Create or reuse a provider application.
+    - Existing provider → "Previously Approved"
+    - New provider → "Under Review"
     """
+    try:
+        provider = json.loads(provider_data)
+    except Exception:
+        provider = {}
+
+    # ✅ Check duplicates
     apps = load_applications()
-
-    # ✅ Match by either `id` or `application_id`
-    record = next(
+    existing = next(
         (
-            r
-            for r in apps
-            if str(r.get("id")) == app_id or str(r.get("application_id")) == app_id
+            r for r in apps
+            if (r.get("provider", {}).get("license_number") == provider.get("license_number"))
         ),
         None,
     )
 
-    # ✅ Graceful handling if record is missing
-    if not record:
-        return HTMLResponse(
-            f"<h3>❌ No provider found for Application ID: {app_id}</h3>",
-            status_code=404,
+    if existing:
+        app_id = existing.get("id") or existing.get("application_id")
+        print(f"ℹ️ Found existing provider {app_id}")
+
+        # Ensure FAISS is created if missing
+        provider_dir = Path("app/data/faiss_store") / app_id
+        if not list(provider_dir.glob("*.index")):
+            _create_faiss_for_provider(app_id, existing.get("provider", {}))
+
+        return templates.TemplateResponse(
+            "provider_dashboard.html",
+            {
+                "request": request,
+                "app_id": app_id,
+                "provider": existing.get("provider", {}),
+                "status": existing.get("status", "Application Accepted"),
+                "documents": existing.get("documents", []),
+                "messages": existing.get("messages", []),
+                "history": existing.get("history", []),
+                "message": "ℹ️ Provider already exists and was previously approved.",
+            },
         )
 
-    # ✅ Normalize legacy records (some may lack `id`)
-    if not record.get("id") and record.get("application_id"):
-        record["id"] = record["application_id"]
-    elif not record.get("application_id") and record.get("id"):
-        record["application_id"] = record["id"]
+    # 🆕 New Application
+    temp_id = generate_temp_id()
+    record = {
+        "id": temp_id,
+        "application_id": temp_id,
+        "provider": provider,
+        "status": "Under Review",
+        "documents": [],
+        "messages": [],
+        "created_at": datetime.utcnow().isoformat(),
+        "history": [{"event": "Created", "timestamp": datetime.utcnow().isoformat()}],
+    }
 
-    # ✅ Adjust display status for TEMP-ID applications
-    display_status = record.get("status", "Under Review")
-    if str(record["id"]).startswith("TEMP-ID") and display_status == "Application Accepted":
-        display_status = "Under Review"
-
-    # ✅ Defensive field population
-    provider = record.get("provider", {}) or {}
-    documents = record.get("documents", [])
+    upsert_application(record)
+    request.app.state.current_application = record
 
     return templates.TemplateResponse(
         "provider_dashboard.html",
         {
             "request": request,
-            "app_id": record.get("id", app_id),
+            "app_id": temp_id,
             "provider": provider,
-            "documents": documents,
+            "status": "Under Review",
+            "documents": [],
+            "messages": [],
+            "history": [{"event": "Created", "timestamp": datetime.utcnow().isoformat()}],
+            "message": "✅ New provider application submitted for review.",
+        },
+    )
+
+
+# ============================================================
+# 📄 VIEW EXISTING APPLICATION
+# ============================================================
+@router.get("/view/{app_id}", response_class=HTMLResponse)
+async def view_dashboard(request: Request, app_id: str):
+    """Display provider details, documents, and history (handles both id & application_id)."""
+    apps = load_applications()
+
+    record = next(
+        (r for r in apps if r.get("id") == app_id or r.get("application_id") == app_id),
+        None
+    )
+    if not record:
+        return HTMLResponse(f"<h3>❌ No provider found for App ID: {app_id}</h3>", status_code=404)
+
+    # Normalize IDs for consistency
+    record["id"] = record.get("id") or record.get("application_id") or app_id
+    record["application_id"] = record.get("application_id") or record["id"]
+
+    # TEMP-ID apps always show “Under Review”
+    display_status = record.get("status", "Under Review")
+    if record["id"].startswith("TEMP-ID") and display_status == "Application Accepted":
+        display_status = "Under Review"
+
+    return templates.TemplateResponse(
+        "provider_dashboard.html",
+        {
+            "request": request,
+            "app_id": record["id"],
+            "provider": record.get("provider", {}),
+            "documents": record.get("documents", []),
             "status": display_status,
+            "messages": record.get("messages", []),
+            "history": record.get("history", []),
             "message": "📄 Provider dashboard loaded successfully.",
         },
     )
 
 
+# ============================================================
+# ❌ REJECT APPLICATION
+# ============================================================
+# ============================================================
+# 🧩 APPLICATION LIFECYCLE ACTIONS
+# ============================================================
 
-# ---------- Reject Application ----------
-@router.post("/reject-application")
-async def reject_application(request: Request, rejection_reason: str = Form(...)):
-    """Reject provider license and show reason."""
-    rejection_entry = {
-        "timestamp": datetime.now().isoformat(),
-        "reason": rejection_reason,
-    }
-    request.app.state.last_rejection = rejection_entry
+@router.post("/approve/{app_id}", response_class=HTMLResponse)
+async def approve_application(request: Request, app_id: str):
+    """Approve an application."""
+    updated = update_status(app_id, "Approved", note="Application approved by reviewer.")
+    if updated:
+        append_message(app_id, "System", "✅ Application approved successfully.")
+        msg = "✅ Provider approved successfully."
+    else:
+        msg = "⚠️ Could not find the application to approve."
 
+    record = find_application(app_id)
     return templates.TemplateResponse(
-        "upload_form.html",
+        "provider_dashboard.html",
         {
             "request": request,
-            "message": f"❌ Provider License Rejected. Reason: {rejection_reason}",
+            "app_id": app_id,
+            "provider": record.get("provider", {}) if record else {},
+            "documents": record.get("documents", []) if record else [],
+            "status": record.get("status", "Approved") if record else "Unknown",
+            "messages": record.get("messages", []) if record else [],
+            "history": record.get("history", []) if record else [],
+            "message": msg,
         },
     )
 
 
-# ---------- Delete Document ----------
+@router.post("/reject/{app_id}", response_class=HTMLResponse)
+async def reject_application(request: Request, app_id: str, reason: str = Form(...)):
+    """Reject a provider application with a reason."""
+    updated = update_status(app_id, "Rejected", note=reason)
+    if updated:
+        append_message(app_id, "Reviewer", f"❌ Application rejected. Reason: {reason}")
+        msg = f"❌ Application rejected for reason: {reason}"
+    else:
+        msg = "⚠️ Could not find application to reject."
+
+    record = find_application(app_id)
+    return templates.TemplateResponse(
+        "provider_dashboard.html",
+        {
+            "request": request,
+            "app_id": app_id,
+            "provider": record.get("provider", {}) if record else {},
+            "documents": record.get("documents", []) if record else [],
+            "status": record.get("status", "Rejected") if record else "Unknown",
+            "messages": record.get("messages", []) if record else [],
+            "history": record.get("history", []) if record else [],
+            "message": msg,
+        },
+    )
+
+
+@router.post("/request-info/{app_id}", response_class=HTMLResponse)
+async def request_info(request: Request, app_id: str, note: str = Form(...)):
+    """Request more details or clarification from the provider."""
+    updated = update_status(app_id, "Info Requested", note=note)
+    if updated:
+        append_message(app_id, "Reviewer", f"🟡 Additional information requested: {note}")
+        msg = "🟡 Provider has been asked for more details."
+    else:
+        msg = "⚠️ Could not find the application to update."
+
+    record = find_application(app_id)
+    return templates.TemplateResponse(
+        "provider_dashboard.html",
+        {
+            "request": request,
+            "app_id": app_id,
+            "provider": record.get("provider", {}) if record else {},
+            "documents": record.get("documents", []) if record else [],
+            "status": record.get("status", "Info Requested") if record else "Unknown",
+            "messages": record.get("messages", []) if record else [],
+            "history": record.get("history", []) if record else [],
+            "message": msg,
+        },
+    )
+
+
+
+# ============================================================
+# 🗑️ DELETE DOCUMENT
+# ============================================================
 @router.post("/delete-document")
 async def delete_document(request: Request, app_id: str = Form(...), filename: str = Form(...)):
-    """Delete a specific uploaded document and related FAISS index."""
-    import os
-
+    """Delete a specific uploaded document and its FAISS vector file."""
     apps = load_applications()
-    record = next((r for r in apps if r["id"] == app_id), None)
+    record = next(
+        (r for r in apps if r.get("id") == app_id or r.get("application_id") == app_id),
+        None
+    )
     if not record:
         return HTMLResponse(f"<h3>❌ No provider found for App ID: {app_id}</h3>", status_code=404)
 
@@ -237,9 +286,10 @@ async def delete_document(request: Request, app_id: str = Form(...), filename: s
                 except Exception as e:
                     print(f"⚠️ Error deleting {fname}: {e}")
 
-    # Update record
-    record["documents"] = [d for d in record.get("documents", []) if d["filename"] != filename]
-    save_applications(apps)
+    record["documents"] = [
+        d for d in record.get("documents", []) if d["filename"] != filename
+    ]
+    save_all(apps)
 
     msg = (
         f"✅ Deleted document '{filename}' and its FAISS index."
@@ -251,24 +301,26 @@ async def delete_document(request: Request, app_id: str = Form(...), filename: s
         {
             "request": request,
             "app_id": app_id,
-            "provider": record["provider"],
-            "documents": record["documents"],
-            "status": record.get("status", "Application Accepted"),
+            "provider": record.get("provider", {}),
+            "documents": record.get("documents", []),
+            "status": record.get("status", "Under Review"),
+            "messages": record.get("messages", []),
+            "history": record.get("history", []),
             "message": msg,
         },
     )
 
+
+# ============================================================
+# 🧾 SHOW UPLOAD FORM
+# ============================================================
 @router.get("/upload-form", response_class=HTMLResponse)
 async def upload_form(request: Request):
-    """
-    Display the provider license upload form + registry grid below it.
-    """
+    """Display upload form + registry grid."""
     apps = load_applications()
     sorted_apps = sorted(apps, key=lambda x: x.get("created_at", ""), reverse=True)
+
     return templates.TemplateResponse(
         "upload_form.html",
-        {
-            "request": request,
-            "providers": sorted_apps,
-        },
+        {"request": request, "providers": sorted_apps},
     )

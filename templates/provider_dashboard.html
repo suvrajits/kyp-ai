@@ -6,69 +6,72 @@
   <title>Provider Dashboard</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #eef2f5;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f3f6f9;
+      margin: 0;
       padding: 40px;
     }
     .container {
-      background: white;
-      padding: 30px;
+      background: #fff;
       border-radius: 12px;
-      max-width: 900px;
+      padding: 35px;
+      max-width: 960px;
       margin: auto;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
     }
     h2 { color: #333; margin-top: 0; }
+    h3 { color: #222; border-bottom: 2px solid #eee; padding-bottom: 4px; }
 
     /* 🩵 Status styles */
     .status {
       font-size: 18px;
-      padding: 10px 16px;
+      font-weight: 600;
+      padding: 10px 18px;
       border-radius: 8px;
       display: inline-block;
-      margin-bottom: 10px;
-      font-weight: 600;
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
       border: 1px solid transparent;
+      margin-bottom: 15px;
     }
-
-    .accepted {
-      background: #d6ecff;
-      color: #004c91;
-      border-color: #b3d9ff;
-    }
-    .approved {
-      background: #d1f2d1;
-      color: #146314;
-    }
-    .rejected {
-      background: #f8d7da;
-      color: #8a0000;
-    }
+    .under-review { background: #fff8e6; color: #7a6200; border-color: #f0e1a0; }
+    .accepted { background: #e0f2ff; color: #004c91; border-color: #b3d9ff; }
+    .approved { background: #d4f5d4; color: #126612; border-color: #a8e3a8; }
+    .rejected { background: #fde2e4; color: #861010; border-color: #f8c4c4; }
 
     .box {
       background: #f8f9fa;
       border-radius: 8px;
-      padding: 15px;
+      padding: 12px 16px;
       margin-bottom: 10px;
+      border: 1px solid #eee;
     }
-    .label { font-weight: bold; color: #555; }
-    .actions { margin-top: 30px; text-align: center; }
+    .label { font-weight: bold; color: #444; }
+
+    .actions {
+      margin-top: 35px;
+      text-align: center;
+    }
     button {
       background-color: #0077cc;
       color: white;
       border: none;
-      padding: 10px 20px;
+      padding: 10px 22px;
       border-radius: 8px;
       font-size: 15px;
       cursor: pointer;
-      margin: 10px;
-      transition: background 0.2s ease;
+      margin: 8px;
+      transition: all 0.2s ease;
     }
     button:hover {
       background-color: #005fa3;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
     }
+    button.reject { background: #d93b3b; }
+    button.reject:hover { background: #b22e2e; }
+    button.info { background: #f5b041; }
+    button.info:hover { background: #d99a00; }
+
     input[type="file"] {
       padding: 10px;
       background: #f9f9f9;
@@ -77,13 +80,12 @@
       width: 100%;
     }
 
-    /* 🧠 Search section */
     .search-section {
-      margin: 25px 0;
+      margin: 30px 0;
       padding: 20px;
-      border: 1px solid #ddd;
       border-radius: 8px;
       background: #f9fafc;
+      border: 1px solid #e1e1e1;
     }
     .search-box { display: flex; gap: 10px; }
     #query {
@@ -107,11 +109,41 @@
       background: #fff;
       border-radius: 6px;
       padding: 12px;
-      line-height: 1.5;
       color: #333;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       min-height: 40px;
     }
+
+    /* 🧾 Messages & History */
+    .section {
+      background: #fcfcfc;
+      border: 1px solid #eee;
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-top: 25px;
+    }
+    .message {
+      background: #eef5ff;
+      border-left: 4px solid #0077cc;
+      padding: 8px 12px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+    }
+    .history-entry {
+      background: #f7f7f7;
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin: 5px 0;
+      font-size: 14px;
+    }
+
+    a.back-link {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #0077cc;
+    }
+    a.back-link:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -120,12 +152,16 @@
 
   <!-- Dynamic Status Badge -->
   <div class="status
-    {% if 'Accepted' in status %}
-        accepted
+    {% if 'Review' in status %}
+      under-review
+    {% elif 'Accepted' in status %}
+      accepted
     {% elif 'Approved' in status %}
-        approved
+      approved
+    {% elif 'Reject' in status %}
+      rejected
     {% else %}
-        rejected
+      under-review
     {% endif %}
   ">
     {{ status }}
@@ -155,6 +191,7 @@
   {% else %}
     <p>No provider data available.</p>
   {% endif %}
+
   <hr>
 
   <h3>📁 Upload Additional Documents</h3>
@@ -172,20 +209,80 @@
         <form method="post" action="/dashboard/delete-document" style="display:inline;">
           <input type="hidden" name="app_id" value="{{ app_id }}">
           <input type="hidden" name="filename" value="{{ doc.filename }}">
-          <button type="submit">🗑️ Delete</button>
+          <button type="submit" class="reject">🗑️ Delete</button>
         </form>
       </li>
     {% endfor %}
     </ul>
   {% endif %}
 
-  <div class="actions">
-    <a href="/analyze-html/"><button>⬅ Back to Analysis</button></a>
-    <a href="/trust-card/generate_trust_card"><button>🧾 Generate Trust Card</button></a>
-  </div>
-</div>
+  <!-- 🧩 History Section -->
+  {% if history %}
+    <div class="section">
+      <h3>📚 Application History</h3>
+      {% for event in history %}
+        <div class="history-entry">
+          <strong>{{ event.event }}</strong> — {{ event.timestamp }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
 
-<!-- JS for streaming RAG Ask -->
+  <!-- 💬 Message Section -->
+    {% if messages %}
+    <div class="section">
+        <h3>💬 Messages</h3>
+        {% for msg in messages %}
+        <div class="message">
+            <strong>{{ msg.from }}:</strong> {{ msg.text }}
+            <div style="font-size:12px; color:#666;">🕒 {{ msg.timestamp }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+
+    <div class="actions">
+    <!-- ✅ Approve -->
+    <form action="/dashboard/approve/{{ app_id }}" method="post" style="display:inline;">
+        <button type="submit">✅ Approve</button>
+    </form>
+
+    <!-- ❌ Reject -->
+    <form action="/dashboard/reject/{{ app_id }}" method="post" style="display:inline;">
+        <input 
+        type="text" 
+        name="reason" 
+        placeholder="Reason for rejection" 
+        required 
+        style="padding:8px 10px; margin-right:8px; border-radius:6px; border:1px solid #ccc; font-size:14px;" 
+        />
+        <button type="submit" class="reject">❌ Reject</button>
+    </form>
+
+    <!-- 🟡 Request Info -->
+    <form action="/dashboard/request-info/{{ app_id }}" method="post" style="display:inline;">
+        <input 
+        type="text" 
+        name="note" 
+        placeholder="Request details..." 
+        required 
+        style="padding:8px 10px; margin-right:8px; border-radius:6px; border:1px solid #ccc; font-size:14px;" 
+        />
+        <button type="submit" class="info">📨 Request Info</button>
+    </form>
+    </div>
+
+    <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+
+    <div class="actions">
+    <a href="/upload/upload-form" class="back-link">⬅ Back to Uploads</a>
+    <a href="/trust-card/generate_trust_card">
+        <button type="button">🧾 Generate Trust Card</button>
+    </a>
+    </div>
+
+<!-- JS for RAG Ask -->
 <script>
 document.getElementById("search-btn").addEventListener("click", async (e) => {
   e.preventDefault();
