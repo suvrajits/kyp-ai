@@ -324,3 +324,41 @@ async def upload_form(request: Request):
         "upload_form.html",
         {"request": request, "providers": sorted_apps},
     )
+
+@router.post("/reject/{app_id}")
+async def reject_provider(request: Request, app_id: str, reason: str = Form(...)):
+    """Reject a provider application, record the reason, and log to history."""
+    from app.services.application_store import load_applications, save_all, append_message
+    apps = load_applications()
+
+    record = next((r for r in apps if r.get("id") == app_id or r.get("application_id") == app_id), None)
+    if not record:
+        return HTMLResponse(f"<h3>❌ Application not found: {app_id}</h3>", status_code=404)
+
+    record["status"] = "Rejected"
+    record.setdefault("history", []).append({
+        "event": f"Rejected: {reason}",
+        "timestamp": datetime.utcnow().isoformat()
+    })
+    record.setdefault("messages", []).append({
+        "from": "Reviewer",
+        "text": f"Application rejected. Reason: {reason}",
+        "timestamp": datetime.utcnow().isoformat()
+    })
+
+    save_all(apps)
+    print(f"🔄 Status for {app_id} → Rejected")
+
+    return templates.TemplateResponse(
+        "provider_dashboard.html",
+        {
+            "request": request,
+            "app_id": record["id"],
+            "provider": record.get("provider", {}),
+            "documents": record.get("documents", []),
+            "messages": record.get("messages", []),
+            "history": record.get("history", []),
+            "status": record["status"],
+            "message": f"❌ Application rejected successfully. Reason: {reason}",
+        },
+    )

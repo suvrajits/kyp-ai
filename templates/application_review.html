@@ -1,0 +1,140 @@
+<!-- templates/application_review.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Application Review</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f3f6f9;
+      margin: 0;
+      padding: 40px;
+    }
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      padding: 35px;
+      max-width: 960px;
+      margin: auto;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+    h2 { color: #333; margin-top: 0; }
+    h3 { color: #222; border-bottom: 2px solid #eee; padding-bottom: 4px; }
+
+    .status {
+      font-size: 18px;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 8px;
+      display: inline-block;
+      background: #fff8e6;
+      color: #7a6200;
+      border: 1px solid #f0e1a0;
+      margin-bottom: 15px;
+    }
+
+    .box {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      border: 1px solid #eee;
+    }
+    .label { font-weight: bold; color: #444; }
+
+    .actions {
+      margin-top: 35px;
+      text-align: center;
+    }
+    button {
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      margin: 8px;
+      transition: all 0.2s ease;
+    }
+    button:hover {
+      background-color: #005fa3;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+    button.deny { background: #d93b3b; }
+    button.deny:hover { background: #b22e2e; }
+
+    .note-box {
+      margin-top: 15px;
+      text-align: center;
+    }
+    textarea {
+      width: 80%;
+      min-height: 60px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      padding: 8px;
+      resize: vertical;
+    }
+    a.back-link {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #0077cc;
+    }
+    a.back-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>📝 Application Review</h2>
+  <div class="status">Status: {{ application.status or 'New' }}</div>
+
+  <p><strong>Application ID:</strong> {{ application.id }}</p>
+  <p><strong>Received At:</strong> {{ application.created_at }}</p>
+  <hr>
+
+  <h3>📜 Extracted Provider Details</h3>
+  {% if application.provider %}
+    {% for key, value in application.provider.items() %}
+      <div class="box">
+        <div class="label">{{ key.replace('_',' ')|title }}</div>
+        <div>{{ value }}</div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No structured data available for this application.</p>
+  {% endif %}
+
+  {% if application.documents %}
+    <h3>📂 Uploaded Documents</h3>
+    <ul>
+      {% for doc in application.documents %}
+        <li>{{ doc.filename }} — uploaded at {{ doc.uploaded_at }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <hr>
+
+  <div class="actions">
+    <form action="/review/{{ application.id }}/accept" method="post" style="display:inline;">
+      <button type="submit">✅ Accept Application</button>
+    </form>
+
+    <form action="/review/{{ application.id }}/deny" method="post" style="display:inline;">
+      <div class="note-box">
+        <textarea name="reason" placeholder="Reason for denial..." required></textarea>
+      </div>
+      <button type="submit" class="deny">❌ Deny Application</button>
+    </form>
+  </div>
+
+  <div class="actions">
+    <a href="/upload/upload-form" class="back-link">⬅ Back to Application List</a>
+  </div>
+</div>
+</body>
+</html>

@@ -14,6 +14,8 @@ from app.services.registry_matcher import match_provider
 # Reuse utilities
 from app.routes.upload import generate_temp_id
 from app.services.application_store import upsert_application  # ✅ centralized persistence
+from fastapi.responses import RedirectResponse
+
 
 router = APIRouter()
 
@@ -70,16 +72,16 @@ async def analyze_and_match_html(request: Request, file: UploadFile = File(...))
         # ----------------------------------------------------------
         application_id = generate_temp_id()
         record = {
+            "id": application_id,  # ✅ ensure both fields exist
             "application_id": application_id,
             "provider": structured,
-            "status": "Under Review",
+            "status": "New",
             "confidence": confidence or 0.0,
             "created_at": datetime.utcnow().isoformat(),
             "documents": [],
         }
 
-        upsert_application(record)  # ✅ saves to app/data/applications.json
-
+        upsert_application(record)
         print(f"💾 Application {application_id} saved successfully.")
 
         # ----------------------------------------------------------
@@ -93,18 +95,8 @@ async def analyze_and_match_html(request: Request, file: UploadFile = File(...))
         # ----------------------------------------------------------
         # 6️⃣ Render result.html summary
         # ----------------------------------------------------------
-        return templates.TemplateResponse(
-            "result.html",
-            {
-                "request": request,
-                "filename": file.filename,
-                "structured": structured,
-                "matched": match_result,
-                "confidence": confidence,
-                "status": status,
-                "application_id": application_id,
-            },
-        )
+        print(f"➡️ Redirecting analyst to review application {application_id}")
+        return RedirectResponse(url=f"/review/{application_id}", status_code=303)
 
     except Exception as e:
         print(f"❌ Error in analyze_and_match_html: {e}")

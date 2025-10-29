@@ -249,16 +249,18 @@
     </form>
 
     <!-- ❌ Reject -->
-    <form action="/dashboard/reject/{{ app_id }}" method="post" style="display:inline;">
+    <div style="display:flex; align-items:center; justify-content:center; margin-top:10px;">
+    <form action="/dashboard/reject/{{ app_id }}" method="post" style="display:flex; align-items:center; gap:8px;">
         <input 
-        type="text" 
-        name="reason" 
-        placeholder="Reason for rejection" 
-        required 
-        style="padding:8px 10px; margin-right:8px; border-radius:6px; border:1px solid #ccc; font-size:14px;" 
+            type="text" 
+            name="reason" 
+            placeholder="Reason for rejection" 
+            required 
+            style="padding:8px 10px; border-radius:6px; border:1px solid #ccc; font-size:14px; width:240px;" 
         />
         <button type="submit" class="reject">❌ Reject</button>
     </form>
+    </div>
 
     <!-- 🟡 Request Info -->
     <form action="/dashboard/request-info/{{ app_id }}" method="post" style="display:inline;">

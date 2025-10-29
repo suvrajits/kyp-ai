@@ -166,25 +166,25 @@
 
   <div class="divider"></div>
 
-  <div class="actions">
-    <!-- ✅ Approve Application -->
-    <form action="/dashboard/create-application" method="post" style="display:inline;">
-      <input type="hidden" name="provider_data" value='{{ structured | tojson }}'>
-      <button type="submit">✅ Approve & Create Application</button>
-    </form>
+    <div class="actions">
+      <!-- ✅ Approve Application -->
+      <form action="/dashboard/create-application" method="post" style="display:inline;">
+        <input type="hidden" name="provider_data" value='{{ structured | tojson }}'>
+        <button type="submit">✅ Approve & Create Application</button>
+      </form>
 
-    <!-- 🧾 Generate Trust Card -->
-    <form action="/trust-card/generate_trust_card" method="get" style="display:inline;">
-      <button type="submit" class="trust">🧾 Generate Trust Card</button>
-    </form>
+      <!-- 🧾 Generate Trust Card -->
+      <form action="/trust-card/generate_trust_card" method="get" style="display:inline;">
+        <button type="submit" class="trust">🧾 Generate Trust Card</button>
+      </form>
 
-    <!-- ❌ Reject -->
-    <form action="/dashboard/reject-application" method="post" style="display:inline;">
-      <textarea name="rejection_reason" placeholder="Enter reason for rejection..." required></textarea>
-      <input type="hidden" name="provider_data" value='{{ structured | tojson }}'>
-      <button type="submit" class="reject">❌ Reject Application</button>
-    </form>
-  </div>
+      <!-- ❌ Reject -->
+      <form action="/dashboard/reject-application" method="post" style="display:inline;">
+        <textarea name="rejection_reason" placeholder="Enter reason for rejection..." required></textarea>
+        <input type="hidden" name="provider_data" value='{{ structured | tojson }}'>
+        <button type="submit" class="reject">❌ Reject Application</button>
+      </form>
+    </div>
 
   <div class="meta">
     <p>FAISS embeddings stored for: <strong>{{ provider_id or 'N/A' }}</strong></p>

@@ -161,11 +161,16 @@ def upsert_application(record: Dict, key_fields=("provider_name", "license_numbe
 
     # 🆕 New record
     else:
-        temp_id = generate_temp_id()
+        temp_id = record.get("id") or record.get("application_id")
+        if not temp_id:
+            temp_id = generate_temp_id()
+
         record["id"] = temp_id
         record["application_id"] = temp_id
+        _normalize_id(record)
         _ensure_defaults(record)
-        record["history"].append({
+
+        record.setdefault("history", []).append({
             "event": "Created",
             "timestamp": _now_iso(),
         })

@@ -19,6 +19,7 @@ from app.routes import (
     analyze_and_match_html,
     trust_card,
     provider_dashboard,
+    application_review
 )
 
 # ----------------------------------------------------------
@@ -73,6 +74,8 @@ app.include_router(trust_card.router, prefix="/trust-card", tags=["Trust Card Ge
 # RAG (Retrieval-Augmented Generation)
 app.include_router(rag_router, prefix="/rag", tags=["RAG - Ingest"])
 app.include_router(ask_router, prefix="/rag", tags=["RAG - Ask"])
+
+app.include_router(application_review.router, prefix="", tags=["Application Review"])
 
 # ----------------------------------------------------------
 # 🧠 Startup / Shutdown Events
