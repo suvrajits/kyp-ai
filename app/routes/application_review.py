@@ -4,11 +4,10 @@ from fastapi import APIRouter, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from app.services.application_store import load_applications, save_all
-
 from datetime import datetime
 from pathlib import Path
+from shutil import move, copytree, rmtree
 from app.services.id_utils import generate_app_id
-
 
 router = APIRouter()
 
@@ -29,9 +28,9 @@ async def review_application(request: Request, app_id: str):
     if not record:
         return HTMLResponse(f"<h3>❌ No application found for ID: {app_id}</h3>", status_code=404)
 
-    # Only allow review if it's still 'New'
+    # If already promoted or not new, redirect to dashboard
     if record.get("status") not in ["New", "Pending"]:
-        return RedirectResponse(f"/dashboard/view/{app_id}", status_code=303)
+        return RedirectResponse(f"/dashboard/view/{record.get('id')}", status_code=303)
 
     return templates.TemplateResponse(
         "application_review.html",
@@ -49,40 +48,91 @@ async def review_application(request: Request, app_id: str):
 async def accept_application(request: Request, app_id: str):
     """
     Accept an incoming application.
-    Promotes TEMP-ID → APP-ID and moves it to the provider stage.
+    Promotes TEMP-ID → APP-ID, migrates FAISS directory if present,
+    builds FAISS embeddings for the license text, and redirects to dashboard.
     """
+    from shutil import move, copytree, rmtree
+    from app.services.id_utils import generate_app_id
+    from app.rag.ingest import embed_texts
+    from app.rag.vector_store_faiss import save_faiss_index
+    import faiss
+    import numpy as np
+
     apps = load_applications()
-    record = None
-
-    for rec in apps:
-        if rec.get("id") == app_id or rec.get("application_id") == app_id:
-            record = rec
-            break
-
+    record = next((r for r in apps if r.get("id") == app_id or r.get("application_id") == app_id), None)
     if not record:
         return HTMLResponse(f"<h3>❌ Application not found for ID: {app_id}</h3>", status_code=404)
 
-    # ✅ Promote ID from TEMP-ID → APP-ID
-    if str(record.get("id", "")).startswith("TEMP-ID"):
-        new_app_id = generate_app_id()
-        print(f"🔁 Promoting {app_id} → {new_app_id}")
-        record["id"] = new_app_id
-        record["application_id"] = new_app_id
+    # 🚧 Prevent double acceptance
+    if record.get("id", "").startswith("APP-"):
+        print(f"⚠️ Application {app_id} already promoted → {record['id']}")
+        return RedirectResponse(url=f"/dashboard/view/{record['id']}", status_code=303)
 
-    # ✅ Update status & log
+    # ✅ Generate new APP-ID
+    new_app_id = generate_app_id()
+    print(f"🔁 Promoting {app_id} → {new_app_id}")
+
+    # --------------------------------------------------------
+    # 🗂️ Move FAISS directory safely
+    # --------------------------------------------------------
+    old_faiss_dir = Path("app/data/faiss_store") / app_id
+    new_faiss_dir = Path("app/data/faiss_store") / new_app_id
+    try:
+        if old_faiss_dir.exists():
+            move(str(old_faiss_dir), str(new_faiss_dir))
+            print(f"📦 Moved FAISS data from {old_faiss_dir.name} → {new_faiss_dir.name}")
+        else:
+            print(f"ℹ️ No FAISS directory found for {app_id}, skipping move.")
+    except Exception as e:
+        print(f"⚠️ Could not move FAISS folder ({app_id}): {e}")
+
+    # --------------------------------------------------------
+    # 🧩 Promote and Normalize Record
+    # --------------------------------------------------------
+    record["id"] = new_app_id
+    record["application_id"] = new_app_id
     record["status"] = "Under Review"
+
+    # --------------------------------------------------------
+    # 🧠 Create FAISS index for extracted license text
+    # --------------------------------------------------------
+    try:
+        provider = record.get("provider", {})
+        if provider:
+            text_data = "\n".join([f"{k}: {v}" for k, v in provider.items() if v])
+            print(f"🧠 Creating FAISS embeddings for structured license data ({len(text_data.split())} tokens)...")
+
+            vectors = embed_texts([text_data])
+            faiss.normalize_L2(vectors)
+
+            provider_dir = Path("app/data/faiss_store") / new_app_id
+            provider_dir.mkdir(parents=True, exist_ok=True)
+
+            save_faiss_index(
+                vectors=vectors,
+                chunks=[text_data],
+                doc_id=new_app_id,
+                provider_dir=str(provider_dir)
+            )
+            print(f"💾 Saved FAISS index for provider {new_app_id} (from license metadata).")
+        else:
+            print(f"⚠️ No structured provider data found to embed for {new_app_id}.")
+    except Exception as e:
+        print(f"❌ Failed to create FAISS for {new_app_id}: {e}")
+
+    # --------------------------------------------------------
+    # 🧾 Log and Save
+    # --------------------------------------------------------
     record.setdefault("history", []).append({
         "event": "Application Accepted & Promoted",
         "timestamp": datetime.utcnow().isoformat(),
-        "note": f"Promoted from {app_id} → {record['id']}"
+        "note": f"Promoted from {app_id} → {new_app_id} and created baseline FAISS."
     })
 
-    # ✅ Persist change
     save_all(apps)
-    print(f"✅ Application {app_id} promoted → {record['id']} and moved to 'Under Review'")
+    print(f"✅ Application {app_id} promoted → {new_app_id} and FAISS built successfully.")
 
-    # ✅ Redirect to the new dashboard page
-    return RedirectResponse(url=f"/dashboard/view/{record['id']}", status_code=303)
+    return RedirectResponse(url=f"/dashboard/view/{new_app_id}", status_code=303)
 
 
 
