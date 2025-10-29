@@ -7,6 +7,8 @@ from app.services.application_store import load_applications, save_all
 
 from datetime import datetime
 from pathlib import Path
+from app.services.id_utils import generate_app_id
+
 
 router = APIRouter()
 
@@ -47,24 +49,41 @@ async def review_application(request: Request, app_id: str):
 async def accept_application(request: Request, app_id: str):
     """
     Accept an incoming application.
-    Changes status → 'Under Review'
-    and redirects to provider dashboard.
+    Promotes TEMP-ID → APP-ID and moves it to the provider stage.
     """
     apps = load_applications()
+    record = None
+
     for rec in apps:
         if rec.get("id") == app_id or rec.get("application_id") == app_id:
-            rec["status"] = "Under Review"
-            rec.setdefault("history", []).append({
-                "event": "Application Accepted",
-                "timestamp": datetime.utcnow().isoformat()
-            })
+            record = rec
             break
-    else:
+
+    if not record:
         return HTMLResponse(f"<h3>❌ Application not found for ID: {app_id}</h3>", status_code=404)
 
+    # ✅ Promote ID from TEMP-ID → APP-ID
+    if str(record.get("id", "")).startswith("TEMP-ID"):
+        new_app_id = generate_app_id()
+        print(f"🔁 Promoting {app_id} → {new_app_id}")
+        record["id"] = new_app_id
+        record["application_id"] = new_app_id
+
+    # ✅ Update status & log
+    record["status"] = "Under Review"
+    record.setdefault("history", []).append({
+        "event": "Application Accepted & Promoted",
+        "timestamp": datetime.utcnow().isoformat(),
+        "note": f"Promoted from {app_id} → {record['id']}"
+    })
+
+    # ✅ Persist change
     save_all(apps)
-    print(f"✅ Application {app_id} moved to 'Under Review' (Provider Stage)")
-    return RedirectResponse(url=f"/dashboard/view/{app_id}", status_code=303)
+    print(f"✅ Application {app_id} promoted → {record['id']} and moved to 'Under Review'")
+
+    # ✅ Redirect to the new dashboard page
+    return RedirectResponse(url=f"/dashboard/view/{record['id']}", status_code=303)
+
 
 
 # ============================================================

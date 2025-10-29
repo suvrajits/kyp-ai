@@ -1,29 +1,7 @@
 [
   {
-    "id": "APP-20251028-88676",
-    "provider": {
-      "expiry_date": "31-Dec-2026",
-      "issue_date": "01-Jan-2021",
-      "issuing_authority": "Maharashtra Medical Council",
-      "license_number": "MH123456789",
-      "provider_name": "Dr. Ramesh Kumar",
-      "specialty": "Orthopedic Surgeon"
-    },
-    "created_at": "2025-10-28T10:09:28.749196",
-    "status": "Application Accepted",
-    "documents": [
-      {
-        "filename": "provider_guidelines.pdf",
-        "uploaded_at": "2025-10-28T16:11:50.752507"
-      }
-    ],
-    "application_id": "APP-20251028-88676",
-    "messages": [],
-    "history": []
-  },
-  {
-    "id": "TEMP-ID-031",
-    "application_id": "TEMP-ID-031",
+    "id": "APP-20251029-00001",
+    "application_id": "APP-20251029-00001",
     "provider": {
       "provider_name": "Dr. Arjun Iyer",
       "license_number": "KA-MED-2025-556",
@@ -34,33 +12,26 @@
       "expiry_date": "14-Apr-2030",
       "registration_id": "KMC-REG-2025-556"
     },
-    "status": "Denied",
+    "status": "Under Review",
     "confidence": 0.41,
-    "created_at": "2025-10-29T09:01:35.627420",
+    "created_at": "2025-10-29T09:23:34.502963",
     "documents": [],
     "messages": [],
     "history": [
       {
         "event": "Created",
-        "timestamp": "2025-10-29T09:00:45.647377"
+        "timestamp": "2025-10-29T09:23:34.503974"
       },
       {
-        "event": "Application Accepted",
-        "timestamp": "2025-10-29T09:01:01.491300"
-      },
-      {
-        "event": "Updated (New)",
-        "timestamp": "2025-10-29T09:01:35.632007"
-      },
-      {
-        "event": "Application Denied (denied - license)",
-        "timestamp": "2025-10-29T09:02:05.009634"
+        "event": "Application Accepted & Promoted",
+        "timestamp": "2025-10-29T09:27:21.024284",
+        "note": "Promoted from TEMP-ID-033 \u2192 APP-20251029-00001"
       }
     ]
   },
   {
-    "id": "TEMP-ID-032",
-    "application_id": "TEMP-ID-032",
+    "id": "TEMP-ID-034",
+    "application_id": "TEMP-ID-034",
     "provider": {
       "provider_name": "Lotus Heart Care Clinic",
       "license_number": "DL-CLINIC-2025-223",
@@ -71,34 +42,49 @@
       "expiry_date": "04-Mar-2030",
       "registration_id": "DMC-CLINIC-2025-223"
     },
-    "status": "Rejected",
+    "status": "Denied",
     "confidence": 0.32,
-    "created_at": "2025-10-29T09:02:23.303740",
+    "created_at": "2025-10-29T09:23:53.469440",
     "documents": [],
-    "messages": [
-      {
-        "from": "Reviewer",
-        "text": "\u274c Application rejected. Reason: Wrong doctor",
-        "timestamp": "2025-10-29T09:02:56.867578"
-      }
-    ],
+    "messages": [],
     "history": [
       {
         "event": "Created",
-        "timestamp": "2025-10-29T09:02:23.305802"
+        "timestamp": "2025-10-29T09:23:53.471792"
       },
       {
-        "event": "Application Accepted",
-        "timestamp": "2025-10-29T09:02:27.637119"
+        "event": "Application Denied (no dates)",
+        "timestamp": "2025-10-29T09:27:37.259515"
+      }
+    ]
+  },
+  {
+    "id": "APP-20251029-00002",
+    "application_id": "APP-20251029-00002",
+    "provider": {
+      "provider_name": "Sunrise Multispeciality Hospital",
+      "license_number": "MH-HOSP-2025-112",
+      "specialty": "Multispeciality Hospital",
+      "state": "Maharashtra",
+      "issuing_authority": "Maharashtra Health",
+      "issue_date": "10-Feb-2025",
+      "expiry_date": "09-Feb-2030",
+      "registration_id": "MHC-HOSP-REG-2025-112"
+    },
+    "status": "Under Review",
+    "confidence": 0.28,
+    "created_at": "2025-10-29T09:24:12.555404",
+    "documents": [],
+    "messages": [],
+    "history": [
+      {
+        "event": "Created",
+        "timestamp": "2025-10-29T09:24:12.557609"
       },
       {
-        "event": "Status changed from Under Review \u2192 Rejected",
-        "timestamp": "2025-10-29T09:02:56.862876",
-        "note": "Wrong doctor"
-      },
-      {
-        "event": "Message from Reviewer",
-        "timestamp": "2025-10-29T09:02:56.867578"
+        "event": "Application Accepted & Promoted",
+        "timestamp": "2025-10-29T09:28:03.431075",
+        "note": "Promoted from TEMP-ID-035 \u2192 APP-20251029-00002"
       }
     ]
   }
