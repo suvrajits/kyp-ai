@@ -127,5 +127,53 @@
         "note": "Promoted from TEMP-ID-045 \u2192 APP-20251031-00011 and created baseline FAISS."
       }
     ]
+  },
+  {
+    "id": "APP-20251031-00012",
+    "application_id": "APP-20251031-00012",
+    "provider": {
+      "provider_name": "Lifeline Kolkata Medical Centre",
+      "license_number": "WB/MC/2022/01006",
+      "type_of_institution": "Primary Care Hospital",
+      "address": "150 Station Road, Kolkata, West Bengal - 767128",
+      "ownership_details": "Sri Venkateswara Trust",
+      "license_issue_date": "2024-01-20",
+      "license_expiry_date": "2029-01-20",
+      "details_of_services_offered": "Inpatient, Outpatient",
+      "number_of_beds": "500",
+      "qualification_and_number_of_medical_staff": "30 Doctors, 32 Nurses, 9 Technicians",
+      "licensing_authority_name": "State Health Department",
+      "infrastructure_standards_compliance": "Yes; Fire Safety: Yes",
+      "biomedical_waste_management_authorization": "No",
+      "pollution_control_board_clearance": "No",
+      "consent_to_operate_certificate": "Yes",
+      "drug_license": "No",
+      "radiology_radiation_safety_license": "Not Applicable",
+      "registration_under_any_special_acts": "Transplantation of Human Organs Act",
+      "display_of_hospital_charges_and_facilities": "Yes",
+      "compliance_with_minimum_standards": "No",
+      "details_of_support_services": "All Services",
+      "list_of_equipment_and_medical_devices_used": "187 devices",
+      "fire_and_lift_inspection_certificates": "Updated",
+      "accreditation_status": "NABH",
+      "issuing_authority": "",
+      "registration_id": ""
+    },
+    "status": "Under Review",
+    "confidence": 0.18,
+    "created_at": "2025-10-31T20:33:27.522237",
+    "documents": [],
+    "messages": [],
+    "history": [
+      {
+        "event": "Created",
+        "timestamp": "2025-10-31T20:33:27.524585"
+      },
+      {
+        "event": "Application Accepted & Promoted",
+        "timestamp": "2025-10-31T20:35:17.742545",
+        "note": "Promoted from TEMP-ID-046 \u2192 APP-20251031-00012 and created baseline FAISS."
+      }
+    ]
   }
 ]

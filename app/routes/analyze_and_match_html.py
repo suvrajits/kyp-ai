@@ -5,6 +5,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 from datetime import datetime
+import tempfile  # ✅ add this line
 
 # Core AI services
 from app.services.document_ai import analyze_document
@@ -45,17 +46,30 @@ async def analyze_and_match_html(request: Request, file: UploadFile = File(...))
     """
     try:
         # ----------------------------------------------------------
-        # 1️⃣ Read uploaded file
+        # 1️⃣ Save uploaded file temporarily
         # ----------------------------------------------------------
         contents = await file.read()
         if not contents:
             return HTMLResponse("<h3>❌ Uploaded file is empty.</h3>", status_code=400)
 
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+            tmp.write(contents)
+            temp_pdf_path = tmp.name
+
+        print(f"📂 Uploaded PDF saved to temporary path: {temp_pdf_path}")
+
+        # ----------------------------------------------------------
+        # 2️⃣ Extract fields using Azure Document Intelligence Parser
+        # ----------------------------------------------------------
+        print("🧠 Running Azure Document Intelligence model for field extraction...")
+        structured = parse_provider_license(temp_pdf_path, debug=True)
+
+
         # ----------------------------------------------------------
         # 2️⃣ Run Azure Document Intelligence + Parser
         # ----------------------------------------------------------
-        extracted = analyze_document(contents)
-        structured = parse_provider_license(extracted) or {}
+        print("🧠 Running Azure Document Intelligence model for field extraction...")
+        structured = parse_provider_license(temp_pdf_path, debug=True)
 
         # Normalize key fields to avoid NoneType issues
         for k in ("provider_name", "license_number", "issuing_authority", "registration_id"):
