@@ -5,7 +5,7 @@ from app.services.azure_docai_extractor import AzureDocumentExtractor
 VAULT_URL = "https://providergpt-kv.vault.azure.net/"
 
 # Path to your PDF
-PDF_PATH = r"C:\Users\suvra\OneDrive\Desktop\Resume\Portfolio\Healthcare\New_provider_pdfs\provider_58.pdf"
+PDF_PATH = r"C:\Users\suvra\OneDrive\Desktop\Resume\Portfolio\Healthcare\New_provider_pdfs\provider_59.pdf"
 
 # Initialize the Document Extractor
 extractor = AzureDocumentExtractor(vault_url=VAULT_URL)
