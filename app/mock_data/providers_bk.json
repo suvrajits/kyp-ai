@@ -1,0 +1,29 @@
+[
+  {
+    "provider_name": "Dr. Ramesh Kumar",
+    "license_number": "MH123456789",
+    "specialty": "Orthopedic Surgeon",
+    "state": "Maharashtra",
+    "issuing_authority": "Maharashtra Medical Council",
+    "issue_date": "2021-01-01",
+    "expiry_date": "2026-12-31"
+  },
+  {
+    "provider_name": "Dr. Meera Desai",
+    "license_number": "GJ987654321",
+    "specialty": "Cardiologist",
+    "state": "Gujarat",
+    "issuing_authority": "Gujarat Medical Council",
+    "issue_date": "2020-06-15",
+    "expiry_date": "2025-06-14"
+  },
+  {
+    "provider_name": "Dr. Aakash Sen",
+    "license_number": "DL654321987",
+    "specialty": "Pediatrician",
+    "state": "Delhi",
+    "issuing_authority": "Delhi Medical Council",
+    "issue_date": "2019-11-10",
+    "expiry_date": "2024-11-09"
+  }
+]

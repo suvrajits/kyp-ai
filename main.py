@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from datetime import datetime
+from dotenv import load_dotenv
 import os
 
 # ----------------------------------------------------------
@@ -19,31 +20,39 @@ from app.routes import (
     analyze_and_match_html,
     trust_card,
     provider_dashboard,
-    application_review
+    application_review,
+    search,
+    review,
 )
 
+# Explicitly load the .env from app/config
+dotenv_path = os.path.join(os.path.dirname(__file__), "app", "config", ".env")
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path=dotenv_path)
+    print(f"✅ Loaded .env from: {dotenv_path}")
+else:
+    print(f"⚠️ .env file not found at {dotenv_path}")
+    
 # ----------------------------------------------------------
 # 🚀 Initialize FastAPI App
 # ----------------------------------------------------------
 app = FastAPI(
     title="ProviderGPT AI",
     description=(
-        "An Azure OpenAI-powered intelligent document analysis and provider "
+        "An Azure OpenAI–powered intelligent document analysis and provider "
         "verification system integrating OCR, Registry Matching, and RAG search."
     ),
-    version="1.3.0",
+    version="1.4.0",
 )
 
 # ----------------------------------------------------------
 # 🗂️ Templates & Static Files
 # ----------------------------------------------------------
-# Mount static only if directory exists (safety for container deploys)
 if os.path.isdir("static"):
     app.mount("/static", StaticFiles(directory="static"), name="static")
 else:
     print("⚠️  Skipping /static mount — directory not found.")
 
-# Templates live at the project root
 templates = Jinja2Templates(directory="templates")
 
 # ----------------------------------------------------------
@@ -75,27 +84,33 @@ app.include_router(trust_card.router, prefix="/trust-card", tags=["Trust Card Ge
 app.include_router(rag_router, prefix="/rag", tags=["RAG - Ingest"])
 app.include_router(ask_router, prefix="/rag", tags=["RAG - Ask"])
 
+# Application Review
 app.include_router(application_review.router, prefix="", tags=["Application Review"])
+
+# 🔍 Smart Semantic Search
+app.include_router(search.router, prefix="/search", tags=["Semantic Search"])  # ✅ NEW
+
+app.include_router(review.router)
 
 # ----------------------------------------------------------
 # 🧠 Startup / Shutdown Events
 # ----------------------------------------------------------
 @app.on_event("startup")
 async def on_startup():
-    print("\n" + "=" * 80)
+    print("\n" + "=" * 90)
     print("🚀 PROVIDER GPT BACKEND STARTED")
     print(f"🕒 {datetime.utcnow().isoformat()} UTC")
     print("📂 Active Modules:")
     print("   • Upload / Analyze / Match")
     print("   • Provider Dashboard")
-    print("   • Trust Card")
+    print("   • Trust Card Generator")
     print("   • RAG (Ask + Ingest)")
-    print("=" * 80 + "\n")
+    print("   • Smart Semantic Search  ✅")
+    print("=" * 90 + "\n")
 
 @app.on_event("shutdown")
 async def on_shutdown():
     print("🧩 Graceful shutdown: releasing any in-memory state / connections.")
-
 
 # ----------------------------------------------------------
 # 🩺 Health Check Route
@@ -106,7 +121,7 @@ def root():
     return {
         "ok": True,
         "app_name": "ProviderGPT AI",
-        "version": "1.3.0",
+        "version": "1.4.0",
         "timestamp": datetime.utcnow().isoformat(),
         "message": "✅ ProviderGPT backend is up and running.",
         "modules_loaded": [
@@ -116,8 +131,8 @@ def root():
             "Provider Dashboard",
             "Trust Card Generator",
             "RAG (Ingest & Ask)",
+            "Smart Semantic Search",
         ],
         "template_dir": "templates/",
         "data_dir": "app/data/",
     }
-

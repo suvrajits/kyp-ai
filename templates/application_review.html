@@ -11,6 +11,7 @@
       margin: 0;
       padding: 40px;
     }
+
     .container {
       background: #fff;
       border-radius: 12px;
@@ -19,6 +20,7 @@
       margin: auto;
       box-shadow: 0 6px 16px rgba(0,0,0,0.1);
     }
+
     h2 { color: #333; margin-top: 0; }
     h3 { color: #222; border-bottom: 2px solid #eee; padding-bottom: 4px; }
 
@@ -34,19 +36,128 @@
       margin-bottom: 15px;
     }
 
-    .box {
-      background: #f8f9fa;
+    /* === Warnings === */
+    .warning-box {
+      background: #fff6da;
+      border-left: 5px solid #f0c000;
       border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 10px;
-      border: 1px solid #eee;
+      padding: 10px 16px;
+      margin-bottom: 20px;
+      color: #6a5200;
     }
-    .label { font-weight: bold; color: #444; }
+    .warning-box ul {
+      margin: 6px 0 0 20px;
+    }
 
-    .actions {
-      margin-top: 35px;
-      text-align: center;
+    .expired-warning {
+      background: #ffecec;
+      border-left: 5px solid #d93b3b;
+      border-radius: 8px;
+      padding: 12px 18px;
+      color: #8a0000;
+      font-weight: 600;
+      margin-bottom: 20px;
     }
+
+    /* === License Match Summary === */
+    .match-summary {
+      background: #f7faff;
+      border-left: 5px solid #0077cc;
+      border-radius: 8px;
+      padding: 14px 20px;
+      margin: 15px 0 25px 0;
+    }
+
+    .match-percent {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0077cc;
+    }
+
+    .progress-bar {
+      height: 14px;
+      border-radius: 10px;
+      background: #e0e0e0;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      transition: width 0.6s ease;
+    }
+    .progress-fill.green { background-color: #28a745; }
+    .progress-fill.amber { background-color: #ffc107; }
+    .progress-fill.red { background-color: #dc3545; }
+
+    .recommendation { font-size: 15px; color: #333; margin-top: 6px; }
+    .reason { font-size: 13px; color: #555; margin-top: 4px; }
+
+    /* === Field Comparison === */
+    .field-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    .field-table th, .field-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+    .field-table th {
+      background: #f2f4f7;
+      text-align: left;
+      color: #333;
+    }
+    .highlight-red { background: #ffecec; color: #8a0000; }
+    .highlight-amber { background: #fff5e0; color: #7a4a00; }
+    .highlight-green { background: #e8f7e8; color: #155724; }
+    .highlight-expired { background: #ffe0e0; color: #b00000; font-weight: 600; }
+
+    tr:hover td {
+      background: #f5f8ff;
+      transition: background 0.2s ease;
+    }
+
+    /* === Risk Score Section === */
+    .risk-scores {
+      background: #f9f9ff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 25px;
+    }
+    .risk-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed #ddd;
+      padding: 6px 0;
+      font-size: 14px;
+    }
+    .risk-label { font-weight: 600; color: #333; }
+    .risk-value { color: #0077cc; }
+
+    /* === Extracted Provider Table === */
+    .provider-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    .provider-table th, .provider-table td {
+      border-bottom: 1px solid #eee;
+      padding: 8px 10px;
+      font-size: 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .provider-table th {
+      width: 40%;
+      background: #f2f4f7;
+      font-weight: 600;
+    }
+
+    /* === Actions === */
+    .actions { margin-top: 35px; text-align: center; }
     button {
       background-color: #0077cc;
       color: white;
@@ -66,10 +177,6 @@
     button.deny { background: #d93b3b; }
     button.deny:hover { background: #b22e2e; }
 
-    .note-box {
-      margin-top: 15px;
-      text-align: center;
-    }
     textarea {
       width: 80%;
       min-height: 60px;
@@ -78,6 +185,7 @@
       padding: 8px;
       resize: vertical;
     }
+
     a.back-link {
       display: inline-block;
       margin-top: 20px;
@@ -94,30 +202,135 @@
 
   <p><strong>Application ID:</strong> {{ application.id }}</p>
   <p><strong>Received At:</strong> {{ application.created_at }}</p>
+
+  {% if application.match_result %}
+    {% set match_percent = application.match_result.match_percent or 0 %}
+    {% set has_expired = false %}
+
+    {% for field, info in application.match_result.per_field.items() %}
+      {% if info.method == 'expired' %}
+        {% set has_expired = true %}
+      {% endif %}
+    {% endfor %}
+
+    {% if has_expired %}
+      <div class="expired-warning">
+        ⚠️ License Expired — This provider’s license expiry date has passed.
+      </div>
+    {% endif %}
+
+    {% if application.match_result.warnings %}
+    <div class="warning-box">
+      ⚠️ <strong>Attention:</strong> Some issues were detected during analysis:
+      <ul>
+        {% for warn in application.match_result.warnings %}
+          <li>{{ warn }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <div class="match-summary">
+      <div class="match-percent">
+        License Match: {{ match_percent | round(1) }}%
+      </div>
+
+      <div class="progress-bar">
+        {% if match_percent >= 80 %}
+          {% set fill_class = "green" %}
+        {% elif match_percent >= 60 %}
+          {% set fill_class = "amber" %}
+        {% else %}
+          {% set fill_class = "red" %}
+        {% endif %}
+        <div class="progress-fill {{ fill_class }}" style="width: {{ match_percent | round(1) }}%;"></div>
+      </div>
+
+      <div class="recommendation">
+        Recommendation: <strong>{{ application.match_result.recommendation or 'Unknown' }}</strong>
+      </div>
+      {% if application.match_result.reason %}
+      <div class="reason">
+        {{ application.match_result.reason }}
+      </div>
+      {% endif %}
+    </div>
+
+    <h3>🔍 Field Comparison Summary</h3>
+    {% if application.match_result.per_field %}
+    <table class="field-table">
+      <thead>
+        <tr>
+          <th>Field</th>
+          <th>Incoming Value</th>
+          <th>Registry Value</th>
+          <th>Match %</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for field, info in application.match_result.per_field.items() %}
+          {% set score = info.score or 0 %}
+          {% if info.method == 'expired' %}
+            {% set row_class = "highlight-expired" %}
+          {% elif score < 0.6 %}
+            {% set row_class = "highlight-red" %}
+          {% elif score < 0.8 %}
+            {% set row_class = "highlight-amber" %}
+          {% else %}
+            {% set row_class = "highlight-green" %}
+          {% endif %}
+          <tr class="{{ row_class }}">
+            <td><b>{{ field }}</b></td>
+            <td>
+              {{ info.incoming or '—' }}
+              {% if info.flag %}<span style="color:red;">{{ info.flag }}</span>{% endif %}
+            </td>
+            <td>{{ info.registry or '—' }}</td>
+            <td>{{ (score * 100) | round(1) }}%</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p style="color:#777; margin-top:10px;">No detailed field-level comparison available.</p>
+    {% endif %}
+  {% endif %}
+
   <hr>
 
   <h3>📜 Extracted Provider Details</h3>
   {% if application.provider %}
-    {% for key, value in application.provider.items() %}
-      <div class="box">
-        <div class="label">{{ key.replace('_',' ')|title }}</div>
-        <div>{{ value }}</div>
-      </div>
-    {% endfor %}
+  <table class="provider-table">
+    <thead>
+      <tr>
+        <th>Field</th>
+        <th>Extracted Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for key, value in application.provider.items() %}
+      <tr>
+        <th>{{ key }}</th>
+        <td>{{ value or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
   {% else %}
     <p>No structured data available for this application.</p>
   {% endif %}
 
-  {% if application.documents %}
-    <h3>📂 Uploaded Documents</h3>
-    <ul>
-      {% for doc in application.documents %}
-        <li>{{ doc.filename }} — uploaded at {{ doc.uploaded_at }}</li>
-      {% endfor %}
-    </ul>
+  {% if application.risk_scores %}
+  <div class="risk-scores">
+    <h3>⚖️ Risk Score Summary</h3>
+    {% for category, score in application.risk_scores.items() %}
+    <div class="risk-item">
+      <div class="risk-label">{{ category.replace('_',' ')|title }}</div>
+      <div class="risk-value">{{ (score * 100) | round(1) }}%</div>
+    </div>
+    {% endfor %}
+  </div>
   {% endif %}
-
-  <hr>
 
   <div class="actions">
     <form action="/review/{{ application.id }}/accept" method="post" style="display:inline;">
@@ -125,9 +338,7 @@
     </form>
 
     <form action="/review/{{ application.id }}/deny" method="post" style="display:inline;">
-      <div class="note-box">
-        <textarea name="reason" placeholder="Reason for denial..." required></textarea>
-      </div>
+      <textarea name="reason" placeholder="Reason for denial..." required></textarea>
       <button type="submit" class="deny">❌ Deny Application</button>
     </form>
   </div>

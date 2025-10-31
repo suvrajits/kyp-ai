@@ -5,3 +5,4 @@ azure-identity
 azure-keyvault-secrets
 azure-ai-formrecognizer
 python-multipart
+rapidfuzz

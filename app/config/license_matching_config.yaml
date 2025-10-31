@@ -1,0 +1,26 @@
+weights:
+  registration_number: 0.30
+  institution_name: 0.20
+  registration_issue_date: 0.08
+  registration_expiry_date: 0.08
+  address: 0.10
+  ownership: 0.06
+  licensing_authority: 0.07
+  beds: 0.03
+  services: 0.03
+  accreditation: 0.03
+
+thresholds:
+  accept: 0.90        # >= 90% treat as strong match
+  good: 0.75
+  manual_review: 0.60 # below this highlight red / require manual review
+  low_match: 0.40
+
+fuzzy:
+  name_token_set_thresholds:
+    exact: 0.90
+    near: 0.75
+  license_ratio_exact: 0.95
+  license_ratio_near: 0.80
+
+date_tolerance_days: 30

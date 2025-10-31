@@ -104,6 +104,39 @@
       padding-bottom: 4px;
       margin-bottom: 10px;
     }
+
+    /* === Smart Search === */
+    .smart-search {
+      background: #f9fafc;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 35px;
+      text-align: center;
+    }
+    .smart-search input {
+      width: 70%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    .smart-search button {
+      margin-left: 8px;
+      padding: 10px 20px;
+    }
+    .result-card {
+      background: #fafbfc;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 10px;
+      text-align: left;
+    }
+    .result-card h4 {
+      margin: 0 0 8px 0;
+      color: #0077cc;
+    }
   </style>
 </head>
 <body>
@@ -117,6 +150,15 @@
       <input type="file" name="file" required><br>
       <button type="submit">🔍 Analyze & Match</button>
     </form>
+  </div>
+
+  <!-- 🧠 Smart Natural Language Search -->
+  <div class="smart-search">
+    <h3>🔎 Smart Provider Search</h3>
+    <p style="color:#666; font-size:14px;">Try queries like: <em>"List providers expiring in next 6 months"</em> or <em>"Show orthopedic specialists in Delhi"</em>.</p>
+    <input id="queryInput" placeholder="Ask anything about provider data..." />
+    <button onclick="runSearch()">Search</button>
+    <div id="results" style="margin-top:20px; text-align:left;"></div>
   </div>
 
   <!-- ===================== -->
@@ -215,5 +257,35 @@
     {% endif %}
   </div>
 </div>
+
+<!-- Smart Search Script -->
+<script>
+async function runSearch() {
+  const q = document.getElementById('queryInput').value;
+  if (!q.trim()) return;
+
+  const res = await fetch(`/search/semantic?q=${encodeURIComponent(q)}`);
+  const data = await res.json();
+
+  let html = `<h4>Showing results for: "<em>${data.query}</em>"</h4>`;
+  html += `<pre style="background:#f4f6f8; padding:10px; border-radius:8px;">Interpreted: ${JSON.stringify(data.interpreted_intent, null, 2)}</pre>`;
+
+  if (!data.results || data.results.length === 0) {
+    html += `<p style="color:#777;">No matching applications found.</p>`;
+  } else {
+    html += data.results.map(r => `
+      <div class="result-card">
+        <h4>${r.provider_name || "Unknown Provider"}</h4>
+        <p><b>License:</b> ${r.license_number || "N/A"}</p>
+        <p><b>Specialty:</b> ${r.specialty || "N/A"}</p>
+        <p><b>State:</b> ${r.state || "N/A"}</p>
+        <p><b>Expiry:</b> ${r.expiry_date || "Unknown"}</p>
+      </div>
+    `).join("");
+  }
+
+  document.getElementById('results').innerHTML = html;
+}
+</script>
 </body>
 </html>

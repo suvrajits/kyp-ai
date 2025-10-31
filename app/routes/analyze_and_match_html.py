@@ -1,7 +1,7 @@
 # app/routes/analyze_and_match_html.py
 
 from fastapi import APIRouter, Request, File, UploadFile
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 from datetime import datetime
@@ -14,8 +14,6 @@ from app.services.registry_matcher import match_provider
 # Reuse utilities
 from app.routes.upload import generate_temp_id
 from app.services.application_store import upsert_application  # ✅ centralized persistence
-from fastapi.responses import RedirectResponse
-
 
 router = APIRouter()
 
@@ -24,7 +22,6 @@ router = APIRouter()
 # --------------------------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
-
 
 # --------------------------------------------------------------------
 # 🌐 Routes
@@ -62,38 +59,53 @@ async def analyze_and_match_html(request: Request, file: UploadFile = File(...))
             structured[k] = (structured.get(k) or "").strip()
 
         # ----------------------------------------------------------
-        # 3️⃣ Match against registry (fuzzy)
+        # 3️⃣ Match against registry (now weighted + per-field)
         # ----------------------------------------------------------
-        match_result, confidence = match_provider(structured)
-        status = "Matched" if confidence >= 0.80 else "Needs Review"
+        match_entry, match_data = match_provider(structured)
+        match_percent = match_data.get("match_percent", 0.0)
+        confidence = match_percent / 100.0
+        recommendation = match_data.get("recommendation", "Unknown")
+
+        # Determine status based on thresholds
+        if match_percent >= 90:
+            status = "Matched"
+        elif match_percent >= 75:
+            status = "Needs Review"
+        else:
+            status = "Unverified"
 
         # ----------------------------------------------------------
         # 4️⃣ Generate TEMP-ID and persist record
         # ----------------------------------------------------------
         application_id = generate_temp_id()
         record = {
-            "id": application_id,  # ✅ ensure both fields exist
+            "id": application_id,
             "application_id": application_id,
             "provider": structured,
             "status": "New",
-            "confidence": confidence or 0.0,
+            "confidence": confidence,
+            "match_percent": match_percent,
+            "match_result": match_data,             # ✅ full per-field detail
+            "match_explanation": match_data.get("per_field", {}),
+            "match_recommendation": recommendation,
             "created_at": datetime.utcnow().isoformat(),
             "documents": [],
         }
 
         upsert_application(record)
-        print(f"💾 Application {application_id} saved successfully.")
+        print(f"💾 Application {application_id} saved successfully with {match_percent}% match.")
 
         # ----------------------------------------------------------
-        # 5️⃣ Cache latest state (used by trust card, dashboard)
+        # 5️⃣ Cache latest state (used by dashboard & trust card)
         # ----------------------------------------------------------
         request.app.state.latest_structured = structured
-        request.app.state.latest_matched = match_result
+        request.app.state.latest_matched = match_entry
+        request.app.state.latest_match_data = match_data
         request.app.state.latest_confidence = confidence
         request.app.state.latest_status = status
 
         # ----------------------------------------------------------
-        # 6️⃣ Render result.html summary
+        # 6️⃣ Redirect to review screen
         # ----------------------------------------------------------
         print(f"➡️ Redirecting analyst to review application {application_id}")
         return RedirectResponse(url=f"/review/{application_id}", status_code=303)
