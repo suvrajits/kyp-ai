@@ -90,8 +90,8 @@
     ]
   },
   {
-    "id": "APP-20251031-00010",
-    "application_id": "APP-20251031-00010",
+    "id": "APP-20251031-00011",
+    "application_id": "APP-20251031-00011",
     "provider": {
       "provider_name": "Samarth Howrah Clinic",
       "license_number": "INVALID-4815",
@@ -104,7 +104,7 @@
     },
     "status": "Under Review",
     "confidence": 0.19,
-    "created_at": "2025-10-31T19:19:29.088264",
+    "created_at": "2025-10-31T20:11:43.809828",
     "documents": [],
     "messages": [],
     "history": [
@@ -116,6 +116,15 @@
         "event": "Application Accepted & Promoted",
         "timestamp": "2025-10-31T19:20:28.894475",
         "note": "Promoted from TEMP-ID-044 \u2192 APP-20251031-00010 and created baseline FAISS."
+      },
+      {
+        "event": "Updated (New)",
+        "timestamp": "2025-10-31T20:11:43.811342"
+      },
+      {
+        "event": "Application Accepted & Promoted",
+        "timestamp": "2025-10-31T20:12:02.272159",
+        "note": "Promoted from TEMP-ID-045 \u2192 APP-20251031-00011 and created baseline FAISS."
       }
     ]
   }
