@@ -81,10 +81,11 @@ async def review_application(request: Request, app_id: str):
             "application": record,
             "match_percent": round(match_percent, 1),
             "recommendation": recommendation,
-            "per_field": per_field,
-            "best_match_entry": best_match_entry,
+            "per_field": per_field or {},   # ✅ safe fallback
+            "best_match_entry": best_match_entry or {},
         },
     )
+
 
 
 # ============================================================

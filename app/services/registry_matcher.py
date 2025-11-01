@@ -82,45 +82,54 @@ def compute_similarity(a: str, b: str) -> float:
 # --------------------------------------------------------------------
 def match_provider(input_fields: Dict[str, str], debug: bool = False) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """
-    Matches extracted input fields against the provider registry.
-    Returns the best match entry and a detailed match_result dict.
+    Match extracted input_fields against all registry entries.
+    Compares all 24 canonical fields and returns per-field similarity + overall match score.
     """
     registry = load_provider_registry()
     if not registry:
         print("⚠️ No registry data available.")
         return None, {"match_percent": 0.0, "per_field": {}, "recommendation": "Registry empty"}
 
+    def safe_str(value):
+        """Convert any data type to a cleaned string for comparison."""
+        if value is None:
+            return ""
+        if isinstance(value, (int, float, bool)):
+            return str(value).strip()
+        return str(value).strip()
+
     best_match = None
     highest_score = 0.0
     best_field_data = {}
 
-    # Weighted field comparison
-    weights = {
-        "provider_name": 0.5,
-        "license_number": 0.3,
-        "licensing_authority_name": 0.2,
-    }
+    # Canonical 24 fields
+    all_fields = list(KEY_MAP.values())
+
+    # Core weighted identifiers
+    weights = {"provider_name": 0.5, "license_number": 0.3, "licensing_authority_name": 0.2}
 
     for entry in registry:
         field_scores = {}
-        score_sum = 0.0
+        weighted_sum = 0.0
         total_weight = 0.0
 
-        for field, weight in weights.items():
-            incoming_val = input_fields.get(field, "")
-            registry_val = entry.get(field, "")
+        for field in all_fields:
+            incoming_val = safe_str(input_fields.get(field))
+            registry_val = safe_str(entry.get(field))
             sim = compute_similarity(incoming_val, registry_val)
-            score_sum += sim * weight
-            total_weight += weight
             field_scores[field] = {
                 "incoming": incoming_val,
                 "registry": registry_val,
                 "score": round(sim, 2),
-                "weight": weight,
                 "method": "string_similarity"
             }
 
-        avg_score = score_sum / total_weight if total_weight > 0 else 0.0
+        # Weighted average for confidence
+        for field, weight in weights.items():
+            weighted_sum += field_scores.get(field, {}).get("score", 0.0) * weight
+            total_weight += weight
+
+        avg_score = weighted_sum / total_weight if total_weight > 0 else 0.0
         if avg_score > highest_score:
             highest_score = avg_score
             best_match = entry
@@ -130,16 +139,16 @@ def match_provider(input_fields: Dict[str, str], debug: bool = False) -> Tuple[D
         "match_percent": round(highest_score * 100, 1),
         "per_field": best_field_data,
         "recommendation": (
-            "Strong Match" if highest_score >= 0.9 else
-            "Moderate Match" if highest_score >= 0.75 else
-            "Low Confidence Match"
-        ),
+            "Strong Match" if highest_score >= 0.9
+            else "Moderate Match" if highest_score >= 0.75
+            else "Low Confidence Match"
+        )
     }
 
-    if debug and best_match:
-        print(f"✅ Best match: {best_match.get('provider_name', 'Unknown')} ({match_result['match_percent']}%)")
-
-    elif debug and not best_match:
-        print("❌ No matching provider found in registry.")
+    if debug:
+        if best_match:
+            print(f"✅ Best match: {best_match.get('provider_name', 'Unknown')} ({match_result['match_percent']}%)")
+        else:
+            print("❌ No matching provider found in registry.")
 
     return best_match, match_result
