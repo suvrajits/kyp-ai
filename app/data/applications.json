@@ -231,7 +231,7 @@
       "fire_and_lift_inspection_certificates": "Updated",
       "accreditation_status": "NABL"
     },
-    "status": "Unverified",
+    "status": "Rejected",
     "confidence": 0.0,
     "match_percent": 0.0,
     "match_result": {
@@ -245,11 +245,26 @@
     "documents": [
       "provider_11.pdf"
     ],
-    "messages": [],
+    "messages": [
+      {
+        "from": "Reviewer",
+        "text": "\u274c Application rejected. Reason: Wrong application",
+        "timestamp": "2025-11-01T13:28:46.312646"
+      }
+    ],
     "history": [
       {
         "event": "Created",
         "timestamp": "2025-11-01T09:58:11.844209"
+      },
+      {
+        "event": "Status changed from Unverified \u2192 Rejected",
+        "timestamp": "2025-11-01T13:28:46.297666",
+        "note": "Wrong application"
+      },
+      {
+        "event": "Message from Reviewer",
+        "timestamp": "2025-11-01T13:28:46.312646"
       }
     ]
   },
@@ -305,8 +320,8 @@
     ]
   },
   {
-    "id": "TEMP-ID-055",
-    "application_id": "TEMP-ID-055",
+    "id": "APP-20251101-00018",
+    "application_id": "APP-20251101-00018",
     "provider": {
       "provider_name": "CurePoint Kolkata Medical Centre",
       "license_number": "WB-HOSP-2020-1019",
@@ -333,7 +348,7 @@
       "fire_and_lift_inspection_certificates": "Pending",
       "accreditation_status": "JCI"
     },
-    "status": "New",
+    "status": "Under Review",
     "confidence": 1.0,
     "match_percent": 100.0,
     "match_result": {
@@ -642,12 +657,17 @@
       {
         "event": "Created",
         "timestamp": "2025-11-01T12:57:49.816951"
+      },
+      {
+        "event": "Application Accepted & Promoted",
+        "timestamp": "2025-11-01T13:30:57.663218",
+        "note": "Promoted from TEMP-ID-055 \u2192 APP-20251101-00018 and FAISS built."
       }
     ]
   },
   {
-    "id": "TEMP-ID-056",
-    "application_id": "TEMP-ID-056",
+    "id": "APP-20251101-00017",
+    "application_id": "APP-20251101-00017",
     "provider": {
       "provider_name": "HealthFirst Kolkata Multispeciality Hospital",
       "license_number": "WBMED20251024",
@@ -674,7 +694,7 @@
       "fire_and_lift_inspection_certificates": "Pending",
       "accreditation_status": "None"
     },
-    "status": "New",
+    "status": "Under Review",
     "confidence": 1.0,
     "match_percent": 100.0,
     "match_result": {
@@ -983,6 +1003,361 @@
       {
         "event": "Created",
         "timestamp": "2025-11-01T13:08:56.377813"
+      },
+      {
+        "event": "Application Accepted & Promoted",
+        "timestamp": "2025-11-01T13:29:24.180368",
+        "note": "Promoted from TEMP-ID-056 \u2192 APP-20251101-00017 and FAISS built."
+      }
+    ]
+  },
+  {
+    "id": "APP-20251101-00016",
+    "application_id": "APP-20251101-00016",
+    "provider": {
+      "provider_name": "Lifeline Kolkata Primary Health Centre",
+      "license_number": "INVALID-9042",
+      "type_of_institution": "Primary Care Hospital",
+      "address": "447 MG Road, Kolkata, West Bengal - 917684",
+      "ownership_details": "Government of India",
+      "license_issue_date": "2024-06-17",
+      "license_expiry_date": "2025-01-01",
+      "details_of_services_offered": "Diagnostic, Radiology, Laboratory",
+      "number_of_beds": "50",
+      "qualification_and_number_of_medical_staff": "6 Doctors, 12 Nurses, 22 Technicians",
+      "licensing_authority_name": "District Health Authority",
+      "infrastructure_standards_compliance": "Building Safety Certificate: No; Fire Safety: No",
+      "biomedical_waste_management_authorization": "No",
+      "pollution_control_board_clearance": "Yes",
+      "consent_to_operate_certificate": "Yes",
+      "drug_license": "Yes",
+      "radiology_radiation_safety_license": "Not Applicable",
+      "registration_under_any_special_acts": "PNDT Act",
+      "display_of_hospital_charges_and_facilities": "Yes",
+      "compliance_with_minimum_standards": "No",
+      "details_of_support_services": "Ambulance, Pharmacy",
+      "list_of_equipment_and_medical_devices_used": "174 devices",
+      "fire_and_lift_inspection_certificates": "Not Applicable",
+      "accreditation_status": "JCI"
+    },
+    "status": "Under Review",
+    "confidence": 0.77,
+    "match_percent": 77.2,
+    "match_result": {
+      "match_percent": 77.2,
+      "per_field": {
+        "provider_name": {
+          "incoming": "Lifeline Kolkata Primary Health Centre",
+          "registry": "Lifeline Kolkata Primary Health Centre",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "license_number": {
+          "incoming": "INVALID-9042",
+          "registry": "WBMED20201026",
+          "score": 0.24,
+          "method": "string_similarity"
+        },
+        "type_of_institution": {
+          "incoming": "Primary Care Hospital",
+          "registry": "Primary Care Hospital",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "address": {
+          "incoming": "447 MG Road, Kolkata, West Bengal - 917684",
+          "registry": "447 MG Road, Kolkata, West Bengal - 917684",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "ownership_details": {
+          "incoming": "Government of India",
+          "registry": "Government of India",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "licensing_authority_name": {
+          "incoming": "District Health Authority",
+          "registry": "District Health Authority",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "license_issue_date": {
+          "incoming": "2024-06-17",
+          "registry": "2024-06-17",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "license_expiry_date": {
+          "incoming": "2025-01-01",
+          "registry": "2025-01-01",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "details_of_services_offered": {
+          "incoming": "Diagnostic, Radiology, Laboratory",
+          "registry": "Diagnostic, Radiology, Laboratory",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "number_of_beds": {
+          "incoming": "50",
+          "registry": "50",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "qualification_and_number_of_medical_staff": {
+          "incoming": "6 Doctors, 12 Nurses, 22 Technicians",
+          "registry": "6 Doctors, 12 Nurses, 22 Technicians",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "infrastructure_standards_compliance": {
+          "incoming": "Building Safety Certificate: No; Fire Safety: No",
+          "registry": "Building Safety Certificate: No; Fire Safety: No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "biomedical_waste_management_authorization": {
+          "incoming": "No",
+          "registry": "No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "pollution_control_board_clearance": {
+          "incoming": "Yes",
+          "registry": "Yes",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "consent_to_operate_certificate": {
+          "incoming": "Yes",
+          "registry": "Yes",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "drug_license": {
+          "incoming": "Yes",
+          "registry": "Yes",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "radiology_radiation_safety_license": {
+          "incoming": "Not Applicable",
+          "registry": "Not Applicable",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "registration_under_any_special_acts": {
+          "incoming": "PNDT Act",
+          "registry": "PNDT Act",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "display_of_hospital_charges_and_facilities": {
+          "incoming": "Yes",
+          "registry": "Displayed",
+          "score": 0.33,
+          "method": "string_similarity"
+        },
+        "compliance_with_minimum_standards": {
+          "incoming": "No",
+          "registry": "No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "details_of_support_services": {
+          "incoming": "Ambulance, Pharmacy",
+          "registry": "Ambulance, Pharmacy",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "list_of_equipment_and_medical_devices_used": {
+          "incoming": "174 devices",
+          "registry": "174 devices (list available on request)",
+          "score": 0.44,
+          "method": "string_similarity"
+        },
+        "fire_and_lift_inspection_certificates": {
+          "incoming": "Not Applicable",
+          "registry": "Not Applicable",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "accreditation_status": {
+          "incoming": "JCI",
+          "registry": "JCI",
+          "score": 1.0,
+          "method": "string_similarity"
+        }
+      },
+      "recommendation": "Moderate Match"
+    },
+    "match_explanation": {
+      "provider_name": {
+        "incoming": "Lifeline Kolkata Primary Health Centre",
+        "registry": "Lifeline Kolkata Primary Health Centre",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "license_number": {
+        "incoming": "INVALID-9042",
+        "registry": "WBMED20201026",
+        "score": 0.24,
+        "method": "string_similarity"
+      },
+      "type_of_institution": {
+        "incoming": "Primary Care Hospital",
+        "registry": "Primary Care Hospital",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "address": {
+        "incoming": "447 MG Road, Kolkata, West Bengal - 917684",
+        "registry": "447 MG Road, Kolkata, West Bengal - 917684",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "ownership_details": {
+        "incoming": "Government of India",
+        "registry": "Government of India",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "licensing_authority_name": {
+        "incoming": "District Health Authority",
+        "registry": "District Health Authority",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "license_issue_date": {
+        "incoming": "2024-06-17",
+        "registry": "2024-06-17",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "license_expiry_date": {
+        "incoming": "2025-01-01",
+        "registry": "2025-01-01",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "details_of_services_offered": {
+        "incoming": "Diagnostic, Radiology, Laboratory",
+        "registry": "Diagnostic, Radiology, Laboratory",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "number_of_beds": {
+        "incoming": "50",
+        "registry": "50",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "qualification_and_number_of_medical_staff": {
+        "incoming": "6 Doctors, 12 Nurses, 22 Technicians",
+        "registry": "6 Doctors, 12 Nurses, 22 Technicians",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "infrastructure_standards_compliance": {
+        "incoming": "Building Safety Certificate: No; Fire Safety: No",
+        "registry": "Building Safety Certificate: No; Fire Safety: No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "biomedical_waste_management_authorization": {
+        "incoming": "No",
+        "registry": "No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "pollution_control_board_clearance": {
+        "incoming": "Yes",
+        "registry": "Yes",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "consent_to_operate_certificate": {
+        "incoming": "Yes",
+        "registry": "Yes",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "drug_license": {
+        "incoming": "Yes",
+        "registry": "Yes",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "radiology_radiation_safety_license": {
+        "incoming": "Not Applicable",
+        "registry": "Not Applicable",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "registration_under_any_special_acts": {
+        "incoming": "PNDT Act",
+        "registry": "PNDT Act",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "display_of_hospital_charges_and_facilities": {
+        "incoming": "Yes",
+        "registry": "Displayed",
+        "score": 0.33,
+        "method": "string_similarity"
+      },
+      "compliance_with_minimum_standards": {
+        "incoming": "No",
+        "registry": "No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "details_of_support_services": {
+        "incoming": "Ambulance, Pharmacy",
+        "registry": "Ambulance, Pharmacy",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "list_of_equipment_and_medical_devices_used": {
+        "incoming": "174 devices",
+        "registry": "174 devices (list available on request)",
+        "score": 0.44,
+        "method": "string_similarity"
+      },
+      "fire_and_lift_inspection_certificates": {
+        "incoming": "Not Applicable",
+        "registry": "Not Applicable",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "accreditation_status": {
+        "incoming": "JCI",
+        "registry": "JCI",
+        "score": 1.0,
+        "method": "string_similarity"
+      }
+    },
+    "match_recommendation": "Moderate Match",
+    "created_at": "2025-11-01T13:26:04.608124",
+    "documents": [
+      "provider_26.pdf",
+      {
+        "filename": "provider_guidelines.pdf",
+        "uploaded_at": "2025-11-01T19:09:17.572817"
+      }
+    ],
+    "messages": [],
+    "history": [
+      {
+        "event": "Created",
+        "timestamp": "2025-11-01T13:26:04.611296"
+      },
+      {
+        "event": "Application Accepted & Promoted",
+        "timestamp": "2025-11-01T13:28:29.431869",
+        "note": "Promoted from TEMP-ID-057 \u2192 APP-20251101-00016 and FAISS built."
       }
     ]
   }

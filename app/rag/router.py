@@ -180,10 +180,19 @@ async def ask_provider_docs(req: dict):
         if not rec and provider_id.startswith("APP-"):
             rec = next((r for r in apps if r["id"] == provider_id.replace("APP-", "TEMP-ID-")), None)
         if rec and rec.get("documents"):
-            filenames = [d["filename"] for d in rec["documents"]]
-            meta_text = "\n\n📂 Provider uploaded documents:\n" + "\n".join(f"- {f}" for f in filenames)
+            filenames = []
+            for d in rec["documents"]:
+                if isinstance(d, dict):
+                    filenames.append(d.get("filename"))
+                elif isinstance(d, str):
+                    filenames.append(d)
+            if filenames:
+                meta_text = "\n\n📂 Provider uploaded documents:\n" + "\n".join(f"- {f}" for f in filenames)
+            else:
+                meta_text = "\n\nℹ️ No additional uploaded documents found."
         elif rec:
             meta_text = "\n\nℹ️ No additional uploaded documents found."
+
 
     full_context = f"{context_text}\n{meta_text}"
 

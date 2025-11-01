@@ -152,17 +152,11 @@
 
   <!-- Dynamic Status Badge -->
   <div class="status
-    {% if 'Review' in status %}
-      under-review
-    {% elif 'Accepted' in status %}
-      accepted
-    {% elif 'Approved' in status %}
-      approved
-    {% elif 'Reject' in status %}
-      rejected
-    {% else %}
-      under-review
-    {% endif %}
+    {% if 'Review' in status %} under-review
+    {% elif 'Accepted' in status %} accepted
+    {% elif 'Approved' in status %} approved
+    {% elif 'Reject' in status %} rejected
+    {% else %} under-review {% endif %}
   ">
     {{ status }}
   </div>
@@ -170,11 +164,11 @@
   <p><strong>Application ID:</strong> {{ app_id }}</p>
   <p><strong>Message:</strong> {{ message }}</p>
 
-  <!-- Ask Section -->
+  <!-- 🔍 Unified Ask / Search Section -->
   <div class="search-section">
-    <h3>🔍 Ask Provider Knowledgebase</h3>
+    <h3>🔍 Ask or Search Providers</h3>
     <div class="search-box">
-      <input type="text" id="query" placeholder="Ask about this provider’s documents or license…" />
+      <input type="text" id="query" placeholder="Ask about this provider or search providers (e.g., NABH hospitals in Delhi)..." />
       <button id="search-btn">Ask</button>
     </div>
     <div id="answer"></div>
@@ -216,104 +210,96 @@
     </ul>
   {% endif %}
 
-  <!-- 🧩 History Section -->
   {% if history %}
     <div class="section">
       <h3>📚 Application History</h3>
       {% for event in history %}
-        <div class="history-entry">
-          <strong>{{ event.event }}</strong> — {{ event.timestamp }}
+        <div class="history-entry"><strong>{{ event.event }}</strong> — {{ event.timestamp }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if messages %}
+    <div class="section">
+      <h3>💬 Messages</h3>
+      {% for msg in messages %}
+        <div class="message">
+          <strong>{{ msg.from }}:</strong> {{ msg.text }}
+          <div style="font-size:12px; color:#666;">🕒 {{ msg.timestamp }}</div>
         </div>
       {% endfor %}
     </div>
   {% endif %}
 
-  <!-- 💬 Message Section -->
-    {% if messages %}
-    <div class="section">
-        <h3>💬 Messages</h3>
-        {% for msg in messages %}
-        <div class="message">
-            <strong>{{ msg.from }}:</strong> {{ msg.text }}
-            <div style="font-size:12px; color:#666;">🕒 {{ msg.timestamp }}</div>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-
-    <div class="actions">
-    <!-- ✅ Approve -->
+  <div class="actions">
     <form action="/dashboard/approve/{{ app_id }}" method="post" style="display:inline;">
         <button type="submit">✅ Approve</button>
     </form>
 
-    <!-- ❌ Reject -->
     <div style="display:flex; align-items:center; justify-content:center; margin-top:10px;">
-    <form action="/dashboard/reject/{{ app_id }}" method="post" style="display:flex; align-items:center; gap:8px;">
-        <input 
-            type="text" 
-            name="reason" 
-            placeholder="Reason for rejection" 
-            required 
-            style="padding:8px 10px; border-radius:6px; border:1px solid #ccc; font-size:14px; width:240px;" 
-        />
+      <form action="/dashboard/reject/{{ app_id }}" method="post" style="display:flex; align-items:center; gap:8px;">
+        <input type="text" name="reason" placeholder="Reason for rejection" required
+               style="padding:8px 10px; border-radius:6px; border:1px solid #ccc; font-size:14px; width:240px;">
         <button type="submit" class="reject">❌ Reject</button>
-    </form>
+      </form>
     </div>
 
-    <!-- 🟡 Request Info -->
     <form action="/dashboard/request-info/{{ app_id }}" method="post" style="display:inline;">
-        <input 
-        type="text" 
-        name="note" 
-        placeholder="Request details..." 
-        required 
-        style="padding:8px 10px; margin-right:8px; border-radius:6px; border:1px solid #ccc; font-size:14px;" 
-        />
+        <input type="text" name="note" placeholder="Request details..." required
+               style="padding:8px 10px; margin-right:8px; border-radius:6px; border:1px solid #ccc; font-size:14px;">
         <button type="submit" class="info">📨 Request Info</button>
     </form>
-    </div>
+  </div>
 
-    <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+  <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
 
-    <div class="actions">
+  <div class="actions">
     <a href="/upload/upload-form" class="back-link">⬅ Back to Uploads</a>
-    <a href="/trust-card/generate_trust_card">
-        <button type="button">🧾 Generate Trust Card</button>
-    </a>
-    </div>
+    <a href="/trust-card/generate_trust_card"><button type="button">🧾 Generate Trust Card</button></a>
+  </div>
 
-<!-- JS for RAG Ask -->
+<!-- 💡 Smart Ask/Search Script -->
 <script>
 document.getElementById("search-btn").addEventListener("click", async (e) => {
   e.preventDefault();
-  const query = document.getElementById("query").value.trim();
+  const query = document.getElementById("query").value.trim().toLowerCase();
   const answerDiv = document.getElementById("answer");
+  if (!query) { answerDiv.innerHTML = "<em>Please enter a question or search term.</em>"; return; }
 
-  if (!query) {
-    answerDiv.innerHTML = "<em>Please enter a question.</em>";
+  answerDiv.innerHTML = "⏳ Thinking...";
+
+  const searchTriggers = ["find", "show", "list", "hospitals", "clinics", "providers", "government", "nabh", "nabl"];
+  const isProviderSearch = searchTriggers.some(word => query.includes(word));
+
+  if (isProviderSearch) {
+    try {
+      const resp = await fetch(`/dashboard/search?q=${encodeURIComponent(query)}`);
+      if (resp.ok) {
+        const html = await resp.text();
+        document.open();
+        document.write(html);
+        document.close();
+      } else throw new Error("Search failed");
+    } catch (err) {
+      console.error("❌ Search error:", err);
+      answerDiv.innerHTML = "❌ Could not search providers.";
+    }
     return;
   }
 
-  answerDiv.innerHTML = "⏳ Thinking...";
+  // Default: Ask RAG about current provider
   try {
     const response = await fetch("/rag/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query: query,
-        provider_id: "{{ app_id }}",
-        top_k: 3
-      }),
+      body: JSON.stringify({ query, provider_id: "{{ app_id }}", top_k: 3 }),
     });
-
     if (!response.ok) throw new Error("Network error");
+
     const reader = response.body.getReader();
     const decoder = new TextDecoder("utf-8");
     answerDiv.innerHTML = "";
     let fullText = "";
-
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;

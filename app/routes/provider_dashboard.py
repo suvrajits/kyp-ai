@@ -362,3 +362,71 @@ async def reject_provider(request: Request, app_id: str, reason: str = Form(...)
             "message": f"❌ Application rejected successfully. Reason: {reason}",
         },
     )
+
+# ============================================================
+# 🔍 SMART NATURAL LANGUAGE SEARCH
+# ============================================================
+@router.get("/search", response_class=HTMLResponse)
+async def dashboard_search(request: Request, q: str = ""):
+    """
+    Lightweight natural-language provider search.
+    Supports queries like:
+      - 'NABH hospitals in Delhi'
+      - 'government clinics with less than 50 beds'
+    """
+    from app.services.application_store import load_applications
+    import re
+
+    apps = load_applications()
+    query = (q or "").strip().lower()
+    if not query:
+        return templates.TemplateResponse(
+            "upload_form.html",
+            {"request": request, "providers": apps, "query": q},
+        )
+
+    def match_provider(provider_record: dict) -> bool:
+        p = provider_record.get("provider", {}) or {}
+        blob = " ".join(str(v).lower() for v in p.values())
+
+        # --- Synonym normalization ---
+        synonyms = {
+            "bengaluru": "bangalore",
+            "delhi ncr": "delhi",
+            "nabh accredited": "accreditation_status nabh",
+            "nabl accredited": "accreditation_status nabl",
+            "hospital": "type_of_institution hospital",
+            "clinic": "type_of_institution clinic",
+            "government": "ownership_details government",
+            "private": "ownership_details private",
+        }
+        for k, v in synonyms.items():
+            query_norm = query.replace(k, v)
+        else:
+            query_norm = query
+
+        # --- Keyword-based matching ---
+        tokens = query_norm.split()
+        if all(t in blob for t in tokens):
+            return True
+
+        # --- Numeric condition: '>50 beds' ---
+        m = re.search(r"([><=]*)(\d+)\s*beds?", query_norm)
+        if m:
+            try:
+                val = int(str(p.get("number_of_beds", "0")).split()[0])
+                op, n = m.group(1), int(m.group(2))
+                if (">" in op and val > n) or ("<" in op and val < n) or val == n:
+                    return True
+            except Exception:
+                pass
+
+        return False
+
+    filtered = [p for p in apps if match_provider(p)]
+    print(f"🔍 Dashboard search: '{query}' → {len(filtered)} results")
+
+    return templates.TemplateResponse(
+        "upload_form.html",
+        {"request": request, "providers": filtered, "query": q},
+    )
