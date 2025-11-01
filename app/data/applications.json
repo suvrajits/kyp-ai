@@ -159,11 +159,17 @@
       "issuing_authority": "",
       "registration_id": ""
     },
-    "status": "Under Review",
+    "status": "Approved",
     "confidence": 0.18,
     "created_at": "2025-10-31T20:33:27.522237",
     "documents": [],
-    "messages": [],
+    "messages": [
+      {
+        "from": "System",
+        "text": "\u2705 Application approved successfully.",
+        "timestamp": "2025-11-01T04:20:12.219860"
+      }
+    ],
     "history": [
       {
         "event": "Created",
@@ -173,6 +179,106 @@
         "event": "Application Accepted & Promoted",
         "timestamp": "2025-10-31T20:35:17.742545",
         "note": "Promoted from TEMP-ID-046 \u2192 APP-20251031-00012 and created baseline FAISS."
+      },
+      {
+        "event": "Status changed from Under Review \u2192 Approved",
+        "timestamp": "2025-11-01T04:20:12.216340",
+        "note": "Application approved by reviewer."
+      },
+      {
+        "event": "Message from System",
+        "timestamp": "2025-11-01T04:20:12.219860"
+      }
+    ]
+  },
+  {
+    "id": "APP-20251101-00013",
+    "application_id": "APP-20251101-00013",
+    "provider": {
+      "provider_name": "CurePoint Bengaluru General Hospital",
+      "license_number": "KA/MC/2022/01016",
+      "type_of_institution": "Clinic",
+      "address": "217 Medical Avenue, Bengaluru, Karnataka - 806358",
+      "ownership_details": "Government of India",
+      "license_issue_date": "2021-02-21",
+      "license_expiry_date": "2026-02-21",
+      "details_of_services_offered": "Diagnostic, Radiology, Laboratory",
+      "number_of_beds": "10",
+      "qualification_and_number_of_medical_staff": "16 Doctors, 34 Nurses, 18 Technicians",
+      "licensing_authority_name": "State Health Department",
+      "infrastructure_standards_compliance": "Building Safety Certificate: No; Fire Safety: No",
+      "biomedical_waste_management_authorization": "Yes",
+      "pollution_control_board_clearance": "Yes",
+      "consent_to_operate_certificate": "No",
+      "drug_license": "No",
+      "radiology_radiation_safety_license": "No",
+      "registration_under_any_special_acts": "Transplantation of Human Organs Act",
+      "display_of_hospital_charges_and_facilities": "No",
+      "compliance_with_minimum_standards": "Yes",
+      "details_of_support_services": "Ambulance, Pharmacy",
+      "list_of_equipment_and_medical_devices_used": "193 devices",
+      "fire_and_lift_inspection_certificates": "Updated",
+      "accreditation_status": "None",
+      "issuing_authority": "",
+      "registration_id": ""
+    },
+    "status": "Under Review",
+    "confidence": 0.2,
+    "created_at": "2025-11-01T04:20:49.452764",
+    "documents": [],
+    "messages": [],
+    "history": [
+      {
+        "event": "Created",
+        "timestamp": "2025-11-01T04:20:49.454948"
+      },
+      {
+        "event": "Application Accepted & Promoted",
+        "timestamp": "2025-11-01T04:21:14.529513",
+        "note": "Promoted from TEMP-ID-047 \u2192 APP-20251101-00013 and created baseline FAISS."
+      }
+    ]
+  },
+  {
+    "id": "TEMP-ID-048",
+    "application_id": "TEMP-ID-048",
+    "provider": {
+      "provider_name": "Aarogya Old Delhi Medical Centre",
+      "license_number": "DL-HOSP-2018-1010",
+      "type_of_institution": "Primary Care Hospital",
+      "address": "Old Delhi, Delhi - 616753",
+      "ownership_details": "Sri Venkateswara Trust",
+      "license_issue_date": "2023-03-18",
+      "license_expiry_date": "2028-03-18",
+      "details_of_services_offered": "Surgery, Emergency, ICU",
+      "number_of_beds": "500",
+      "qualification_and_number_of_medical_staff": "79 Doctors, 158 Nurses, 22 Technicians",
+      "licensing_authority_name": "District Health Authority",
+      "infrastructure_standards_compliance": "No; Fire Safety: No",
+      "biomedical_waste_management_authorization": "Yes",
+      "pollution_control_board_clearance": "Yes",
+      "consent_to_operate_certificate": "No",
+      "drug_license": "Yes",
+      "radiology_radiation_safety_license": "No",
+      "registration_under_any_special_acts": "PNDT Act",
+      "display_of_hospital_charges_and_facilities": "No",
+      "compliance_with_minimum_standards": "No",
+      "details_of_support_services": "All Services",
+      "list_of_equipment_and_medical_devices_used": "15 devices (list available on request)",
+      "fire_and_lift_inspection_certificates": "Not Applicable",
+      "accreditation_status": "JCI",
+      "issuing_authority": "",
+      "registration_id": ""
+    },
+    "status": "New",
+    "confidence": 0.24,
+    "created_at": "2025-11-01T04:24:41.446868",
+    "documents": [],
+    "messages": [],
+    "history": [
+      {
+        "event": "Created",
+        "timestamp": "2025-11-01T04:24:41.450507"
       }
     ]
   }

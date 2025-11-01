@@ -44,7 +44,6 @@ def generate_trust_card_pdf(structured, matched, confidence, status) -> bytes:
     draw_label_value("Provider Name", structured.get("provider_name", ""))
     draw_label_value("License Number", structured.get("license_number", ""))
     draw_label_value("Specialty", structured.get("specialty", ""))
-    draw_label_value("Issuing Authority", structured.get("issuing_authority", ""))
     draw_label_value("Validity", f"{structured.get('issue_date')} to {structured.get('expiry_date')}")
 
     # Match Confidence

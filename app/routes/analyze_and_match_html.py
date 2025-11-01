@@ -72,7 +72,7 @@ async def analyze_and_match_html(request: Request, file: UploadFile = File(...))
         structured = parse_provider_license(temp_pdf_path, debug=True)
 
         # Normalize key fields to avoid NoneType issues
-        for k in ("provider_name", "license_number", "issuing_authority", "registration_id"):
+        for k in ("provider_name", "license_number"):
             structured[k] = (structured.get(k) or "").strip()
 
         # ----------------------------------------------------------

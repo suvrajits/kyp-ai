@@ -54,11 +54,8 @@ def match_provider(input_fields: Dict[str, str]) -> Tuple[Dict[str, Any], float]
 
         if "license_number" in input_fields and "license_number" in entry:
             score += compute_similarity(input_fields.get("license_number"), entry.get("license_number")) * 0.3
-            total_weight += 0.3
+            total_weight += 0.5
 
-        if "issuing_authority" in input_fields and "issuing_authority" in entry:
-            score += compute_similarity(input_fields.get("issuing_authority"), entry.get("issuing_authority")) * 0.2
-            total_weight += 0.2
 
         # Normalize score
         if total_weight > 0:
@@ -85,8 +82,7 @@ def match_provider(input_fields: Dict[str, str]) -> Tuple[Dict[str, Any], float]
 if __name__ == "__main__":
     test_input = {
         "provider_name": "Dr. Ramesh Kumar",
-        "license_number": "MH123456789",
-        "issuing_authority": "Maharashtra Medical Council"
+        "license_number": "MH123456789"
     }
     match, score = match_provider(test_input)
     print("Best Match:", match)
