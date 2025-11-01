@@ -5,42 +5,70 @@
   <meta charset="UTF-8" />
   <title>ProviderGPT Dashboard</title>
   <style>
-    /* 🌙 DARK THEME ROOT */
     body {
       margin: 0;
-      background: #0e0f12;
-      color: #f5f5f5;
+      background: #f9fafc;
+      color: #222;
       font-family: "Inter", sans-serif;
       overflow: hidden;
     }
 
-    /* 🔹 Sidebar (left vertical menu) */
+    /* Sidebar (left menu) */
     .sidebar {
       position: fixed;
       top: 0;
       left: 0;
-      width: 70px;
+      width: 80px;
       height: 100%;
-      background: #16181c;
+      background: #fff;
+      border-right: 1px solid #e0e0e0;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding-top: 20px;
-      gap: 25px;
-      box-shadow: 2px 0 6px rgba(0,0,0,0.3);
+      gap: 20px;
+      box-shadow: 2px 0 6px rgba(0,0,0,0.05);
       z-index: 20;
     }
-    .sidebar-icon {
-      font-size: 22px;
+    .sidebar-item {
+      text-align: center;
+      color: #555;
       cursor: pointer;
-      color: #aaa;
       transition: 0.25s;
+      font-size: 20px;
     }
-    .sidebar-icon:hover { color: #00aaff; transform: scale(1.1); }
+    .sidebar-item:hover {
+      color: #0077cc;
+      transform: scale(1.1);
+    }
+    .sidebar-label {
+      font-size: 11px;
+      margin-top: 4px;
+      color: #888;
+    }
 
-    /* 🔹 Main chat container */
+    /* Header (top right fixed) */
+    .header {
+      position: fixed;
+      top: 15px;
+      right: 30px;
+      text-align: right;
+      z-index: 25;
+    }
+    .header h2 {
+      margin: 0;
+      font-size: 22px;
+      color: #222;
+    }
+    .header p {
+      margin: 2px 0 0;
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* Main chat container */
     .main {
-      margin-left: 90px;
+      margin-left: 100px;
       display: flex;
       flex-direction: column;
       height: 100vh;
@@ -51,69 +79,68 @@
     /* Chat area (scrollable) */
     .chat-window {
       flex: 1;
-      width: 60%;
-      max-width: 850px;
+      width: 65%;
+      max-width: 900px;
       overflow-y: auto;
-      padding: 30px;
+      padding: 40px;
       box-sizing: border-box;
       scrollbar-width: thin;
     }
 
-    /* Message bubbles */
+    /* Messages */
     .message {
       margin-bottom: 15px;
       padding: 12px 16px;
       border-radius: 10px;
       line-height: 1.5;
       max-width: 80%;
-      word-wrap: break-word;
       font-size: 15px;
     }
     .user-msg {
       background: #0077cc;
-      color: white;
+      color: #fff;
       align-self: flex-end;
     }
     .ai-msg {
-      background: #1b1d21;
-      border: 1px solid #333;
-      color: #f0f0f0;
+      background: #f1f3f5;
+      color: #222;
       align-self: flex-start;
     }
 
-    /* Chat input bar (fixed bottom) */
+    /* Chat input bar */
     .chat-bar {
       position: fixed;
       bottom: 0;
-      left: 90px;
+      left: 100px;
       right: 0;
-      background: #16181c;
+      background: #fff;
+      border-top: 1px solid #e0e0e0;
       padding: 15px 25px;
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 -2px 6px rgba(0,0,0,0.4);
       z-index: 10;
     }
     .chat-input-container {
       display: flex;
       align-items: center;
-      background: #1e2024;
+      background: #f4f6f8;
       border-radius: 12px;
       padding: 10px 15px;
-      width: 60%;
-      max-width: 850px;
+      width: 65%;
+      max-width: 900px;
+      border: 1px solid #ddd;
     }
     .chat-input {
       flex: 1;
       background: transparent;
       border: none;
-      color: #f5f5f5;
+      color: #222;
       font-size: 15px;
       outline: none;
     }
     .upload-btn, .send-btn {
-      background: #00aaff;
+      background: #0077cc;
       border: none;
       color: white;
       border-radius: 8px;
@@ -123,31 +150,40 @@
       transition: 0.2s;
     }
     .upload-btn:hover, .send-btn:hover {
-      background: #0090dd;
+      background: #005fa3;
       transform: translateY(-1px);
     }
-
-    /* Hidden file input */
     #file-input {
       display: none;
     }
 
-    /* 🔹 Slide Panels */
+    /* Slide Panels */
     .side-panel {
       position: fixed;
       top: 0;
       left: -400px;
       width: 380px;
       height: 100%;
-      background: #1b1d21;
-      color: #eee;
+      background: #fff;
+      color: #222;
       overflow-y: auto;
       padding: 20px;
+      border-right: 1px solid #e0e0e0;
       transition: left 0.3s ease;
-      box-shadow: 2px 0 10px rgba(0,0,0,0.4);
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
       z-index: 15;
     }
-    .side-panel.active { left: 70px; }
+    .side-panel.active { left: 80px; }
+
+    .close-panel {
+      text-align: right;
+      font-size: 18px;
+      cursor: pointer;
+      color: #0077cc;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
     canvas { margin-top: 20px; }
   </style>
 </head>
@@ -155,17 +191,35 @@
 <body>
   <!-- Sidebar -->
   <div class="sidebar">
-    <div class="sidebar-icon" onclick="togglePanel('risk')">📊</div>
-    <div class="sidebar-icon" onclick="togglePanel('details')">🏥</div>
-    <div class="sidebar-icon" onclick="togglePanel('upload')">📁</div>
-    <div class="sidebar-icon" onclick="togglePanel('actions')">⚙️</div>
+    <div class="sidebar-item" onclick="togglePanel('risk')">
+      📊
+      <div class="sidebar-label">Risk</div>
+    </div>
+    <div class="sidebar-item" onclick="togglePanel('details')">
+      🏥
+      <div class="sidebar-label">Details</div>
+    </div>
+    <div class="sidebar-item" onclick="togglePanel('upload')">
+      📁
+      <div class="sidebar-label">Upload</div>
+    </div>
+    <div class="sidebar-item" onclick="togglePanel('actions')">
+      ⚙️
+      <div class="sidebar-label">Actions</div>
+    </div>
+  </div>
+
+  <!-- Header (Top Right) -->
+  <div class="header">
+    <h2>Provider Dashboard</h2>
+    <p>{{ provider.provider_name }} — {{ provider.license_number }}</p>
   </div>
 
   <!-- Chat Section -->
   <div class="main">
     <div id="chat-window" class="chat-window"></div>
 
-    <!-- Fixed Chat Bar -->
+    <!-- Chat Input -->
     <div class="chat-bar">
       <div class="chat-input-container">
         <input id="query" class="chat-input" placeholder="Ask about provider compliance, license, or risk..." />
@@ -178,11 +232,13 @@
 
   <!-- Panels -->
   <div id="risk-panel" class="side-panel">
+    <div class="close-panel" onclick="togglePanel('risk')">⬅ Close</div>
     <h3>📊 Provider Risk Breakdown</h3>
     <canvas id="riskChart"></canvas>
   </div>
 
   <div id="details-panel" class="side-panel">
+    <div class="close-panel" onclick="togglePanel('details')">⬅ Close</div>
     <h3>🏥 Provider Details</h3>
     {% for key, value in provider.items() %}
       <div style="margin-bottom:10px;"><strong>{{ key.replace('_',' ')|title }}</strong>: {{ value }}</div>
@@ -190,6 +246,7 @@
   </div>
 
   <div id="upload-panel" class="side-panel">
+    <div class="close-panel" onclick="togglePanel('upload')">⬅ Close</div>
     <h3>📁 Upload Documents</h3>
     <form id="upload-form" enctype="multipart/form-data">
       <input type="file" name="files" multiple required />
@@ -198,6 +255,7 @@
   </div>
 
   <div id="actions-panel" class="side-panel">
+    <div class="close-panel" onclick="togglePanel('actions')">⬅ Close</div>
     <h3>⚙️ Actions</h3>
     <form action="/dashboard/approve/{{ app_id }}" method="post"><button class="send-btn">✅ Approve</button></form>
     <form action="/dashboard/reject/{{ app_id }}" method="post"><button class="send-btn">❌ Reject</button></form>
@@ -213,11 +271,9 @@
     function togglePanel(name) {
       ["risk","details","upload","actions"].forEach(id => {
         const el = document.getElementById(`${id}-panel`);
-        el.classList.remove("active");
+        if (name === id && !el.classList.contains("active")) el.classList.add("active");
+        else el.classList.remove("active");
       });
-      const target = document.getElementById(`${name}-panel`);
-      if (target) target.classList.toggle("active");
-
       if (name === "risk") loadRiskChart();
     }
 
@@ -272,7 +328,7 @@
           datasets: [{
             label: 'Risk %',
             data: Object.values(data.categories),
-            backgroundColor: '#00aaff'
+            backgroundColor: '#0077cc'
           }]
         },
         options: { scales: { y: { beginAtZero: true, max: 100 } } }
