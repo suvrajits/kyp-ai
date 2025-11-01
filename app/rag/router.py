@@ -24,27 +24,38 @@ async def upload_and_ingest_for_dashboard(
     files: list[UploadFile] = File(...),
 ):
     """
-    Upload and embed multiple PDFs for a provider.
-    Also records filenames in applications.json and merges FAISS vectors.
+    Upload and embed multiple PDFs for a specific provider.
+    Keeps all documents (license + supplementary) tied to that provider's record
+    and merges embeddings into the same FAISS store.
     """
     try:
         # --------------------------------------------------------
-        # Resolve FAISS directory (auto-create if missing)
+        # Ensure provider FAISS directory exists
         # --------------------------------------------------------
         provider_dir = Path("app/data/faiss_store") / provider_id
         provider_dir.mkdir(parents=True, exist_ok=True)
 
+        # --------------------------------------------------------
+        # Load applications.json and find provider record
+        # --------------------------------------------------------
         apps_file = Path("app/data/applications.json")
         apps = json.loads(apps_file.read_text()) if apps_file.exists() else []
 
-        record = next((r for r in apps if r["id"] == provider_id), None)
+        record = next(
+            (r for r in apps if r.get("id") == provider_id or r.get("application_id") == provider_id),
+            None,
+        )
         if not record:
-            return JSONResponse(status_code=404, content={"error": f"Provider {provider_id} not found."})
+            return JSONResponse(
+                status_code=404,
+                content={"error": f"Provider {provider_id} not found in applications.json"},
+            )
 
         record.setdefault("documents", [])
+        new_docs = []
 
         # --------------------------------------------------------
-        # Process each uploaded file
+        # Process and embed each uploaded file
         # --------------------------------------------------------
         for file in files:
             file_path = provider_dir / file.filename
@@ -52,32 +63,53 @@ async def upload_and_ingest_for_dashboard(
                 f.write(await file.read())
             print(f"📥 Saved {file.filename} → {file_path}")
 
-            # ✅ Run ingestion (append to existing FAISS)
-            await asyncio.to_thread(
-                ingest_pdf,
-                str(file_path),
-                provider_id=provider_id,
-                doc_name=file.filename,
-                append=True,  # 🔁 merge embeddings
-            )
+            # Detect document type (license vs supplementary)
+            doc_type = "license" if "license" in file.filename.lower() else "supplementary"
 
-            # ✅ Log document metadata
-            record["documents"].append({
+            # ✅ Run ingestion (append to existing FAISS)
+            try:
+                await asyncio.to_thread(
+                    ingest_pdf,
+                    str(file_path),
+                    provider_id=provider_id,
+                    doc_name=file.filename,
+                    append=True,  # 🔁 merge embeddings into the same vector store
+                )
+                print(f"🧠 Embedded {file.filename} into FAISS store for {provider_id}")
+            except Exception as embed_err:
+                print(f"⚠️ Embedding failed for {file.filename}: {embed_err}")
+
+            # ✅ Record metadata
+            meta = {
                 "filename": file.filename,
                 "uploaded_at": datetime.now().isoformat(),
-            })
+                "type": doc_type,
+                "path": str(file_path),
+            }
+            record["documents"].append(meta)
+            new_docs.append(meta)
 
         # --------------------------------------------------------
-        # Persist application state
+        # Save back to applications.json
         # --------------------------------------------------------
         apps_file.write_text(json.dumps(apps, indent=2))
-        print(f"✅ Ingested {len(files)} file(s) for provider {provider_id}")
+        print(f"✅ {len(new_docs)} document(s) ingested for provider {provider_id}")
 
-        return RedirectResponse(url=f"/dashboard/view/{provider_id}", status_code=303)
+        # --------------------------------------------------------
+        # Return JSON response (for frontend updates)
+        # --------------------------------------------------------
+        return JSONResponse(
+            {
+                "status": "success",
+                "message": f"{len(new_docs)} document(s) uploaded and embedded successfully.",
+                "documents": record["documents"],
+            }
+        )
 
     except Exception as e:
         print(f"❌ Error during ingestion for {provider_id}: {e}")
         return JSONResponse(status_code=500, content={"error": str(e)})
+
 
 
 # ============================================================

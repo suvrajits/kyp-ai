@@ -57,7 +57,7 @@
       display: none;
     }
 
-    /* Header (Top right) */
+    /* Header */
     .header {
       position: fixed;
       top: 15px;
@@ -263,13 +263,7 @@
 
     <h4 style="margin-top:15px;">📄 Uploaded Files</h4>
     <ul id="doc-list" class="doc-list">
-      {% if documents %}
-        {% for doc in documents %}
-          <li><span>{{ doc.filename }}</span></li>
-        {% endfor %}
-      {% else %}
-        <li><span>No documents uploaded yet.</span></li>
-      {% endif %}
+      <li><span>Loading documents...</span></li>
     </ul>
   </div>
 
@@ -296,6 +290,30 @@
         else el.classList.remove("active");
       });
       if (name === "risk") loadRiskChart();
+      if (name === "upload") refreshDocumentList();
+    }
+
+    async function refreshDocumentList() {
+      const res = await fetch(`/dashboard/docs/{{ app_id }}`);
+      if (!res.ok) return;
+      const docs = await res.json();
+      docList.innerHTML = "";
+
+      if (!docs.length) {
+        docList.innerHTML = "<li><span>No documents uploaded yet.</span></li>";
+        badge.style.display = "none";
+        return;
+      }
+
+      docs.forEach(d => {
+        const li = document.createElement("li");
+        const icon = d.type === "license" ? "📜" : "📄";
+        li.innerHTML = `<span>${icon} ${d.filename}</span>`;
+        docList.appendChild(li);
+      });
+
+      badge.textContent = docs.length;
+      badge.style.display = "block";
     }
 
     async function sendMessage() {
@@ -364,26 +382,14 @@
       for (const file of files) formData.append("files", file);
 
       const res = await fetch(`/rag/{{ app_id }}/ingest`, { method: "POST", body: formData });
-      if (res.ok) {
+      const data = await res.json();
+      if (res.ok && data.status === "success") {
         alert("✅ Document uploaded and embedded successfully!");
-        // Update document list and badge
-        for (const file of files) {
-          const li = document.createElement("li");
-          li.innerHTML = `<span>${file.name}</span>`;
-          docList.appendChild(li);
-        }
-        updateBadgeCount();
-      } else alert("❌ Upload failed");
+        refreshDocumentList();
+      } else {
+        alert("❌ Upload failed");
+      }
     });
-
-    function updateBadgeCount() {
-      const count = docList.getElementsByTagName("li").length;
-      badge.textContent = count;
-      badge.style.display = count > 0 ? "block" : "none";
-    }
-
-    // Initialize badge on page load
-    updateBadgeCount();
   </script>
 </body>
 </html>

@@ -464,3 +464,14 @@ async def calculate_risk(provider_id: str):
         level = "High"
 
     return {"risk_score": risk_score, "level": level}
+
+@router.get("/docs/{app_id}")
+async def list_provider_docs(app_id: str):
+    apps = load_applications()
+    record = next(
+        (r for r in apps if r.get("id") == app_id or r.get("application_id") == app_id),
+        None,
+    )
+    if not record:
+        return []
+    return record.get("documents", [])
