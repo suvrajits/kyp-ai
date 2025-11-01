@@ -1,199 +1,261 @@
 [
   {
-    "id": "APP-20251029-00009",
-    "application_id": "APP-20251029-00009",
+    "id": "APP-20251101-00015",
+    "application_id": "APP-20251101-00015",
     "provider": {
-      "provider_name": "Dr. Arjun Iyer",
-      "license_number": "KA-MED-2025-556",
-      "specialty": "Pediatrics",
-      "state": "Karnataka",
-      "issuing_authority": "Karnataka Medical",
-      "issue_date": "15-Apr-2025",
-      "expiry_date": "14-Apr-2030",
-      "registration_id": "KMC-REG-2025-556"
+      "provider_name": "Sanjeevani New Delhi General Hospital",
+      "license_number": "DL-HOSP-2019-1001",
+      "type_of_institution": "Secondary Care Hospital",
+      "address": "182 Main Bazaar, New Delhi, Delhi - 266721",
+      "ownership_details": "Rainbow Healthcare LLP",
+      "license_issue_date": "2020-07-24",
+      "license_expiry_date": "2025-07-24",
+      "details_of_services_offered": "Diagnostic, Radiology, Laboratory",
+      "number_of_beds": "500",
+      "qualification_and_number_of_medical_staff": "10 Doctors, 14 Nurses, 13 Technicians",
+      "licensing_authority_name": "State Health Department",
+      "infrastructure_standards_compliance": "Building Safety Certificate: No; Fire Safety: No",
+      "biomedical_waste_management_authorization": "Yes",
+      "pollution_control_board_clearance": "No",
+      "consent_to_operate_certificate": "No",
+      "drug_license": "No",
+      "radiology_radiation_safety_license": "Not Applicable",
+      "registration_under_any_special_acts": "None",
+      "display_of_hospital_charges_and_facilities": "No",
+      "compliance_with_minimum_standards": "No",
+      "details_of_support_services": "Ambulance only",
+      "list_of_equipment_and_medical_devices_used": "171 devices (list available on request)",
+      "fire_and_lift_inspection_certificates": "Pending",
+      "accreditation_status": "JCI"
+    },
+    "status": "Rejected",
+    "confidence": 0.0,
+    "created_at": "2025-11-01T06:02:49.400349",
+    "documents": [],
+    "messages": [
+      {
+        "from": "Reviewer",
+        "text": "\u274c Application rejected. Reason: Wrong application",
+        "timestamp": "2025-11-01T06:17:50.784518"
+      }
+    ],
+    "history": [
+      {
+        "event": "Created",
+        "timestamp": "2025-11-01T06:02:49.402500"
+      },
+      {
+        "event": "Application Accepted & Promoted",
+        "timestamp": "2025-11-01T06:15:28.329979",
+        "note": "Promoted from TEMP-ID-049 \u2192 APP-20251101-00015 and created baseline FAISS."
+      },
+      {
+        "event": "Status changed from Under Review \u2192 Rejected",
+        "timestamp": "2025-11-01T06:17:50.779504",
+        "note": "Wrong application"
+      },
+      {
+        "event": "Message from Reviewer",
+        "timestamp": "2025-11-01T06:17:50.784518"
+      }
+    ]
+  },
+  {
+    "id": "APP-20251101-00014",
+    "application_id": "APP-20251101-00014",
+    "provider": {
+      "provider_name": "Saraswati Kolkata General Hospital",
+      "license_number": "WB/MC/2023/01002",
+      "type_of_institution": "Clinic",
+      "address": "275 MG Road, Kolkata, West Bengal - 161991",
+      "ownership_details": "HealthCare Pvt. Ltd.",
+      "license_issue_date": "2020-04-08",
+      "license_expiry_date": "2025-04-08",
+      "details_of_services_offered": "All Services",
+      "number_of_beds": "20",
+      "qualification_and_number_of_medical_staff": "19 Doctors, 22 Nurses, 4 Technicians",
+      "licensing_authority_name": "District Health Authority",
+      "infrastructure_standards_compliance": "Building Safety Certificate: No; Fire Safety: No",
+      "biomedical_waste_management_authorization": "No",
+      "pollution_control_board_clearance": "No",
+      "consent_to_operate_certificate": "No",
+      "drug_license": "Yes",
+      "radiology_radiation_safety_license": "No",
+      "registration_under_any_special_acts": "PNDT Act",
+      "display_of_hospital_charges_and_facilities": "No",
+      "compliance_with_minimum_standards": "No",
+      "details_of_support_services": "Pharmacy, Laboratory",
+      "list_of_equipment_and_medical_devices_used": "191 devices",
+      "fire_and_lift_inspection_certificates": "Not Applicable",
+      "accreditation_status": "JCI"
     },
     "status": "Approved",
-    "confidence": 0.41,
-    "created_at": "2025-10-29T11:17:11.256280",
+    "confidence": 0.0,
+    "created_at": "2025-11-01T06:03:33.113230",
     "documents": [],
     "messages": [
       {
         "from": "System",
         "text": "\u2705 Application approved successfully.",
-        "timestamp": "2025-10-29T11:18:30.623931"
+        "timestamp": "2025-11-01T06:18:03.884301"
       }
     ],
     "history": [
       {
         "event": "Created",
-        "timestamp": "2025-10-29T11:17:11.258414"
+        "timestamp": "2025-11-01T06:03:33.115726"
       },
       {
         "event": "Application Accepted & Promoted",
-        "timestamp": "2025-10-29T11:18:27.064239",
-        "note": "Promoted from TEMP-ID-042 \u2192 APP-20251029-00009 and created baseline FAISS."
+        "timestamp": "2025-11-01T06:03:38.649574",
+        "note": "Promoted from TEMP-ID-050 \u2192 APP-20251101-00014 and created baseline FAISS."
       },
       {
         "event": "Status changed from Under Review \u2192 Approved",
-        "timestamp": "2025-10-29T11:18:30.618214",
+        "timestamp": "2025-11-01T06:18:03.879025",
         "note": "Application approved by reviewer."
       },
       {
         "event": "Message from System",
-        "timestamp": "2025-10-29T11:18:30.623931"
+        "timestamp": "2025-11-01T06:18:03.884301"
       }
     ]
   },
   {
-    "id": "APP-20251029-00008",
-    "application_id": "APP-20251029-00008",
+    "id": "TEMP-ID-051",
+    "application_id": "TEMP-ID-051",
     "provider": {
-      "provider_name": "Lotus Heart Care Clinic",
-      "license_number": "DL-CLINIC-2025-223",
-      "specialty": "Cardiology and General Medicine",
-      "state": "Delhi",
-      "issuing_authority": "Delhi Medical",
-      "issue_date": "05-Mar-2025",
-      "expiry_date": "04-Mar-2030",
-      "registration_id": "DMC-CLINIC-2025-223"
+      "provider_name": "Greenline Old Delhi Medical Centre Centre",
+      "license_number": "DL/MC/2018/01004",
+      "type_of_institution": "Tertiary Care Hospital",
+      "address": "126 Health Street, Old Delhi, Delhi - 113654",
+      "ownership_details": "S. K. Trust",
+      "license_issue_date": "2020-05-09",
+      "license_expiry_date": "2025-05-09",
+      "details_of_services_offered": "Diagnostic, Radiology, Laboratory",
+      "number_of_beds": "500",
+      "qualification_and_number_of_medical_staff": "44 Doctors, 127 Nurses, 4 Technicians",
+      "licensing_authority_name": "State Health Department",
+      "infrastructure_standards_compliance": "Building Safety Certificate: Yes; Fire Safety: Pending",
+      "biomedical_waste_management_authorization": "Yes",
+      "pollution_control_board_clearance": "No",
+      "consent_to_operate_certificate": "No",
+      "drug_license": "Yes",
+      "radiology_radiation_safety_license": "Not Applicable",
+      "registration_under_any_special_acts": "Yesne",
+      "display_of_hospital_charges_and_facilities": "Yes",
+      "compliance_with_minimum_standards": "No",
+      "details_of_support_services": "Pharmacy, Laboratory",
+      "list_of_equipment_and_medical_devices_used": "15 devices",
+      "fire_and_lift_inspection_certificates": "Yest Applicable",
+      "accreditation_status": "NABH"
     },
-    "status": "Rejected",
-    "confidence": 0.32,
-    "created_at": "2025-10-29T11:17:53.177179",
-    "documents": [],
-    "messages": [
-      {
-        "from": "Reviewer",
-        "text": "\u274c Application rejected. Reason: rejicting provider",
-        "timestamp": "2025-10-29T11:18:51.754722"
-      }
-    ],
-    "history": [
-      {
-        "event": "Created",
-        "timestamp": "2025-10-29T11:17:53.179235"
-      },
-      {
-        "event": "Application Accepted & Promoted",
-        "timestamp": "2025-10-29T11:18:01.402297",
-        "note": "Promoted from TEMP-ID-043 \u2192 APP-20251029-00008 and created baseline FAISS."
-      },
-      {
-        "event": "Status changed from Under Review \u2192 Rejected",
-        "timestamp": "2025-10-29T11:18:51.749185",
-        "note": "rejicting provider"
-      },
-      {
-        "event": "Message from Reviewer",
-        "timestamp": "2025-10-29T11:18:51.754722"
-      }
-    ]
-  },
-  {
-    "id": "APP-20251031-00011",
-    "application_id": "APP-20251031-00011",
-    "provider": {
-      "provider_name": "Samarth Howrah Clinic",
-      "license_number": "INVALID-4815",
-      "specialty": "",
-      "state": "",
-      "issuing_authority": "",
-      "issue_date": "",
-      "expiry_date": "",
-      "registration_id": "under"
-    },
-    "status": "Under Review",
-    "confidence": 0.19,
-    "created_at": "2025-10-31T20:11:43.809828",
+    "status": "New",
+    "confidence": 0.0,
+    "created_at": "2025-11-01T06:33:41.599295",
     "documents": [],
     "messages": [],
     "history": [
       {
         "event": "Created",
-        "timestamp": "2025-10-31T19:19:29.090904"
-      },
-      {
-        "event": "Application Accepted & Promoted",
-        "timestamp": "2025-10-31T19:20:28.894475",
-        "note": "Promoted from TEMP-ID-044 \u2192 APP-20251031-00010 and created baseline FAISS."
-      },
-      {
-        "event": "Updated (New)",
-        "timestamp": "2025-10-31T20:11:43.811342"
-      },
-      {
-        "event": "Application Accepted & Promoted",
-        "timestamp": "2025-10-31T20:12:02.272159",
-        "note": "Promoted from TEMP-ID-045 \u2192 APP-20251031-00011 and created baseline FAISS."
+        "timestamp": "2025-11-01T06:33:41.601356"
       }
     ]
   },
   {
-    "id": "APP-20251031-00012",
-    "application_id": "APP-20251031-00012",
+    "id": "TEMP-ID-052",
+    "application_id": "TEMP-ID-052",
     "provider": {
-      "provider_name": "Lifeline Kolkata Medical Centre",
-      "license_number": "WB/MC/2022/01006",
-      "type_of_institution": "Primary Care Hospital",
-      "address": "150 Station Road, Kolkata, West Bengal - 767128",
-      "ownership_details": "Sri Venkateswara Trust",
-      "license_issue_date": "2024-01-20",
-      "license_expiry_date": "2029-01-20",
+      "provider_name": "Nova Old Delhi General Hospital",
+      "license_number": "DL-HOSP-2023-1005",
+      "type_of_institution": "Clinic",
+      "address": "448 Main Bazaar, Old Delhi, Delhi - 198335",
+      "ownership_details": "Mismatched Owner Entity Pvt. Ltd.",
+      "license_issue_date": "2020-04-24",
+      "license_expiry_date": "2025-04-24",
       "details_of_services_offered": "Inpatient, Outpatient",
-      "number_of_beds": "500",
-      "qualification_and_number_of_medical_staff": "30 Doctors, 32 Nurses, 9 Technicians",
+      "number_of_beds": "20",
+      "qualification_and_number_of_medical_staff": "4 Doctors, 9 Nurses, 5 Technicians",
       "licensing_authority_name": "State Health Department",
-      "infrastructure_standards_compliance": "Yes; Fire Safety: Yes",
-      "biomedical_waste_management_authorization": "No",
+      "infrastructure_standards_compliance": "Building Safety Certificate: Yes; Fire Safety: Pending",
+      "biomedical_waste_management_authorization": "Yes",
       "pollution_control_board_clearance": "No",
-      "consent_to_operate_certificate": "Yes",
-      "drug_license": "No",
-      "radiology_radiation_safety_license": "Not Applicable",
-      "registration_under_any_special_acts": "Transplantation of Human Organs Act",
-      "display_of_hospital_charges_and_facilities": "Yes",
+      "consent_to_operate_certificate": "No",
+      "drug_license": "Yes",
+      "radiology_radiation_safety_license": "Yes",
+      "registration_under_any_special_acts": "None",
+      "display_of_hospital_charges_and_facilities": "No",
       "compliance_with_minimum_standards": "No",
-      "details_of_support_services": "All Services",
-      "list_of_equipment_and_medical_devices_used": "187 devices",
-      "fire_and_lift_inspection_certificates": "Updated",
-      "accreditation_status": "NABH",
-      "issuing_authority": "",
-      "registration_id": ""
+      "details_of_support_services": "Ambulance, Pharmacy",
+      "list_of_equipment_and_medical_devices_used": "32 devices",
+      "fire_and_lift_inspection_certificates": "Pending",
+      "accreditation_status": "NABL"
     },
-    "status": "Approved",
-    "confidence": 0.18,
-    "created_at": "2025-10-31T20:33:27.522237",
+    "status": "New",
+    "confidence": 0.0,
+    "created_at": "2025-11-01T06:38:34.321626",
     "documents": [],
-    "messages": [
-      {
-        "from": "System",
-        "text": "\u2705 Application approved successfully.",
-        "timestamp": "2025-11-01T04:20:12.219860"
-      }
-    ],
+    "messages": [],
     "history": [
       {
         "event": "Created",
-        "timestamp": "2025-10-31T20:33:27.524585"
-      },
-      {
-        "event": "Application Accepted & Promoted",
-        "timestamp": "2025-10-31T20:35:17.742545",
-        "note": "Promoted from TEMP-ID-046 \u2192 APP-20251031-00012 and created baseline FAISS."
-      },
-      {
-        "event": "Status changed from Under Review \u2192 Approved",
-        "timestamp": "2025-11-01T04:20:12.216340",
-        "note": "Application approved by reviewer."
-      },
-      {
-        "event": "Message from System",
-        "timestamp": "2025-11-01T04:20:12.219860"
+        "timestamp": "2025-11-01T06:38:34.324231"
       }
     ]
   },
   {
-    "id": "APP-20251101-00013",
-    "application_id": "APP-20251101-00013",
+    "id": "TEMP-ID-053",
+    "application_id": "TEMP-ID-053",
+    "provider": {
+      "provider_name": "Samarth Vadodara General Hospital",
+      "license_number": "GJ/MC/2021/01011",
+      "type_of_institution": "Primary Care Hospital",
+      "address": "237 MG Road, Vadodara, Gujarat - 517575",
+      "ownership_details": "Lotus Charitable Foundation",
+      "license_issue_date": "2022-12-08",
+      "license_expiry_date": "2027-12-08",
+      "details_of_services_offered": "Diagnostic, Radiology, Laboratory",
+      "number_of_beds": "50",
+      "qualification_and_number_of_medical_staff": "72 Doctors, 91 Nurses, 3 Technicians",
+      "licensing_authority_name": "Invalid Licensing Authority",
+      "infrastructure_standards_compliance": "Yes; Fire Safety: Yes",
+      "biomedical_waste_management_authorization": "Yes",
+      "pollution_control_board_clearance": "No",
+      "drug_license": "No\nYes",
+      "radiology_radiation_safety_license": "No",
+      "registration_under_any_special_acts": "None",
+      "display_of_hospital_charges_and_facilities": "Yes",
+      "compliance_with_minimum_standards": "No",
+      "details_of_support_services": "All Services",
+      "list_of_equipment_and_medical_devices_used": "87 devices",
+      "fire_and_lift_inspection_certificates": "Updated",
+      "accreditation_status": "NABL"
+    },
+    "status": "Unverified",
+    "confidence": 0.0,
+    "match_percent": 0.0,
+    "match_result": {
+      "match_percent": 0.0,
+      "per_field": {},
+      "recommendation": "No Match Found"
+    },
+    "match_explanation": {},
+    "match_recommendation": "No Match Found",
+    "created_at": "2025-11-01T09:58:11.840936",
+    "documents": [
+      "provider_11.pdf"
+    ],
+    "messages": [],
+    "history": [
+      {
+        "event": "Created",
+        "timestamp": "2025-11-01T09:58:11.844209"
+      }
+    ]
+  },
+  {
+    "id": "TEMP-ID-054",
+    "application_id": "TEMP-ID-054",
     "provider": {
       "provider_name": "CurePoint Bengaluru General Hospital",
       "license_number": "KA/MC/2022/01016",
@@ -218,67 +280,27 @@
       "details_of_support_services": "Ambulance, Pharmacy",
       "list_of_equipment_and_medical_devices_used": "193 devices",
       "fire_and_lift_inspection_certificates": "Updated",
-      "accreditation_status": "None",
-      "issuing_authority": "",
-      "registration_id": ""
-    },
-    "status": "Under Review",
-    "confidence": 0.2,
-    "created_at": "2025-11-01T04:20:49.452764",
-    "documents": [],
-    "messages": [],
-    "history": [
-      {
-        "event": "Created",
-        "timestamp": "2025-11-01T04:20:49.454948"
-      },
-      {
-        "event": "Application Accepted & Promoted",
-        "timestamp": "2025-11-01T04:21:14.529513",
-        "note": "Promoted from TEMP-ID-047 \u2192 APP-20251101-00013 and created baseline FAISS."
-      }
-    ]
-  },
-  {
-    "id": "TEMP-ID-048",
-    "application_id": "TEMP-ID-048",
-    "provider": {
-      "provider_name": "Aarogya Old Delhi Medical Centre",
-      "license_number": "DL-HOSP-2018-1010",
-      "type_of_institution": "Primary Care Hospital",
-      "address": "Old Delhi, Delhi - 616753",
-      "ownership_details": "Sri Venkateswara Trust",
-      "license_issue_date": "2023-03-18",
-      "license_expiry_date": "2028-03-18",
-      "details_of_services_offered": "Surgery, Emergency, ICU",
-      "number_of_beds": "500",
-      "qualification_and_number_of_medical_staff": "79 Doctors, 158 Nurses, 22 Technicians",
-      "licensing_authority_name": "District Health Authority",
-      "infrastructure_standards_compliance": "No; Fire Safety: No",
-      "biomedical_waste_management_authorization": "Yes",
-      "pollution_control_board_clearance": "Yes",
-      "consent_to_operate_certificate": "No",
-      "drug_license": "Yes",
-      "radiology_radiation_safety_license": "No",
-      "registration_under_any_special_acts": "PNDT Act",
-      "display_of_hospital_charges_and_facilities": "No",
-      "compliance_with_minimum_standards": "No",
-      "details_of_support_services": "All Services",
-      "list_of_equipment_and_medical_devices_used": "15 devices (list available on request)",
-      "fire_and_lift_inspection_certificates": "Not Applicable",
-      "accreditation_status": "JCI",
-      "issuing_authority": "",
-      "registration_id": ""
+      "accreditation_status": "None"
     },
     "status": "New",
-    "confidence": 0.24,
-    "created_at": "2025-11-01T04:24:41.446868",
-    "documents": [],
+    "confidence": 0.0,
+    "match_percent": 0.0,
+    "match_result": {
+      "match_percent": 0.0,
+      "per_field": {},
+      "recommendation": "No Match Found"
+    },
+    "match_explanation": {},
+    "match_recommendation": "No Match Found",
+    "created_at": "2025-11-01T10:40:27.735122",
+    "documents": [
+      "provider_16.pdf"
+    ],
     "messages": [],
     "history": [
       {
         "event": "Created",
-        "timestamp": "2025-11-01T04:24:41.450507"
+        "timestamp": "2025-11-01T10:40:27.738466"
       }
     ]
   }

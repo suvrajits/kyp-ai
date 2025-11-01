@@ -9,19 +9,67 @@ from typing import List, Dict, Any, Tuple
 REGISTRY_FILE = os.path.join(os.path.dirname(__file__), "..", "mock_data", "providers.json")
 
 
+# --------------------------------------------------------------------
+# 🔧 Key normalization map (aligns JSON fields to canonical keys)
+# --------------------------------------------------------------------
+KEY_MAP = {
+    "Provider Name": "provider_name",
+    "License Number": "license_number",
+    "Type of Institution": "type_of_institution",
+    "Address": "address",
+    "Ownership Details": "ownership_details",
+    "Licensing Authority Name": "licensing_authority_name",
+    "License Issue Date": "license_issue_date",
+    "License Expiry Date": "license_expiry_date",
+    "Details of Services Offered": "details_of_services_offered",
+    "Number of Beds and Wards": "number_of_beds",
+    "Qualification and Number of Medical Staff (Doctors, Nurses, Technicians)": "number_of_staff",
+    "Infrastructure Standards Compliance": "infrastructure_standards_compliance",
+    "Biomedical Waste Management Authorization": "biomedical_waste_management_authorization",
+    "Pollution Control Board Clearance": "pollution_control_board_clearance",
+    "Consent to Operate Certificate": "consent_to_operate_certificate",
+    "Drug License (if pharmacy services offered)": "drug_license",
+    "Radiology-Radiation Safety License (if applicable)": "radiology_radiation_safety_license",
+    "Registration under any Special Acts": "registration_under_any_special_acts",
+    "Display of Hospital Charges and Facilities": "display_of_hospital_charges_and_facilities",
+    "Compliance with Minimum Standards": "compliance_with_minimum_standards",
+    "Details of Support Services": "details_of_support_services",
+    "List of Equipment and Medical Devices Used": "list_of_equipment_and_medical_devices_used",
+    "Fire and Lift Inspection Certificates": "fire_and_lift_inspection_certificates",
+    "Accreditation Status": "accreditation_status",
+}
+
+
+# --------------------------------------------------------------------
+# 📥 Load and normalize provider registry
+# --------------------------------------------------------------------
 def load_provider_registry() -> List[Dict[str, Any]]:
-    """Load provider registry data from JSON file."""
+    """Load and normalize provider registry data from JSON file."""
     if not os.path.exists(REGISTRY_FILE):
         print(f"⚠️ Registry file not found at {REGISTRY_FILE}")
         return []
     try:
         with open(REGISTRY_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
+            raw = json.load(f)
+
+        normalized = []
+        for entry in raw:
+            normalized_entry = {}
+            for k, v in entry.items():
+                canon_key = KEY_MAP.get(k, k.lower().replace(" ", "_"))
+                normalized_entry[canon_key] = v
+            normalized.append(normalized_entry)
+
+        return normalized
+
     except Exception as e:
         print(f"⚠️ Failed to load registry: {e}")
         return []
 
 
+# --------------------------------------------------------------------
+# 🧮 Similarity Computation
+# --------------------------------------------------------------------
 def compute_similarity(a: str, b: str) -> float:
     """Safely compute case-insensitive similarity between two strings."""
     if not a or not b:
@@ -29,61 +77,69 @@ def compute_similarity(a: str, b: str) -> float:
     return SequenceMatcher(None, str(a).lower(), str(b).lower()).ratio()
 
 
-def match_provider(input_fields: Dict[str, str]) -> Tuple[Dict[str, Any], float]:
+# --------------------------------------------------------------------
+# 🧠 Match Provider Logic
+# --------------------------------------------------------------------
+def match_provider(input_fields: Dict[str, str], debug: bool = False) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """
     Matches extracted input fields against the provider registry.
-    Returns the best match and confidence score (0.0–1.0).
-    Handles missing fields safely.
+    Returns the best match entry and a detailed match_result dict.
     """
     registry = load_provider_registry()
     if not registry:
         print("⚠️ No registry data available.")
-        return None, 0.0
+        return None, {"match_percent": 0.0, "per_field": {}, "recommendation": "Registry empty"}
 
     best_match = None
     highest_score = 0.0
+    best_field_data = {}
+
+    # Weighted field comparison
+    weights = {
+        "provider_name": 0.5,
+        "license_number": 0.3,
+        "licensing_authority_name": 0.2,
+    }
 
     for entry in registry:
-        score = 0.0
+        field_scores = {}
+        score_sum = 0.0
         total_weight = 0.0
 
-        # Weighted field comparison (name > license > authority)
-        if "provider_name" in input_fields and "provider_name" in entry:
-            score += compute_similarity(input_fields.get("provider_name"), entry.get("provider_name")) * 0.5
-            total_weight += 0.5
+        for field, weight in weights.items():
+            incoming_val = input_fields.get(field, "")
+            registry_val = entry.get(field, "")
+            sim = compute_similarity(incoming_val, registry_val)
+            score_sum += sim * weight
+            total_weight += weight
+            field_scores[field] = {
+                "incoming": incoming_val,
+                "registry": registry_val,
+                "score": round(sim, 2),
+                "weight": weight,
+                "method": "string_similarity"
+            }
 
-        if "license_number" in input_fields and "license_number" in entry:
-            score += compute_similarity(input_fields.get("license_number"), entry.get("license_number")) * 0.3
-            total_weight += 0.5
-
-
-        # Normalize score
-        if total_weight > 0:
-            avg_score = score / total_weight
-        else:
-            avg_score = 0.0
-
-        # Keep the best match
+        avg_score = score_sum / total_weight if total_weight > 0 else 0.0
         if avg_score > highest_score:
             highest_score = avg_score
             best_match = entry
+            best_field_data = field_scores
 
-    # Logging summary
-    if best_match:
-        print(f"✅ Best match found: {best_match.get('provider_name', 'Unknown')} "
-              f"({round(highest_score * 100, 1)}% confidence)")
-    else:
-        print("❌ No matching provider found.")
-
-    return best_match, round(highest_score, 2)
-
-
-# Example test run
-if __name__ == "__main__":
-    test_input = {
-        "provider_name": "Dr. Ramesh Kumar",
-        "license_number": "MH123456789"
+    match_result = {
+        "match_percent": round(highest_score * 100, 1),
+        "per_field": best_field_data,
+        "recommendation": (
+            "Strong Match" if highest_score >= 0.9 else
+            "Moderate Match" if highest_score >= 0.75 else
+            "Low Confidence Match"
+        ),
     }
-    match, score = match_provider(test_input)
-    print("Best Match:", match)
-    print("Confidence Score:", score)
+
+    if debug and best_match:
+        print(f"✅ Best match: {best_match.get('provider_name', 'Unknown')} ({match_result['match_percent']}%)")
+
+    elif debug and not best_match:
+        print("❌ No matching provider found in registry.")
+
+    return best_match, match_result
