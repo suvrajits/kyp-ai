@@ -3,315 +3,292 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Provider Dashboard</title>
+  <title>ProviderGPT Dashboard</title>
   <style>
+    /* 🌙 DARK THEME ROOT */
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #f3f6f9;
       margin: 0;
-      padding: 40px;
+      background: #0e0f12;
+      color: #f5f5f5;
+      font-family: "Inter", sans-serif;
+      overflow: hidden;
     }
-    .container {
-      background: #fff;
-      border-radius: 12px;
-      padding: 35px;
-      max-width: 960px;
-      margin: auto;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-    }
-    h2 { color: #333; margin-top: 0; }
-    h3 { color: #222; border-bottom: 2px solid #eee; padding-bottom: 4px; }
 
-    /* 🩵 Status styles */
-    .status {
-      font-size: 18px;
-      font-weight: 600;
-      padding: 10px 18px;
-      border-radius: 8px;
-      display: inline-block;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      border: 1px solid transparent;
-      margin-bottom: 15px;
+    /* 🔹 Sidebar (left vertical menu) */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 70px;
+      height: 100%;
+      background: #16181c;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+      gap: 25px;
+      box-shadow: 2px 0 6px rgba(0,0,0,0.3);
+      z-index: 20;
     }
-    .under-review { background: #fff8e6; color: #7a6200; border-color: #f0e1a0; }
-    .accepted { background: #e0f2ff; color: #004c91; border-color: #b3d9ff; }
-    .approved { background: #d4f5d4; color: #126612; border-color: #a8e3a8; }
-    .rejected { background: #fde2e4; color: #861010; border-color: #f8c4c4; }
-
-    .box {
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 10px;
-      border: 1px solid #eee;
-    }
-    .label { font-weight: bold; color: #444; }
-
-    .actions {
-      margin-top: 35px;
-      text-align: center;
-    }
-    button {
-      background-color: #0077cc;
-      color: white;
-      border: none;
-      padding: 10px 22px;
-      border-radius: 8px;
-      font-size: 15px;
+    .sidebar-icon {
+      font-size: 22px;
       cursor: pointer;
-      margin: 8px;
-      transition: all 0.2s ease;
+      color: #aaa;
+      transition: 0.25s;
     }
-    button:hover {
-      background-color: #005fa3;
-      transform: translateY(-1px);
-      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-    }
-    button.reject { background: #d93b3b; }
-    button.reject:hover { background: #b22e2e; }
-    button.info { background: #f5b041; }
-    button.info:hover { background: #d99a00; }
+    .sidebar-icon:hover { color: #00aaff; transform: scale(1.1); }
 
-    input[type="file"] {
-      padding: 10px;
-      background: #f9f9f9;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      width: 100%;
+    /* 🔹 Main chat container */
+    .main {
+      margin-left: 90px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      justify-content: flex-end;
+      align-items: center;
     }
 
-    .search-section {
-      margin: 30px 0;
-      padding: 20px;
-      border-radius: 8px;
-      background: #f9fafc;
-      border: 1px solid #e1e1e1;
-    }
-    .search-box { display: flex; gap: 10px; }
-    #query {
+    /* Chat area (scrollable) */
+    .chat-window {
       flex: 1;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #bbb;
+      width: 60%;
+      max-width: 850px;
+      overflow-y: auto;
+      padding: 30px;
+      box-sizing: border-box;
+      scrollbar-width: thin;
+    }
+
+    /* Message bubbles */
+    .message {
+      margin-bottom: 15px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      line-height: 1.5;
+      max-width: 80%;
+      word-wrap: break-word;
       font-size: 15px;
     }
-    #search-btn {
-      background-color: #0077cc;
+    .user-msg {
+      background: #0077cc;
       color: white;
-      padding: 10px 20px;
+      align-self: flex-end;
+    }
+    .ai-msg {
+      background: #1b1d21;
+      border: 1px solid #333;
+      color: #f0f0f0;
+      align-self: flex-start;
+    }
+
+    /* Chat input bar (fixed bottom) */
+    .chat-bar {
+      position: fixed;
+      bottom: 0;
+      left: 90px;
+      right: 0;
+      background: #16181c;
+      padding: 15px 25px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.4);
+      z-index: 10;
+    }
+    .chat-input-container {
+      display: flex;
+      align-items: center;
+      background: #1e2024;
+      border-radius: 12px;
+      padding: 10px 15px;
+      width: 60%;
+      max-width: 850px;
+    }
+    .chat-input {
+      flex: 1;
+      background: transparent;
       border: none;
-      border-radius: 6px;
+      color: #f5f5f5;
+      font-size: 15px;
+      outline: none;
+    }
+    .upload-btn, .send-btn {
+      background: #00aaff;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      padding: 8px 14px;
+      margin-left: 10px;
       cursor: pointer;
+      transition: 0.2s;
     }
-    #search-btn:hover { background-color: #005fa3; }
-    #answer {
-      margin-top: 15px;
-      background: #fff;
-      border-radius: 6px;
-      padding: 12px;
-      color: #333;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      min-height: 40px;
+    .upload-btn:hover, .send-btn:hover {
+      background: #0090dd;
+      transform: translateY(-1px);
     }
 
-    /* 🧾 Messages & History */
-    .section {
-      background: #fcfcfc;
-      border: 1px solid #eee;
-      border-radius: 10px;
-      padding: 15px 20px;
-      margin-top: 25px;
-    }
-    .message {
-      background: #eef5ff;
-      border-left: 4px solid #0077cc;
-      padding: 8px 12px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-    }
-    .history-entry {
-      background: #f7f7f7;
-      border-radius: 6px;
-      padding: 6px 10px;
-      margin: 5px 0;
-      font-size: 14px;
+    /* Hidden file input */
+    #file-input {
+      display: none;
     }
 
-    a.back-link {
-      display: inline-block;
-      margin-top: 20px;
-      text-decoration: none;
-      color: #0077cc;
+    /* 🔹 Slide Panels */
+    .side-panel {
+      position: fixed;
+      top: 0;
+      left: -400px;
+      width: 380px;
+      height: 100%;
+      background: #1b1d21;
+      color: #eee;
+      overflow-y: auto;
+      padding: 20px;
+      transition: left 0.3s ease;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.4);
+      z-index: 15;
     }
-    a.back-link:hover { text-decoration: underline; }
+    .side-panel.active { left: 70px; }
+    canvas { margin-top: 20px; }
   </style>
 </head>
+
 <body>
-<div class="container">
-  <h2>Provider Application Dashboard</h2>
-
-  <!-- Dynamic Status Badge -->
-  <div class="status
-    {% if 'Review' in status %} under-review
-    {% elif 'Accepted' in status %} accepted
-    {% elif 'Approved' in status %} approved
-    {% elif 'Reject' in status %} rejected
-    {% else %} under-review {% endif %}
-  ">
-    {{ status }}
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-icon" onclick="togglePanel('risk')">📊</div>
+    <div class="sidebar-icon" onclick="togglePanel('details')">🏥</div>
+    <div class="sidebar-icon" onclick="togglePanel('upload')">📁</div>
+    <div class="sidebar-icon" onclick="togglePanel('actions')">⚙️</div>
   </div>
 
-  <p><strong>Application ID:</strong> {{ app_id }}</p>
-  <p><strong>Message:</strong> {{ message }}</p>
+  <!-- Chat Section -->
+  <div class="main">
+    <div id="chat-window" class="chat-window"></div>
 
-  <!-- 🔍 Unified Ask / Search Section -->
-  <div class="search-section">
-    <h3>🔍 Ask or Search Providers</h3>
-    <div class="search-box">
-      <input type="text" id="query" placeholder="Ask about this provider or search providers (e.g., NABH hospitals in Delhi)..." />
-      <button id="search-btn">Ask</button>
-    </div>
-    <div id="answer"></div>
-  </div>
-
-  <h3>📜 Provider Details</h3>
-  {% if provider %}
-    {% for key, value in provider.items() %}
-      <div class="box">
-        <div class="label">{{ key.replace('_',' ')|title }}</div>
-        <div>{{ value }}</div>
+    <!-- Fixed Chat Bar -->
+    <div class="chat-bar">
+      <div class="chat-input-container">
+        <input id="query" class="chat-input" placeholder="Ask about provider compliance, license, or risk..." />
+        <button class="upload-btn" onclick="document.getElementById('file-input').click()">📎</button>
+        <input type="file" id="file-input" multiple />
+        <button id="send-btn" class="send-btn">Send</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Panels -->
+  <div id="risk-panel" class="side-panel">
+    <h3>📊 Provider Risk Breakdown</h3>
+    <canvas id="riskChart"></canvas>
+  </div>
+
+  <div id="details-panel" class="side-panel">
+    <h3>🏥 Provider Details</h3>
+    {% for key, value in provider.items() %}
+      <div style="margin-bottom:10px;"><strong>{{ key.replace('_',' ')|title }}</strong>: {{ value }}</div>
     {% endfor %}
-  {% else %}
-    <p>No provider data available.</p>
-  {% endif %}
+  </div>
 
-  <hr>
-
-  <h3>📁 Upload Additional Documents</h3>
-  <form action="/rag/{{ app_id }}/ingest" method="post" enctype="multipart/form-data">
-    <input type="file" name="files" multiple required>
-    <button type="submit">📤 Upload & Ingest Selected</button>
-  </form>
-
-  {% if documents %}
-    <h5>📄 Uploaded Documents</h5>
-    <ul>
-    {% for doc in documents %}
-      <li>
-        <span>{{ doc.filename }}</span>
-        <form method="post" action="/dashboard/delete-document" style="display:inline;">
-          <input type="hidden" name="app_id" value="{{ app_id }}">
-          <input type="hidden" name="filename" value="{{ doc.filename }}">
-          <button type="submit" class="reject">🗑️ Delete</button>
-        </form>
-      </li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-
-  {% if history %}
-    <div class="section">
-      <h3>📚 Application History</h3>
-      {% for event in history %}
-        <div class="history-entry"><strong>{{ event.event }}</strong> — {{ event.timestamp }}</div>
-      {% endfor %}
-    </div>
-  {% endif %}
-
-  {% if messages %}
-    <div class="section">
-      <h3>💬 Messages</h3>
-      {% for msg in messages %}
-        <div class="message">
-          <strong>{{ msg.from }}:</strong> {{ msg.text }}
-          <div style="font-size:12px; color:#666;">🕒 {{ msg.timestamp }}</div>
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
-
-  <div class="actions">
-    <form action="/dashboard/approve/{{ app_id }}" method="post" style="display:inline;">
-        <button type="submit">✅ Approve</button>
-    </form>
-
-    <div style="display:flex; align-items:center; justify-content:center; margin-top:10px;">
-      <form action="/dashboard/reject/{{ app_id }}" method="post" style="display:flex; align-items:center; gap:8px;">
-        <input type="text" name="reason" placeholder="Reason for rejection" required
-               style="padding:8px 10px; border-radius:6px; border:1px solid #ccc; font-size:14px; width:240px;">
-        <button type="submit" class="reject">❌ Reject</button>
-      </form>
-    </div>
-
-    <form action="/dashboard/request-info/{{ app_id }}" method="post" style="display:inline;">
-        <input type="text" name="note" placeholder="Request details..." required
-               style="padding:8px 10px; margin-right:8px; border-radius:6px; border:1px solid #ccc; font-size:14px;">
-        <button type="submit" class="info">📨 Request Info</button>
+  <div id="upload-panel" class="side-panel">
+    <h3>📁 Upload Documents</h3>
+    <form id="upload-form" enctype="multipart/form-data">
+      <input type="file" name="files" multiple required />
+      <button type="submit" class="send-btn">Upload</button>
     </form>
   </div>
 
-  <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-
-  <div class="actions">
-    <a href="/upload/upload-form" class="back-link">⬅ Back to Uploads</a>
-    <a href="/trust-card/generate_trust_card"><button type="button">🧾 Generate Trust Card</button></a>
+  <div id="actions-panel" class="side-panel">
+    <h3>⚙️ Actions</h3>
+    <form action="/dashboard/approve/{{ app_id }}" method="post"><button class="send-btn">✅ Approve</button></form>
+    <form action="/dashboard/reject/{{ app_id }}" method="post"><button class="send-btn">❌ Reject</button></form>
+    <form action="/dashboard/request-info/{{ app_id }}" method="post"><button class="send-btn">📨 Request Info</button></form>
   </div>
 
-<!-- 💡 Smart Ask/Search Script -->
-<script>
-document.getElementById("search-btn").addEventListener("click", async (e) => {
-  e.preventDefault();
-  const query = document.getElementById("query").value.trim().toLowerCase();
-  const answerDiv = document.getElementById("answer");
-  if (!query) { answerDiv.innerHTML = "<em>Please enter a question or search term.</em>"; return; }
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const chatWindow = document.getElementById("chat-window");
+    const queryInput = document.getElementById("query");
 
-  answerDiv.innerHTML = "⏳ Thinking...";
+    function togglePanel(name) {
+      ["risk","details","upload","actions"].forEach(id => {
+        const el = document.getElementById(`${id}-panel`);
+        el.classList.remove("active");
+      });
+      const target = document.getElementById(`${name}-panel`);
+      if (target) target.classList.toggle("active");
 
-  const searchTriggers = ["find", "show", "list", "hospitals", "clinics", "providers", "government", "nabh", "nabl"];
-  const isProviderSearch = searchTriggers.some(word => query.includes(word));
-
-  if (isProviderSearch) {
-    try {
-      const resp = await fetch(`/dashboard/search?q=${encodeURIComponent(query)}`);
-      if (resp.ok) {
-        const html = await resp.text();
-        document.open();
-        document.write(html);
-        document.close();
-      } else throw new Error("Search failed");
-    } catch (err) {
-      console.error("❌ Search error:", err);
-      answerDiv.innerHTML = "❌ Could not search providers.";
+      if (name === "risk") loadRiskChart();
     }
-    return;
-  }
 
-  // Default: Ask RAG about current provider
-  try {
-    const response = await fetch("/rag/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, provider_id: "{{ app_id }}", top_k: 3 }),
+    async function sendMessage() {
+      const query = queryInput.value.trim();
+      if (!query) return;
+      const userMsg = document.createElement("div");
+      userMsg.className = "message user-msg";
+      userMsg.textContent = query;
+      chatWindow.appendChild(userMsg);
+      queryInput.value = "";
+
+      const aiMsg = document.createElement("div");
+      aiMsg.className = "message ai-msg";
+      aiMsg.textContent = "Thinking...";
+      chatWindow.appendChild(aiMsg);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+
+      try {
+        const response = await fetch("/rag/ask", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({ query, provider_id: "{{ app_id }}", top_k: 3 }),
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let fullText = "";
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          fullText += decoder.decode(value);
+          aiMsg.innerHTML = fullText.replace(/\n/g, "<br>");
+          chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+      } catch (e) {
+        aiMsg.textContent = "❌ Error fetching response.";
+      }
+    }
+
+    document.getElementById("send-btn").addEventListener("click", sendMessage);
+    queryInput.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
+
+    async function loadRiskChart() {
+      const ctx = document.getElementById("riskChart");
+      const res = await fetch(`/risk/calc/{{ app_id }}`);
+      const data = await res.json();
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(data.categories),
+          datasets: [{
+            label: 'Risk %',
+            data: Object.values(data.categories),
+            backgroundColor: '#00aaff'
+          }]
+        },
+        options: { scales: { y: { beginAtZero: true, max: 100 } } }
+      });
+    }
+
+    // Handle document upload + embedding
+    document.getElementById("file-input").addEventListener("change", async (e) => {
+      const files = e.target.files;
+      if (!files.length) return;
+      const formData = new FormData();
+      for (const file of files) formData.append("files", file);
+      const res = await fetch(`/rag/{{ app_id }}/ingest`, { method: "POST", body: formData });
+      if (res.ok) alert("✅ Document uploaded and embedded successfully!");
+      else alert("❌ Upload failed");
     });
-    if (!response.ok) throw new Error("Network error");
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder("utf-8");
-    answerDiv.innerHTML = "";
-    let fullText = "";
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      const chunk = decoder.decode(value, { stream: true });
-      fullText += chunk;
-      answerDiv.innerHTML = fullText.replace(/\n/g, "<br>").replace("[END]", "");
-    }
-  } catch (err) {
-    console.error("❌ Error fetching stream:", err);
-    answerDiv.innerHTML = "❌ Error fetching answer.";
-  }
-});
-</script>
+  </script>
 </body>
 </html>

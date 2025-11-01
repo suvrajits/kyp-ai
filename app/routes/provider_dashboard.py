@@ -430,3 +430,37 @@ async def dashboard_search(request: Request, q: str = ""):
         "upload_form.html",
         {"request": request, "providers": filtered, "query": q},
     )
+
+@router.get("/risk/calc/{provider_id}")
+async def calculate_risk(provider_id: str):
+    from app.services.application_store import load_applications
+    apps = load_applications()
+    record = next((r for r in apps if r["id"] == provider_id), None)
+    if not record:
+        return {"risk_score": 0, "level": "Unknown"}
+
+    provider = record.get("provider", {})
+    score = 0
+
+    # Example: Penalize missing or negative fields
+    if provider.get("infrastructure_standards_compliance", "").lower().find("no") != -1:
+        score += 20
+    if provider.get("biomedical_waste_management_authorization", "").lower() != "yes":
+        score += 10
+    if provider.get("accreditation_status", "").lower() in ["none", "pending"]:
+        score += 30
+    if provider.get("license_expiry_date"):
+        from datetime import datetime
+        expiry = datetime.strptime(provider["license_expiry_date"], "%Y-%m-%d")
+        if expiry < datetime.utcnow():
+            score += 40
+
+    risk_score = min(100, score)
+    if risk_score < 30:
+        level = "Low"
+    elif risk_score < 60:
+        level = "Moderate"
+    else:
+        level = "High"
+
+    return {"risk_score": risk_score, "level": level}
