@@ -644,5 +644,346 @@
         "timestamp": "2025-11-01T12:57:49.816951"
       }
     ]
+  },
+  {
+    "id": "TEMP-ID-056",
+    "application_id": "TEMP-ID-056",
+    "provider": {
+      "provider_name": "HealthFirst Kolkata Multispeciality Hospital",
+      "license_number": "WBMED20251024",
+      "type_of_institution": "Clinic",
+      "address": "256 Medical Avenue, Kolkata, West Bengal - 231857",
+      "ownership_details": "HealthCare Pvt. Ltd.",
+      "license_issue_date": "2023-02-21",
+      "license_expiry_date": "2028-02-21",
+      "details_of_services_offered": "All Services",
+      "number_of_beds": "300",
+      "qualification_and_number_of_medical_staff": "46 Doctors, 96 Nurses, 18 Technicians",
+      "licensing_authority_name": "District Health Authority",
+      "infrastructure_standards_compliance": "Building Safety Certificate: Yes; Fire Safety: Pending",
+      "biomedical_waste_management_authorization": "Yes",
+      "pollution_control_board_clearance": "No",
+      "consent_to_operate_certificate": "No",
+      "drug_license": "No",
+      "radiology_radiation_safety_license": "Not Applicable",
+      "registration_under_any_special_acts": "Transplantation of Human Organs Act",
+      "display_of_hospital_charges_and_facilities": "No",
+      "compliance_with_minimum_standards": "No",
+      "details_of_support_services": "Ambulance only",
+      "list_of_equipment_and_medical_devices_used": "65 devices",
+      "fire_and_lift_inspection_certificates": "Pending",
+      "accreditation_status": "None"
+    },
+    "status": "New",
+    "confidence": 1.0,
+    "match_percent": 100.0,
+    "match_result": {
+      "match_percent": 100.0,
+      "per_field": {
+        "provider_name": {
+          "incoming": "HealthFirst Kolkata Multispeciality Hospital",
+          "registry": "HealthFirst Kolkata Multispeciality Hospital",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "license_number": {
+          "incoming": "WBMED20251024",
+          "registry": "WBMED20251024",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "type_of_institution": {
+          "incoming": "Clinic",
+          "registry": "Clinic",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "address": {
+          "incoming": "256 Medical Avenue, Kolkata, West Bengal - 231857",
+          "registry": "256 Medical Avenue, Kolkata, West Bengal - 231857",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "ownership_details": {
+          "incoming": "HealthCare Pvt. Ltd.",
+          "registry": "HealthCare Pvt. Ltd.",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "licensing_authority_name": {
+          "incoming": "District Health Authority",
+          "registry": "District Health Authority",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "license_issue_date": {
+          "incoming": "2023-02-21",
+          "registry": "2023-02-21",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "license_expiry_date": {
+          "incoming": "2028-02-21",
+          "registry": "2028-02-21",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "details_of_services_offered": {
+          "incoming": "All Services",
+          "registry": "All Services",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "number_of_beds": {
+          "incoming": "300",
+          "registry": "300",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "number_of_staff": {
+          "incoming": "",
+          "registry": "46 Doctors, 96 Nurses, 18 Technicians",
+          "score": 0.0,
+          "method": "string_similarity"
+        },
+        "infrastructure_standards_compliance": {
+          "incoming": "Building Safety Certificate: Yes; Fire Safety: Pending",
+          "registry": "Building Safety Certificate: Yes; Fire Safety: Pending",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "biomedical_waste_management_authorization": {
+          "incoming": "Yes",
+          "registry": "Yes",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "pollution_control_board_clearance": {
+          "incoming": "No",
+          "registry": "No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "consent_to_operate_certificate": {
+          "incoming": "No",
+          "registry": "No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "drug_license": {
+          "incoming": "No",
+          "registry": "Yes",
+          "score": 0.0,
+          "method": "string_similarity"
+        },
+        "radiology_radiation_safety_license": {
+          "incoming": "Not Applicable",
+          "registry": "Not Applicable",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "registration_under_any_special_acts": {
+          "incoming": "Transplantation of Human Organs Act",
+          "registry": "Transplantation of Human Organs Act",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "display_of_hospital_charges_and_facilities": {
+          "incoming": "No",
+          "registry": "Not Displayed",
+          "score": 0.27,
+          "method": "string_similarity"
+        },
+        "compliance_with_minimum_standards": {
+          "incoming": "No",
+          "registry": "No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "details_of_support_services": {
+          "incoming": "Ambulance only",
+          "registry": "Ambulance only",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "list_of_equipment_and_medical_devices_used": {
+          "incoming": "65 devices",
+          "registry": "65 devices (list available on request)",
+          "score": 0.42,
+          "method": "string_similarity"
+        },
+        "fire_and_lift_inspection_certificates": {
+          "incoming": "Pending",
+          "registry": "Pending",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "accreditation_status": {
+          "incoming": "None",
+          "registry": "None",
+          "score": 1.0,
+          "method": "string_similarity"
+        }
+      },
+      "recommendation": "Strong Match"
+    },
+    "match_explanation": {
+      "provider_name": {
+        "incoming": "HealthFirst Kolkata Multispeciality Hospital",
+        "registry": "HealthFirst Kolkata Multispeciality Hospital",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "license_number": {
+        "incoming": "WBMED20251024",
+        "registry": "WBMED20251024",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "type_of_institution": {
+        "incoming": "Clinic",
+        "registry": "Clinic",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "address": {
+        "incoming": "256 Medical Avenue, Kolkata, West Bengal - 231857",
+        "registry": "256 Medical Avenue, Kolkata, West Bengal - 231857",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "ownership_details": {
+        "incoming": "HealthCare Pvt. Ltd.",
+        "registry": "HealthCare Pvt. Ltd.",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "licensing_authority_name": {
+        "incoming": "District Health Authority",
+        "registry": "District Health Authority",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "license_issue_date": {
+        "incoming": "2023-02-21",
+        "registry": "2023-02-21",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "license_expiry_date": {
+        "incoming": "2028-02-21",
+        "registry": "2028-02-21",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "details_of_services_offered": {
+        "incoming": "All Services",
+        "registry": "All Services",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "number_of_beds": {
+        "incoming": "300",
+        "registry": "300",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "number_of_staff": {
+        "incoming": "",
+        "registry": "46 Doctors, 96 Nurses, 18 Technicians",
+        "score": 0.0,
+        "method": "string_similarity"
+      },
+      "infrastructure_standards_compliance": {
+        "incoming": "Building Safety Certificate: Yes; Fire Safety: Pending",
+        "registry": "Building Safety Certificate: Yes; Fire Safety: Pending",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "biomedical_waste_management_authorization": {
+        "incoming": "Yes",
+        "registry": "Yes",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "pollution_control_board_clearance": {
+        "incoming": "No",
+        "registry": "No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "consent_to_operate_certificate": {
+        "incoming": "No",
+        "registry": "No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "drug_license": {
+        "incoming": "No",
+        "registry": "Yes",
+        "score": 0.0,
+        "method": "string_similarity"
+      },
+      "radiology_radiation_safety_license": {
+        "incoming": "Not Applicable",
+        "registry": "Not Applicable",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "registration_under_any_special_acts": {
+        "incoming": "Transplantation of Human Organs Act",
+        "registry": "Transplantation of Human Organs Act",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "display_of_hospital_charges_and_facilities": {
+        "incoming": "No",
+        "registry": "Not Displayed",
+        "score": 0.27,
+        "method": "string_similarity"
+      },
+      "compliance_with_minimum_standards": {
+        "incoming": "No",
+        "registry": "No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "details_of_support_services": {
+        "incoming": "Ambulance only",
+        "registry": "Ambulance only",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "list_of_equipment_and_medical_devices_used": {
+        "incoming": "65 devices",
+        "registry": "65 devices (list available on request)",
+        "score": 0.42,
+        "method": "string_similarity"
+      },
+      "fire_and_lift_inspection_certificates": {
+        "incoming": "Pending",
+        "registry": "Pending",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "accreditation_status": {
+        "incoming": "None",
+        "registry": "None",
+        "score": 1.0,
+        "method": "string_similarity"
+      }
+    },
+    "match_recommendation": "Strong Match",
+    "created_at": "2025-11-01T13:08:56.374738",
+    "documents": [
+      "provider_24.pdf"
+    ],
+    "messages": [],
+    "history": [
+      {
+        "event": "Created",
+        "timestamp": "2025-11-01T13:08:56.377813"
+      }
+    ]
   }
 ]

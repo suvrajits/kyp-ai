@@ -23,7 +23,7 @@ KEY_MAP = {
     "License Expiry Date": "license_expiry_date",
     "Details of Services Offered": "details_of_services_offered",
     "Number of Beds and Wards": "number_of_beds",
-    "Qualification and Number of Medical Staff (Doctors, Nurses, Technicians)": "number_of_staff",
+    "Qualification and Number of Medical Staff (Doctors, Nurses, Technicians)": "qualification_and_number_of_medical_staff",
     "Infrastructure Standards Compliance": "infrastructure_standards_compliance",
     "Biomedical Waste Management Authorization": "biomedical_waste_management_authorization",
     "Pollution Control Board Clearance": "pollution_control_board_clearance",
