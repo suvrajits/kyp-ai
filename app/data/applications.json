@@ -28,7 +28,7 @@
       "fire_and_lift_inspection_certificates": "Pending",
       "accreditation_status": "JCI"
     },
-    "status": "Under Review",
+    "status": "Rejected",
     "confidence": 1.0,
     "match_percent": 100.0,
     "match_result": {
@@ -332,7 +332,13 @@
     "documents": [
       "provider_1.pdf"
     ],
-    "messages": [],
+    "messages": [
+      {
+        "from": "Reviewer",
+        "text": "\u274c Application rejected. Reason: Wrong application",
+        "timestamp": "2025-11-02T06:55:00.239584"
+      }
+    ],
     "history": [
       {
         "event": "Created",
@@ -342,6 +348,15 @@
         "event": "Application Accepted & Promoted",
         "timestamp": "2025-11-01T18:50:08.644063",
         "note": "Promoted from TEMP-ID-059 \u2192 APP-20251101-00022 and FAISS built."
+      },
+      {
+        "event": "Status changed from Under Review \u2192 Rejected",
+        "timestamp": "2025-11-02T06:55:00.231395",
+        "note": "Wrong application"
+      },
+      {
+        "event": "Message from Reviewer",
+        "timestamp": "2025-11-02T06:55:00.239584"
       }
     ]
   },
@@ -374,7 +389,7 @@
       "fire_and_lift_inspection_certificates": "Not Applicable",
       "accreditation_status": "JCI"
     },
-    "status": "Under Review",
+    "status": "Approved",
     "confidence": 0.94,
     "match_percent": 93.5,
     "match_result": {
@@ -684,7 +699,13 @@
         "path": "app\\data\\faiss_store\\APP-20251101-00021\\provider_guidelines.pdf"
       }
     ],
-    "messages": [],
+    "messages": [
+      {
+        "from": "System",
+        "text": "\u2705 Application approved successfully.",
+        "timestamp": "2025-11-02T06:38:09.901041"
+      }
+    ],
     "history": [
       {
         "event": "Created",
@@ -694,6 +715,15 @@
         "event": "Application Accepted & Promoted",
         "timestamp": "2025-11-01T18:48:52.113506",
         "note": "Promoted from TEMP-ID-060 \u2192 APP-20251101-00021 and FAISS built."
+      },
+      {
+        "event": "Status changed from Under Review \u2192 Approved",
+        "timestamp": "2025-11-02T06:38:09.891845",
+        "note": "Application approved by reviewer."
+      },
+      {
+        "event": "Message from System",
+        "timestamp": "2025-11-02T06:38:09.901041"
       }
     ]
   }
