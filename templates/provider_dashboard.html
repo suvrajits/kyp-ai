@@ -222,8 +222,36 @@
   <!-- Header -->
   <div class="header">
     <h2>Provider Dashboard</h2>
-    <p>{{ provider.provider_name }} — {{ provider.license_number }}</p>
+    <div style="display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-top:4px;">
+      <p style="margin:0;">
+        {{ provider.provider_name }} — {{ provider.license_number }}
+      </p>
+
+      {% set status = status or 'Under Review' %}
+      {% if 'Approved' in status %}
+        <span style="background:#d4f5d4; color:#126612; border:1px solid #a8e3a8; padding:4px 10px; border-radius:8px; font-size:13px; font-weight:600;">
+          ✅ {{ status }}
+        </span>
+      {% elif 'Reject' in status %}
+        <span style="background:#fde2e4; color:#861010; border:1px solid #f5c4c4; padding:4px 10px; border-radius:8px; font-size:13px; font-weight:600;">
+          ❌ {{ status }}
+        </span>
+      {% elif 'Info' in status or 'Review' in status or 'Pending' in status %}
+        <span style="background:#fff8e6; color:#7a6200; border:1px solid #f0e1a0; padding:4px 10px; border-radius:8px; font-size:13px; font-weight:600;">
+          🟡 {{ status }}
+        </span>
+      {% elif 'Accepted' in status %}
+        <span style="background:#e0f2ff; color:#004c91; border:1px solid #b3d9ff; padding:4px 10px; border-radius:8px; font-size:13px; font-weight:600;">
+          🔵 {{ status }}
+        </span>
+      {% else %}
+        <span style="background:#e8e8e8; color:#555; border:1px solid #ccc; padding:4px 10px; border-radius:8px; font-size:13px; font-weight:600;">
+          {{ status }}
+        </span>
+      {% endif %}
+    </div>
   </div>
+
 
   <!-- Chat Section -->
   <div class="main">
