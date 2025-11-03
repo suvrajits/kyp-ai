@@ -13,6 +13,7 @@ from shutil import move
 import asyncio
 from app.risk.orchestrator import evaluate_provider
 from app.risk.watchlist_simulator import CATEGORIES, simulate_watchlist_call
+from app.routes.risk_router import calculate_provider_risk
 
 router = APIRouter()
 
@@ -233,14 +234,39 @@ async def accept_application(request: Request, app_id: str):
         record["risk_status"] = "Evaluating"
         record["risk_triggered_at"] = datetime.utcnow().isoformat()
         save_all(apps)
-        asyncio.create_task(evaluate_provider(new_app_id))
-        record.setdefault("history",[]).append({
-            "event":"Risk Evaluation Triggered",
+
+        async def risk_pipeline(app_id: str):
+            """Runs risk evaluation followed by FAISS embedding."""
+            try:
+                print(f"🧠 [Pipeline] Evaluating provider risk for {app_id}...")
+                await evaluate_provider(app_id)
+                print(f"✅ [Pipeline] Risk model evaluation done for {app_id}")
+                await calculate_provider_risk(app_id, internal=True)
+                print(f"💾 [Pipeline] Risk embeddings stored in FAISS for {app_id}")
+                # Update JSON record
+                apps_latest = load_applications()
+                rec = next((r for r in apps_latest if r.get("id") == app_id), None)
+                if rec:
+                    rec["risk_status"] = "Completed"
+                    rec.setdefault("history", []).append({
+                        "event": "Risk Evaluation & Embedding Complete",
+                        "timestamp": datetime.utcnow().isoformat()
+                    })
+                    save_all(apps_latest)
+            except Exception as e:
+                print(f"❌ Risk pipeline failed for {app_id}: {e}")
+
+        # Run asynchronously without blocking UI
+        asyncio.create_task(risk_pipeline(new_app_id))
+
+        record.setdefault("history", []).append({
+            "event": "Risk Evaluation Pipeline Triggered",
             "timestamp": datetime.utcnow().isoformat()
         })
         save_all(apps)
     else:
         print(f"⚠️ Risk evaluation already in progress for {new_app_id}")
+
 
 
     print(f"✅ Application {app_id} → {new_app_id} accepted successfully.")

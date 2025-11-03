@@ -1,0 +1,128 @@
+[
+  {
+    "timestamp": "2025-11-03T16:15:29.590686",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251103-00032-1762166729",
+        "provider": {
+          "provider_id": "APP-20251103-00032",
+          "provider_name": "Aarogya Old Delhi Medical Centre",
+          "license_number": "DL-HOSP-2018-1010"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [
+            {
+              "text": "provider_name: Aarogya Old Delhi Medical Centre\nlicense_number: DL-HOSP-2018-1010\ntype_of_institution: Primary Care Hospital\naddress: Old Delhi, Delhi - 616753\nownership_details: Sri Venkateswara Trust\nlicense_issue_date: 2023-03-18\nlicense_expiry_date: 2028-03-18\ndetails_of_services_offered: Surgery, Emergency, ICU\nnumber_of_beds: 500\nqualification_and_number_of_medical_staff: 79 Doctors, 158 Nurses, 22 Technicians\nlicensing_authority_name: District Health Authority\ninfrastructure_standards_compliance: No; Fire Safety: No\nbiomedical_waste_management_authorization: Yes\npollution_control_board_clearance: Yes\nconsent_to_operate_certificate: No\ndrug_license: Yes\nradiology_radiation_safety_license: No\nregistration_under_any_special_acts: PNDT Act\ndisplay_of_hospital_charges_and_facilities: No\ncompliance_with_minimum_standards: No\ndetails_of_support_services: All Services\nlist_of_equipment_and_medical_devices_used: 15 devices (list available on request)\nfire_and_lift_inspection_certificates: Not Applicable\naccreditation_status: JCI",
+              "score": -0.013448476791381836
+            }
+          ],
+          "contextual_documents": [
+            "provider_10.pdf"
+          ],
+          "watchlist_embeddings": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251103-00032-1762166729",
+        "provider_id": "APP-20251103-00032",
+        "category_scores": {
+          "cybersecurity": {
+            "score": 10,
+            "note": "simulated response"
+          },
+          "data_privacy": {
+            "score": 10,
+            "note": "simulated response"
+          },
+          "operational": {
+            "score": 10,
+            "note": "simulated response"
+          },
+          "financial": {
+            "score": 10,
+            "note": "simulated response"
+          },
+          "regulatory": {
+            "score": 10,
+            "note": "simulated response"
+          },
+          "reputation": {
+            "score": 10,
+            "note": "simulated response"
+          },
+          "supplychain": {
+            "score": 10,
+            "note": "simulated response"
+          }
+        },
+        "aggregated_score": 10,
+        "notes": "Simulated risk model response with reasoning notes.",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.2",
+        "timestamp": "2025-11-03T16:15:29.588386"
+      },
+      "timestamp": "2025-11-03T16:15:29.588386"
+    }
+  }
+]

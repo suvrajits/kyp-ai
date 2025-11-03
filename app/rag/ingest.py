@@ -180,3 +180,41 @@ def ingest_pdf(file_path: str, provider_id: str, doc_name: str = None, append: b
             print(f"⚠️ Cleanup error: {e}")
 
     return all_chunks, token_count
+
+def ingest_text_block(provider_id: str, text_block: str, doc_name: str = "risk_summary", append: bool = True):
+    """
+    Ingests a text block (risk summary or any generated narrative) into provider's FAISS index.
+    """
+    from app.rag.vector_store_faiss import save_faiss_index, load_faiss_index
+    import faiss
+
+    print(f"🧠 Ingesting text block for provider {provider_id} ({'append' if append else 'overwrite'})")
+
+    text_block = clean_text(text_block)
+    chunks = chunk_text_streaming([text_block], chunk_size=800, overlap=100)
+    enriched_chunks = [f"[{doc_name}] {c}" for c in chunks]
+
+    if not enriched_chunks:
+        print("⚠️ No valid text chunks to embed — skipping.")
+        return 0
+
+    vectors = embed_texts(enriched_chunks)
+    faiss.normalize_L2(vectors)
+
+    provider_dir = Path("app/data/faiss_store") / provider_id
+    provider_dir.mkdir(parents=True, exist_ok=True)
+
+    if append:
+        try:
+            existing_vectors, existing_chunks = load_faiss_index(provider_id)  # ✅ fixed here
+            if existing_vectors is not None:
+                print(f"🔁 Merging {len(existing_vectors)} existing vectors with {len(vectors)} new ones...")
+                vectors = np.concatenate([existing_vectors, vectors], axis=0)
+                enriched_chunks = existing_chunks + enriched_chunks
+        except Exception as e:
+            print(f"⚠️ Could not load existing FAISS for {provider_id}: {e}")
+
+    save_faiss_index(vectors=vectors, chunks=enriched_chunks, doc_id=provider_id, provider_dir=str(provider_dir))
+    print(f"💾 Embedded text block for provider {provider_id} ({len(enriched_chunks)} chunks).")
+
+    return len(enriched_chunks)

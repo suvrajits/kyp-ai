@@ -1,7 +1,7 @@
 [
   {
-    "id": "APP-20251103-00028",
-    "application_id": "APP-20251103-00028",
+    "id": "APP-20251103-00034",
+    "application_id": "APP-20251103-00034",
     "provider": {
       "provider_name": "Sanjeevani New Delhi General Hospital",
       "license_number": "DL-HOSP-2019-1001",
@@ -328,7 +328,7 @@
       }
     },
     "match_recommendation": "Strong Match",
-    "created_at": "2025-11-03T14:15:32.054621",
+    "created_at": "2025-11-03T16:52:19.652378",
     "documents": [
       "provider_1.pdf"
     ],
@@ -336,38 +336,27 @@
     "history": [
       {
         "event": "Created",
-        "timestamp": "2025-11-03T14:15:32.056175"
+        "timestamp": "2025-11-03T16:52:19.653402"
       },
       {
         "event": "Pre-Risk Snapshot Preserved",
         "score": 10.0,
-        "timestamp": "2025-11-03T14:15:32.543102",
+        "timestamp": "2025-11-03T16:52:20.202961",
         "note": "Stored for comparison against post-acceptance risk evaluation."
       },
       {
         "event": "Pre-Risk Snapshot Linked",
-        "timestamp": "2025-11-03T14:15:32.543102",
-        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
-      },
-      {
-        "event": "Pre-Risk Snapshot Preserved",
-        "score": 10.0,
-        "timestamp": "2025-11-03T14:16:23.835072",
-        "note": "Stored for comparison against post-acceptance risk evaluation."
-      },
-      {
-        "event": "Pre-Risk Snapshot Linked",
-        "timestamp": "2025-11-03T14:16:23.835072",
+        "timestamp": "2025-11-03T16:52:20.202961",
         "note": "Preliminary risk snapshot linked to provider record for drift comparison."
       },
       {
         "event": "Application Accepted & Promoted",
-        "timestamp": "2025-11-03T14:16:28.659942",
-        "note": "Promoted from TEMP-ID-069 \u2192 APP-20251103-00028 and FAISS built."
+        "timestamp": "2025-11-03T16:54:44.667047",
+        "note": "Promoted from TEMP-ID-078 \u2192 APP-20251103-00034 and FAISS built."
       },
       {
         "event": "Risk Evaluation Triggered",
-        "timestamp": "2025-11-03T14:16:29.661206"
+        "timestamp": "2025-11-03T16:54:45.687447"
       }
     ],
     "pre_risk_snapshot": {
@@ -381,12 +370,836 @@
         "reputation": 10.0,
         "supplychain": 10.0
       },
-      "timestamp": "2025-11-03T14:16:23.835072"
+      "timestamp": "2025-11-03T16:52:20.202961"
+    },
+    "risk_status": "Completed",
+    "risk_score": 14,
+    "risk_level": "Low",
+    "risk_triggered_at": "2025-11-03T16:54:45.684423",
+    "risk": {
+      "aggregated_score": 14,
+      "category_scores": {
+        "cybersecurity": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "data_privacy": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "operational": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "financial": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "regulatory": {
+          "score": 40,
+          "note": "simulated response"
+        },
+        "reputation": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "supplychain": {
+          "score": 10,
+          "note": "simulated response"
+        }
+      },
+      "updated_at": "2025-11-03T16:54:46.502966"
+    }
+  },
+  {
+    "id": "APP-20251103-00035",
+    "application_id": "APP-20251103-00035",
+    "provider": {
+      "provider_name": "MediTrust Gurgaon General Hospital",
+      "license_number": "HR/MC/2020/01018",
+      "type_of_institution": "Primary Care Hospital",
+      "address": "449 Medical Avenue, Gurgaon, Haryana - 623107",
+      "ownership_details": "Sharma Proprietor",
+      "license_issue_date": "2021-03-05",
+      "license_expiry_date": "2026-03-05",
+      "details_of_services_offered": "Outpatient, Diagnostic",
+      "number_of_beds": "30",
+      "qualification_and_number_of_medical_staff": "3 Doctors, 16 Nurses, 10 Technicians",
+      "licensing_authority_name": "State Health Department",
+      "infrastructure_standards_compliance": "Building Safety Certificate: No; Fire Safety: No",
+      "biomedical_waste_management_authorization": "Yes",
+      "pollution_control_board_clearance": "No",
+      "consent_to_operate_certificate": "No",
+      "drug_license": "Yes",
+      "radiology_radiation_safety_license": "Yes",
+      "registration_under_any_special_acts": "Transplantation of Human Organs Act",
+      "display_of_hospital_charges_and_facilities": "No",
+      "compliance_with_minimum_standards": "No",
+      "details_of_support_services": "All Services",
+      "list_of_equipment_and_medical_devices_used": "103 devices",
+      "fire_and_lift_inspection_certificates": "Updated",
+      "accreditation_status": "NABH"
+    },
+    "status": "Under Review",
+    "confidence": 1.0,
+    "match_percent": 100.0,
+    "match_result": {
+      "match_percent": 100.0,
+      "per_field": {
+        "provider_name": {
+          "incoming": "MediTrust Gurgaon General Hospital",
+          "registry": "MediTrust Gurgaon General Hospital",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "license_number": {
+          "incoming": "HR/MC/2020/01018",
+          "registry": "HR/MC/2020/01018",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "type_of_institution": {
+          "incoming": "Primary Care Hospital",
+          "registry": "Primary Care Hospital",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "address": {
+          "incoming": "449 Medical Avenue, Gurgaon, Haryana - 623107",
+          "registry": "449 Medical Avenue, Gurgaon, Haryana - 623107",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "ownership_details": {
+          "incoming": "Sharma Proprietor",
+          "registry": "Sharma Proprietor",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "licensing_authority_name": {
+          "incoming": "State Health Department",
+          "registry": "State Health Department",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "license_issue_date": {
+          "incoming": "2021-03-05",
+          "registry": "2021-03-05",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "license_expiry_date": {
+          "incoming": "2026-03-05",
+          "registry": "2026-03-05",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "details_of_services_offered": {
+          "incoming": "Outpatient, Diagnostic",
+          "registry": "Outpatient, Diagnostic",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "number_of_beds": {
+          "incoming": "30",
+          "registry": "30",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "qualification_and_number_of_medical_staff": {
+          "incoming": "3 Doctors, 16 Nurses, 10 Technicians",
+          "registry": "3 Doctors, 16 Nurses, 10 Technicians",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "infrastructure_standards_compliance": {
+          "incoming": "Building Safety Certificate: No; Fire Safety: No",
+          "registry": "Building Safety Certificate: No; Fire Safety: No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "biomedical_waste_management_authorization": {
+          "incoming": "Yes",
+          "registry": "Yes",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "pollution_control_board_clearance": {
+          "incoming": "No",
+          "registry": "No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "consent_to_operate_certificate": {
+          "incoming": "No",
+          "registry": "No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "drug_license": {
+          "incoming": "Yes",
+          "registry": "Yes",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "radiology_radiation_safety_license": {
+          "incoming": "Yes",
+          "registry": "Yes",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "registration_under_any_special_acts": {
+          "incoming": "Transplantation of Human Organs Act",
+          "registry": "Transplantation of Human Organs Act",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "display_of_hospital_charges_and_facilities": {
+          "incoming": "No",
+          "registry": "Not Displayed",
+          "score": 0.27,
+          "method": "string_similarity"
+        },
+        "compliance_with_minimum_standards": {
+          "incoming": "No",
+          "registry": "No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "details_of_support_services": {
+          "incoming": "All Services",
+          "registry": "All Services",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "list_of_equipment_and_medical_devices_used": {
+          "incoming": "103 devices",
+          "registry": "103 devices (list available on request)",
+          "score": 0.44,
+          "method": "string_similarity"
+        },
+        "fire_and_lift_inspection_certificates": {
+          "incoming": "Updated",
+          "registry": "Updated",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "accreditation_status": {
+          "incoming": "NABH",
+          "registry": "NABH",
+          "score": 1.0,
+          "method": "string_similarity"
+        }
+      },
+      "recommendation": "Strong Match"
+    },
+    "match_explanation": {
+      "provider_name": {
+        "incoming": "MediTrust Gurgaon General Hospital",
+        "registry": "MediTrust Gurgaon General Hospital",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "license_number": {
+        "incoming": "HR/MC/2020/01018",
+        "registry": "HR/MC/2020/01018",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "type_of_institution": {
+        "incoming": "Primary Care Hospital",
+        "registry": "Primary Care Hospital",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "address": {
+        "incoming": "449 Medical Avenue, Gurgaon, Haryana - 623107",
+        "registry": "449 Medical Avenue, Gurgaon, Haryana - 623107",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "ownership_details": {
+        "incoming": "Sharma Proprietor",
+        "registry": "Sharma Proprietor",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "licensing_authority_name": {
+        "incoming": "State Health Department",
+        "registry": "State Health Department",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "license_issue_date": {
+        "incoming": "2021-03-05",
+        "registry": "2021-03-05",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "license_expiry_date": {
+        "incoming": "2026-03-05",
+        "registry": "2026-03-05",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "details_of_services_offered": {
+        "incoming": "Outpatient, Diagnostic",
+        "registry": "Outpatient, Diagnostic",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "number_of_beds": {
+        "incoming": "30",
+        "registry": "30",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "qualification_and_number_of_medical_staff": {
+        "incoming": "3 Doctors, 16 Nurses, 10 Technicians",
+        "registry": "3 Doctors, 16 Nurses, 10 Technicians",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "infrastructure_standards_compliance": {
+        "incoming": "Building Safety Certificate: No; Fire Safety: No",
+        "registry": "Building Safety Certificate: No; Fire Safety: No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "biomedical_waste_management_authorization": {
+        "incoming": "Yes",
+        "registry": "Yes",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "pollution_control_board_clearance": {
+        "incoming": "No",
+        "registry": "No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "consent_to_operate_certificate": {
+        "incoming": "No",
+        "registry": "No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "drug_license": {
+        "incoming": "Yes",
+        "registry": "Yes",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "radiology_radiation_safety_license": {
+        "incoming": "Yes",
+        "registry": "Yes",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "registration_under_any_special_acts": {
+        "incoming": "Transplantation of Human Organs Act",
+        "registry": "Transplantation of Human Organs Act",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "display_of_hospital_charges_and_facilities": {
+        "incoming": "No",
+        "registry": "Not Displayed",
+        "score": 0.27,
+        "method": "string_similarity"
+      },
+      "compliance_with_minimum_standards": {
+        "incoming": "No",
+        "registry": "No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "details_of_support_services": {
+        "incoming": "All Services",
+        "registry": "All Services",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "list_of_equipment_and_medical_devices_used": {
+        "incoming": "103 devices",
+        "registry": "103 devices (list available on request)",
+        "score": 0.44,
+        "method": "string_similarity"
+      },
+      "fire_and_lift_inspection_certificates": {
+        "incoming": "Updated",
+        "registry": "Updated",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "accreditation_status": {
+        "incoming": "NABH",
+        "registry": "NABH",
+        "score": 1.0,
+        "method": "string_similarity"
+      }
+    },
+    "match_recommendation": "Strong Match",
+    "created_at": "2025-11-03T17:05:36.831107",
+    "documents": [
+      "provider_18.pdf"
+    ],
+    "messages": [],
+    "history": [
+      {
+        "event": "Created",
+        "timestamp": "2025-11-03T17:05:36.836149"
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 10.0,
+        "timestamp": "2025-11-03T17:05:37.395626",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-03T17:05:37.395626",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Application Accepted & Promoted",
+        "timestamp": "2025-11-03T17:05:49.388245",
+        "note": "Promoted from TEMP-ID-079 \u2192 APP-20251103-00035 and FAISS built."
+      },
+      {
+        "event": "Risk Evaluation Triggered",
+        "timestamp": "2025-11-03T17:05:50.395925"
+      }
+    ],
+    "pre_risk_snapshot": {
+      "score": 10.0,
+      "categories": {
+        "cybersecurity": 10.0,
+        "data_privacy": 10.0,
+        "operational": 10.0,
+        "financial": 10.0,
+        "regulatory": 10.0,
+        "reputation": 10.0,
+        "supplychain": 10.0
+      },
+      "timestamp": "2025-11-03T17:05:37.395626"
+    },
+    "risk_status": "Completed",
+    "risk_score": 14,
+    "risk_level": "Low",
+    "risk_triggered_at": "2025-11-03T17:05:50.392660",
+    "risk": {
+      "aggregated_score": 14,
+      "category_scores": {
+        "cybersecurity": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "data_privacy": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "operational": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "financial": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "regulatory": {
+          "score": 40,
+          "note": "simulated response"
+        },
+        "reputation": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "supplychain": {
+          "score": 10,
+          "note": "simulated response"
+        }
+      },
+      "updated_at": "2025-11-03T17:05:51.203579"
+    }
+  },
+  {
+    "id": "APP-20251103-00036",
+    "application_id": "APP-20251103-00036",
+    "provider": {
+      "provider_name": "Vijaya Surat Diagnostic Centre Trust",
+      "license_number": "GJ-LIC-2025-01032",
+      "type_of_institution": "Clinic",
+      "address": "340 Health Street, Surat, Gujarat - 749661",
+      "ownership_details": "MedLife Corporation",
+      "license_issue_date": "2024-06-24",
+      "license_expiry_date": "2029-06-24",
+      "details_of_services_offered": "Surgery, Emergency, ICU",
+      "number_of_beds": "20",
+      "qualification_and_number_of_medical_staff": "3 Doctors, 20 Nurses, 16 Technicians",
+      "licensing_authority_name": "State Health Department",
+      "infrastructure_standards_compliance": "Building Safety Certificate: No; Fire Safety: No",
+      "biomedical_waste_management_authorization": "No",
+      "pollution_control_board_clearance": "Yes",
+      "consent_to_operate_certificate": "No",
+      "drug_license": "Yes",
+      "radiology_radiation_safety_license": "No",
+      "registration_under_any_special_acts": "None",
+      "display_of_hospital_charges_and_facilities": "Yes",
+      "compliance_with_minimum_standards": "No",
+      "details_of_support_services": "All Services",
+      "list_of_equipment_and_medical_devices_used": "90 devices",
+      "fire_and_lift_inspection_certificates": "Not Applicable",
+      "accreditation_status": "NABL"
+    },
+    "status": "Under Review",
+    "confidence": 0.95,
+    "match_percent": 95.5,
+    "match_result": {
+      "match_percent": 95.5,
+      "per_field": {
+        "provider_name": {
+          "incoming": "Vijaya Surat Diagnostic Centre Trust",
+          "registry": "Vijaya Surat Diagnostic Centre",
+          "score": 0.91,
+          "method": "string_similarity"
+        },
+        "license_number": {
+          "incoming": "GJ-LIC-2025-01032",
+          "registry": "GJ-LIC-2025-01032",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "type_of_institution": {
+          "incoming": "Clinic",
+          "registry": "Clinic",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "address": {
+          "incoming": "340 Health Street, Surat, Gujarat - 749661",
+          "registry": "340 Health Street, Surat, Gujarat - 749661",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "ownership_details": {
+          "incoming": "MedLife Corporation",
+          "registry": "MedLife Corporation",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "licensing_authority_name": {
+          "incoming": "State Health Department",
+          "registry": "State Health Department",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "license_issue_date": {
+          "incoming": "2024-06-24",
+          "registry": "2024-06-24",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "license_expiry_date": {
+          "incoming": "2029-06-24",
+          "registry": "2029-06-24",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "details_of_services_offered": {
+          "incoming": "Surgery, Emergency, ICU",
+          "registry": "Surgery, Emergency, ICU",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "number_of_beds": {
+          "incoming": "20",
+          "registry": "20",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "qualification_and_number_of_medical_staff": {
+          "incoming": "3 Doctors, 20 Nurses, 16 Technicians",
+          "registry": "3 Doctors, 20 Nurses, 16 Technicians",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "infrastructure_standards_compliance": {
+          "incoming": "Building Safety Certificate: No; Fire Safety: No",
+          "registry": "Building Safety Certificate: No; Fire Safety: No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "biomedical_waste_management_authorization": {
+          "incoming": "No",
+          "registry": "No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "pollution_control_board_clearance": {
+          "incoming": "Yes",
+          "registry": "Yes",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "consent_to_operate_certificate": {
+          "incoming": "No",
+          "registry": "No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "drug_license": {
+          "incoming": "Yes",
+          "registry": "Yes",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "radiology_radiation_safety_license": {
+          "incoming": "No",
+          "registry": "No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "registration_under_any_special_acts": {
+          "incoming": "None",
+          "registry": "None",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "display_of_hospital_charges_and_facilities": {
+          "incoming": "Yes",
+          "registry": "Displayed",
+          "score": 0.33,
+          "method": "string_similarity"
+        },
+        "compliance_with_minimum_standards": {
+          "incoming": "No",
+          "registry": "No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "details_of_support_services": {
+          "incoming": "All Services",
+          "registry": "All Services",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "list_of_equipment_and_medical_devices_used": {
+          "incoming": "90 devices",
+          "registry": "90 devices (list available on request)",
+          "score": 0.42,
+          "method": "string_similarity"
+        },
+        "fire_and_lift_inspection_certificates": {
+          "incoming": "Not Applicable",
+          "registry": "Not Applicable",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "accreditation_status": {
+          "incoming": "NABL",
+          "registry": "NABL",
+          "score": 1.0,
+          "method": "string_similarity"
+        }
+      },
+      "recommendation": "Strong Match"
+    },
+    "match_explanation": {
+      "provider_name": {
+        "incoming": "Vijaya Surat Diagnostic Centre Trust",
+        "registry": "Vijaya Surat Diagnostic Centre",
+        "score": 0.91,
+        "method": "string_similarity"
+      },
+      "license_number": {
+        "incoming": "GJ-LIC-2025-01032",
+        "registry": "GJ-LIC-2025-01032",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "type_of_institution": {
+        "incoming": "Clinic",
+        "registry": "Clinic",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "address": {
+        "incoming": "340 Health Street, Surat, Gujarat - 749661",
+        "registry": "340 Health Street, Surat, Gujarat - 749661",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "ownership_details": {
+        "incoming": "MedLife Corporation",
+        "registry": "MedLife Corporation",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "licensing_authority_name": {
+        "incoming": "State Health Department",
+        "registry": "State Health Department",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "license_issue_date": {
+        "incoming": "2024-06-24",
+        "registry": "2024-06-24",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "license_expiry_date": {
+        "incoming": "2029-06-24",
+        "registry": "2029-06-24",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "details_of_services_offered": {
+        "incoming": "Surgery, Emergency, ICU",
+        "registry": "Surgery, Emergency, ICU",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "number_of_beds": {
+        "incoming": "20",
+        "registry": "20",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "qualification_and_number_of_medical_staff": {
+        "incoming": "3 Doctors, 20 Nurses, 16 Technicians",
+        "registry": "3 Doctors, 20 Nurses, 16 Technicians",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "infrastructure_standards_compliance": {
+        "incoming": "Building Safety Certificate: No; Fire Safety: No",
+        "registry": "Building Safety Certificate: No; Fire Safety: No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "biomedical_waste_management_authorization": {
+        "incoming": "No",
+        "registry": "No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "pollution_control_board_clearance": {
+        "incoming": "Yes",
+        "registry": "Yes",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "consent_to_operate_certificate": {
+        "incoming": "No",
+        "registry": "No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "drug_license": {
+        "incoming": "Yes",
+        "registry": "Yes",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "radiology_radiation_safety_license": {
+        "incoming": "No",
+        "registry": "No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "registration_under_any_special_acts": {
+        "incoming": "None",
+        "registry": "None",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "display_of_hospital_charges_and_facilities": {
+        "incoming": "Yes",
+        "registry": "Displayed",
+        "score": 0.33,
+        "method": "string_similarity"
+      },
+      "compliance_with_minimum_standards": {
+        "incoming": "No",
+        "registry": "No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "details_of_support_services": {
+        "incoming": "All Services",
+        "registry": "All Services",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "list_of_equipment_and_medical_devices_used": {
+        "incoming": "90 devices",
+        "registry": "90 devices (list available on request)",
+        "score": 0.42,
+        "method": "string_similarity"
+      },
+      "fire_and_lift_inspection_certificates": {
+        "incoming": "Not Applicable",
+        "registry": "Not Applicable",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "accreditation_status": {
+        "incoming": "NABL",
+        "registry": "NABL",
+        "score": 1.0,
+        "method": "string_similarity"
+      }
+    },
+    "match_recommendation": "Strong Match",
+    "created_at": "2025-11-03T17:10:25.716339",
+    "documents": [
+      "provider_32.pdf"
+    ],
+    "messages": [],
+    "history": [
+      {
+        "event": "Created",
+        "timestamp": "2025-11-03T17:10:25.726071"
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 12.9,
+        "timestamp": "2025-11-03T17:10:26.286052",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-03T17:10:26.286052",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Application Accepted & Promoted",
+        "timestamp": "2025-11-03T17:10:33.194115",
+        "note": "Promoted from TEMP-ID-080 \u2192 APP-20251103-00036 and FAISS built."
+      },
+      {
+        "event": "Risk Evaluation Triggered",
+        "timestamp": "2025-11-03T17:10:34.211370"
+      }
+    ],
+    "pre_risk_snapshot": {
+      "score": 12.9,
+      "categories": {
+        "cybersecurity": 30.0,
+        "data_privacy": 10.0,
+        "operational": 10.0,
+        "financial": 10.0,
+        "regulatory": 10.0,
+        "reputation": 10.0,
+        "supplychain": 10.0
+      },
+      "timestamp": "2025-11-03T17:10:26.286052"
     },
     "risk_status": "Completed",
     "risk_score": 10,
     "risk_level": "Low",
-    "risk_triggered_at": "2025-11-03T14:16:29.658388",
+    "risk_triggered_at": "2025-11-03T17:10:34.202038",
     "risk": {
       "aggregated_score": 10,
       "category_scores": {
@@ -419,71 +1232,71 @@
           "note": "simulated response"
         }
       },
-      "updated_at": "2025-11-03T14:16:30.281086"
+      "updated_at": "2025-11-03T17:10:34.716230"
     }
   },
   {
-    "id": "TEMP-ID-070",
-    "application_id": "TEMP-ID-070",
+    "id": "APP-20251103-00037",
+    "application_id": "APP-20251103-00037",
     "provider": {
-      "provider_name": "Saraswati Kolkata General Hospital",
-      "license_number": "WB/MC/2023/01002",
-      "type_of_institution": "Clinic",
-      "address": "275 MG Road, Kolkata, West Bengal - 161991",
-      "ownership_details": "HealthCare Pvt. Ltd.",
-      "license_issue_date": "2020-04-08",
-      "license_expiry_date": "2025-04-08",
-      "details_of_services_offered": "All Services",
-      "number_of_beds": "20",
-      "qualification_and_number_of_medical_staff": "19 Doctors, 22 Nurses, 4 Technicians",
+      "provider_name": "Lifeline Jodhpur General Hospital Foundation",
+      "license_number": "RJ-HOSP-2025-1042",
+      "type_of_institution": "Primary Care Hospital",
+      "address": "333 Health Street, Jodhpur, Rajasthan - 131199",
+      "ownership_details": "Sharma Proprietor",
+      "license_issue_date": "2022-09-25",
+      "license_expiry_date": "2027-09-25",
+      "details_of_services_offered": "Outpatient",
+      "number_of_beds": "200",
+      "qualification_and_number_of_medical_staff": "27 Doctors, 29 Nurses, 16 Technicians",
       "licensing_authority_name": "District Health Authority",
-      "infrastructure_standards_compliance": "Building Safety Certificate: No; Fire Safety: No",
-      "biomedical_waste_management_authorization": "No",
+      "infrastructure_standards_compliance": "Building Safety Certificate: Yes; Fire Safety: Pending",
+      "biomedical_waste_management_authorization": "Yes",
       "pollution_control_board_clearance": "No",
       "consent_to_operate_certificate": "No",
-      "drug_license": "Yes",
+      "drug_license": "No",
       "radiology_radiation_safety_license": "No",
-      "registration_under_any_special_acts": "PNDT Act",
-      "display_of_hospital_charges_and_facilities": "No",
-      "compliance_with_minimum_standards": "No",
+      "registration_under_any_special_acts": "None",
+      "display_of_hospital_charges_and_facilities": "Yest Displayed",
+      "compliance_with_minimum_standards": "Yes",
       "details_of_support_services": "Pharmacy, Laboratory",
-      "list_of_equipment_and_medical_devices_used": "191 devices",
-      "fire_and_lift_inspection_certificates": "Not Applicable",
-      "accreditation_status": "JCI"
+      "list_of_equipment_and_medical_devices_used": "37 devices",
+      "fire_and_lift_inspection_certificates": "Updated",
+      "accreditation_status": "None"
     },
-    "status": "Denied",
-    "confidence": 0.94,
-    "match_percent": 93.5,
+    "status": "Under Review",
+    "confidence": 0.93,
+    "match_percent": 93.0,
     "match_result": {
-      "match_percent": 93.5,
+      "match_percent": 93.0,
       "per_field": {
         "provider_name": {
-          "incoming": "Saraswati Kolkata General Hospital",
-          "registry": "Saraswati Kolkata Hospital",
-          "score": 0.87,
+          "incoming": "Lifeline Jodhpur General Hospital Foundation",
+          "registry": "Lifeline Jodhpur General Hospital",
+          "score": 0.86,
           "method": "string_similarity"
         },
         "license_number": {
-          "incoming": "WB/MC/2023/01002",
-          "registry": "WB/MC/2023/01002",
+          "incoming": "RJ-HOSP-2025-1042",
+          "registry": "RJ-HOSP-2025-1042",
           "score": 1.0,
           "method": "string_similarity"
         },
         "type_of_institution": {
-          "incoming": "Clinic",
-          "registry": "Clinic",
+          "incoming": "Primary Care Hospital",
+          "registry": "Primary Care Hospital",
           "score": 1.0,
           "method": "string_similarity"
         },
         "address": {
-          "incoming": "275 MG Road, Kolkata, West Bengal - 161991",
-          "registry": "275 MG Road, Kolkata, West Bengal - 161991",
+          "incoming": "333 Health Street, Jodhpur, Rajasthan - 131199",
+          "registry": "333 Health Street, Jodhpur, Rajasthan - 131199",
           "score": 1.0,
           "method": "string_similarity"
         },
         "ownership_details": {
-          "incoming": "HealthCare Pvt. Ltd.",
-          "registry": "HealthCare Pvt. Ltd.",
+          "incoming": "Sharma Proprietor",
+          "registry": "Sharma Proprietor",
           "score": 1.0,
           "method": "string_similarity"
         },
@@ -494,44 +1307,44 @@
           "method": "string_similarity"
         },
         "license_issue_date": {
-          "incoming": "2020-04-08",
-          "registry": "2020-04-08",
+          "incoming": "2022-09-25",
+          "registry": "2022-09-25",
           "score": 1.0,
           "method": "string_similarity"
         },
         "license_expiry_date": {
-          "incoming": "2025-04-08",
-          "registry": "2025-04-08",
+          "incoming": "2027-09-25",
+          "registry": "2027-09-25",
           "score": 1.0,
           "method": "string_similarity"
         },
         "details_of_services_offered": {
-          "incoming": "All Services",
-          "registry": "All Services",
+          "incoming": "Outpatient",
+          "registry": "Outpatient",
           "score": 1.0,
           "method": "string_similarity"
         },
         "number_of_beds": {
-          "incoming": "20",
-          "registry": "20",
+          "incoming": "200",
+          "registry": "200",
           "score": 1.0,
           "method": "string_similarity"
         },
         "qualification_and_number_of_medical_staff": {
-          "incoming": "19 Doctors, 22 Nurses, 4 Technicians",
-          "registry": "19 Doctors, 22 Nurses, 4 Technicians",
+          "incoming": "27 Doctors, 29 Nurses, 16 Technicians",
+          "registry": "27 Doctors, 29 Nurses, 16 Technicians",
           "score": 1.0,
           "method": "string_similarity"
         },
         "infrastructure_standards_compliance": {
-          "incoming": "Building Safety Certificate: No; Fire Safety: No",
-          "registry": "Building Safety Certificate: No; Fire Safety: No",
+          "incoming": "Building Safety Certificate: Yes; Fire Safety: Pending",
+          "registry": "Building Safety Certificate: Yes; Fire Safety: Pending",
           "score": 1.0,
           "method": "string_similarity"
         },
         "biomedical_waste_management_authorization": {
-          "incoming": "No",
-          "registry": "No",
+          "incoming": "Yes",
+          "registry": "Yes",
           "score": 1.0,
           "method": "string_similarity"
         },
@@ -548,8 +1361,8 @@
           "method": "string_similarity"
         },
         "drug_license": {
-          "incoming": "Yes",
-          "registry": "Yes",
+          "incoming": "No",
+          "registry": "No",
           "score": 1.0,
           "method": "string_similarity"
         },
@@ -560,20 +1373,20 @@
           "method": "string_similarity"
         },
         "registration_under_any_special_acts": {
-          "incoming": "PNDT Act",
-          "registry": "PNDT Act",
+          "incoming": "None",
+          "registry": "None",
           "score": 1.0,
           "method": "string_similarity"
         },
         "display_of_hospital_charges_and_facilities": {
-          "incoming": "No",
+          "incoming": "Yest Displayed",
           "registry": "Not Displayed",
-          "score": 0.27,
+          "score": 0.81,
           "method": "string_similarity"
         },
         "compliance_with_minimum_standards": {
-          "incoming": "No",
-          "registry": "No",
+          "incoming": "Yes",
+          "registry": "Yes",
           "score": 1.0,
           "method": "string_similarity"
         },
@@ -584,20 +1397,20 @@
           "method": "string_similarity"
         },
         "list_of_equipment_and_medical_devices_used": {
-          "incoming": "191 devices",
-          "registry": "191 devices (list available on request)",
-          "score": 0.44,
+          "incoming": "37 devices",
+          "registry": "37 devices (list available on request)",
+          "score": 0.42,
           "method": "string_similarity"
         },
         "fire_and_lift_inspection_certificates": {
-          "incoming": "Not Applicable",
-          "registry": "Not Applicable",
+          "incoming": "Updated",
+          "registry": "Updated",
           "score": 1.0,
           "method": "string_similarity"
         },
         "accreditation_status": {
-          "incoming": "JCI",
-          "registry": "JCI",
+          "incoming": "None",
+          "registry": "None",
           "score": 1.0,
           "method": "string_similarity"
         }
@@ -606,32 +1419,32 @@
     },
     "match_explanation": {
       "provider_name": {
-        "incoming": "Saraswati Kolkata General Hospital",
-        "registry": "Saraswati Kolkata Hospital",
-        "score": 0.87,
+        "incoming": "Lifeline Jodhpur General Hospital Foundation",
+        "registry": "Lifeline Jodhpur General Hospital",
+        "score": 0.86,
         "method": "string_similarity"
       },
       "license_number": {
-        "incoming": "WB/MC/2023/01002",
-        "registry": "WB/MC/2023/01002",
+        "incoming": "RJ-HOSP-2025-1042",
+        "registry": "RJ-HOSP-2025-1042",
         "score": 1.0,
         "method": "string_similarity"
       },
       "type_of_institution": {
-        "incoming": "Clinic",
-        "registry": "Clinic",
+        "incoming": "Primary Care Hospital",
+        "registry": "Primary Care Hospital",
         "score": 1.0,
         "method": "string_similarity"
       },
       "address": {
-        "incoming": "275 MG Road, Kolkata, West Bengal - 161991",
-        "registry": "275 MG Road, Kolkata, West Bengal - 161991",
+        "incoming": "333 Health Street, Jodhpur, Rajasthan - 131199",
+        "registry": "333 Health Street, Jodhpur, Rajasthan - 131199",
         "score": 1.0,
         "method": "string_similarity"
       },
       "ownership_details": {
-        "incoming": "HealthCare Pvt. Ltd.",
-        "registry": "HealthCare Pvt. Ltd.",
+        "incoming": "Sharma Proprietor",
+        "registry": "Sharma Proprietor",
         "score": 1.0,
         "method": "string_similarity"
       },
@@ -642,44 +1455,44 @@
         "method": "string_similarity"
       },
       "license_issue_date": {
-        "incoming": "2020-04-08",
-        "registry": "2020-04-08",
+        "incoming": "2022-09-25",
+        "registry": "2022-09-25",
         "score": 1.0,
         "method": "string_similarity"
       },
       "license_expiry_date": {
-        "incoming": "2025-04-08",
-        "registry": "2025-04-08",
+        "incoming": "2027-09-25",
+        "registry": "2027-09-25",
         "score": 1.0,
         "method": "string_similarity"
       },
       "details_of_services_offered": {
-        "incoming": "All Services",
-        "registry": "All Services",
+        "incoming": "Outpatient",
+        "registry": "Outpatient",
         "score": 1.0,
         "method": "string_similarity"
       },
       "number_of_beds": {
-        "incoming": "20",
-        "registry": "20",
+        "incoming": "200",
+        "registry": "200",
         "score": 1.0,
         "method": "string_similarity"
       },
       "qualification_and_number_of_medical_staff": {
-        "incoming": "19 Doctors, 22 Nurses, 4 Technicians",
-        "registry": "19 Doctors, 22 Nurses, 4 Technicians",
+        "incoming": "27 Doctors, 29 Nurses, 16 Technicians",
+        "registry": "27 Doctors, 29 Nurses, 16 Technicians",
         "score": 1.0,
         "method": "string_similarity"
       },
       "infrastructure_standards_compliance": {
-        "incoming": "Building Safety Certificate: No; Fire Safety: No",
-        "registry": "Building Safety Certificate: No; Fire Safety: No",
+        "incoming": "Building Safety Certificate: Yes; Fire Safety: Pending",
+        "registry": "Building Safety Certificate: Yes; Fire Safety: Pending",
         "score": 1.0,
         "method": "string_similarity"
       },
       "biomedical_waste_management_authorization": {
-        "incoming": "No",
-        "registry": "No",
+        "incoming": "Yes",
+        "registry": "Yes",
         "score": 1.0,
         "method": "string_similarity"
       },
@@ -696,8 +1509,8 @@
         "method": "string_similarity"
       },
       "drug_license": {
-        "incoming": "Yes",
-        "registry": "Yes",
+        "incoming": "No",
+        "registry": "No",
         "score": 1.0,
         "method": "string_similarity"
       },
@@ -708,20 +1521,20 @@
         "method": "string_similarity"
       },
       "registration_under_any_special_acts": {
-        "incoming": "PNDT Act",
-        "registry": "PNDT Act",
+        "incoming": "None",
+        "registry": "None",
         "score": 1.0,
         "method": "string_similarity"
       },
       "display_of_hospital_charges_and_facilities": {
-        "incoming": "No",
+        "incoming": "Yest Displayed",
         "registry": "Not Displayed",
-        "score": 0.27,
+        "score": 0.81,
         "method": "string_similarity"
       },
       "compliance_with_minimum_standards": {
-        "incoming": "No",
-        "registry": "No",
+        "incoming": "Yes",
+        "registry": "Yes",
         "score": 1.0,
         "method": "string_similarity"
       },
@@ -732,94 +1545,64 @@
         "method": "string_similarity"
       },
       "list_of_equipment_and_medical_devices_used": {
-        "incoming": "191 devices",
-        "registry": "191 devices (list available on request)",
-        "score": 0.44,
+        "incoming": "37 devices",
+        "registry": "37 devices (list available on request)",
+        "score": 0.42,
         "method": "string_similarity"
       },
       "fire_and_lift_inspection_certificates": {
-        "incoming": "Not Applicable",
-        "registry": "Not Applicable",
+        "incoming": "Updated",
+        "registry": "Updated",
         "score": 1.0,
         "method": "string_similarity"
       },
       "accreditation_status": {
-        "incoming": "JCI",
-        "registry": "JCI",
+        "incoming": "None",
+        "registry": "None",
         "score": 1.0,
         "method": "string_similarity"
       }
     },
     "match_recommendation": "Strong Match",
-    "created_at": "2025-11-03T14:15:56.108712",
+    "created_at": "2025-11-03T18:44:45.190908",
     "documents": [
-      "provider_2.pdf"
+      "provider_92.pdf"
     ],
     "messages": [],
     "history": [
       {
         "event": "Created",
-        "timestamp": "2025-11-03T14:15:56.111742"
-      },
-      {
-        "event": "Pre-Risk Snapshot Preserved",
-        "score": 15.7,
-        "timestamp": "2025-11-03T14:15:56.615413",
-        "note": "Stored for comparison against post-acceptance risk evaluation."
-      },
-      {
-        "event": "Pre-Risk Snapshot Linked",
-        "timestamp": "2025-11-03T14:15:56.615413",
-        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
-      },
-      {
-        "event": "Pre-Risk Snapshot Preserved",
-        "score": 12.9,
-        "timestamp": "2025-11-03T14:16:03.092018",
-        "note": "Stored for comparison against post-acceptance risk evaluation."
-      },
-      {
-        "event": "Pre-Risk Snapshot Linked",
-        "timestamp": "2025-11-03T14:16:03.092018",
-        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+        "timestamp": "2025-11-03T18:44:45.196688"
       },
       {
         "event": "Pre-Risk Snapshot Preserved",
         "score": 10.0,
-        "timestamp": "2025-11-03T14:16:05.292380",
+        "timestamp": "2025-11-03T18:44:45.774370",
         "note": "Stored for comparison against post-acceptance risk evaluation."
       },
       {
         "event": "Pre-Risk Snapshot Linked",
-        "timestamp": "2025-11-03T14:16:05.292380",
+        "timestamp": "2025-11-03T18:44:45.774370",
         "note": "Preliminary risk snapshot linked to provider record for drift comparison."
       },
       {
-        "event": "Pre-Risk Snapshot Preserved",
-        "score": 10.0,
-        "timestamp": "2025-11-03T14:16:07.357346",
-        "note": "Stored for comparison against post-acceptance risk evaluation."
+        "event": "Application Accepted & Promoted",
+        "timestamp": "2025-11-03T18:45:17.748840",
+        "note": "Promoted from TEMP-ID-081 \u2192 APP-20251103-00037 and FAISS built."
       },
       {
-        "event": "Pre-Risk Snapshot Linked",
-        "timestamp": "2025-11-03T14:16:07.357346",
-        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+        "event": "Risk Evaluation Pipeline Triggered",
+        "timestamp": "2025-11-03T18:45:18.767819"
       },
       {
-        "event": "Pre-Risk Snapshot Preserved",
-        "score": 10.0,
-        "timestamp": "2025-11-03T14:16:10.504611",
-        "note": "Stored for comparison against post-acceptance risk evaluation."
+        "event": "Risk Evaluation Completed",
+        "timestamp": "2025-11-03T18:45:20.107427",
+        "score": 10,
+        "note": "Final risk score updated and embedded."
       },
       {
-        "event": "Pre-Risk Snapshot Linked",
-        "timestamp": "2025-11-03T14:16:10.504611",
-        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
-      },
-      {
-        "event": "Application Denied",
-        "reason": "deny app",
-        "timestamp": "2025-11-03T14:16:20.452028"
+        "event": "Risk Evaluation & Embedding Complete",
+        "timestamp": "2025-11-03T18:45:20.363352"
       }
     ],
     "pre_risk_snapshot": {
@@ -833,10 +1616,45 @@
         "reputation": 10.0,
         "supplychain": 10.0
       },
-      "timestamp": "2025-11-03T14:16:10.504611"
+      "timestamp": "2025-11-03T18:44:45.774370"
     },
-    "risk_status": "N/A",
-    "risk_score": null,
-    "risk_level": null
+    "risk_status": "Completed",
+    "risk_score": 10,
+    "risk_level": "Low",
+    "risk_triggered_at": "2025-11-03T18:45:18.760307",
+    "risk": {
+      "aggregated_score": 10,
+      "category_scores": {
+        "cybersecurity": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "data_privacy": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "operational": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "financial": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "regulatory": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "reputation": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "supplychain": {
+          "score": 10,
+          "note": "simulated response"
+        }
+      },
+      "updated_at": "2025-11-03T18:45:20.083714"
+    }
   }
 ]

@@ -3,12 +3,12 @@
   "hits": 1,
   "entries": [
     {
-      "id": "REG-1-4217",
+      "id": "REG-1-8473",
       "title": "Simulated regulatory hit #1",
-      "detail": "Auto-generated simulated watchlist entry for Sanjeevani New Delhi General Hospital (DL-HOSP-2019-1001).",
+      "detail": "Auto-generated simulated watchlist entry for MediTrust Gurgaon General Hospital (HR/MC/2020/01018).",
       "severity": 0.4,
       "source": "simulated_regulatory_watchlist",
-      "timestamp": "2025-11-03T16:54:45.882796"
+      "timestamp": "2025-11-03T17:05:50.577378"
     }
   ],
   "raw_simulated": {
