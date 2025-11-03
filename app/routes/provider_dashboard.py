@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Request, Form, HTTPException
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from pathlib import Path
 from datetime import datetime
 import json, random, os
@@ -475,3 +475,47 @@ async def list_provider_docs(app_id: str):
     if not record:
         return []
     return record.get("documents", [])
+
+@router.get("/status/{provider_id}")
+async def dashboard_status(provider_id: str):
+    """
+    Returns the latest stored risk evaluation for a provider,
+    without re-triggering evaluation.
+    Used by provider_dashboard.html for live polling.
+    """
+    apps = load_applications()
+    rec = next(
+        (r for r in apps if r.get("id") == provider_id or r.get("application_id") == provider_id),
+        None,
+    )
+
+
+    if not rec:
+        return JSONResponse({"error": "Provider not found"}, status_code=404)
+
+    # Extract risk data safely
+    risk = rec.get("risk", {})
+    status = rec.get("risk_status", "Unknown")
+    score = rec.get("risk_score") or risk.get("aggregated_score")
+    categories = risk.get("category_scores", {}) or {}
+
+    # Normalize level (derive if not explicitly stored)
+    level = rec.get("risk_level")
+    if not level:
+        if score is None:
+            level = "Unknown"
+        elif score > 66:
+            level = "High"
+        elif score > 33:
+            level = "Moderate"
+        else:
+            level = "Low"
+
+    return JSONResponse(
+        {
+            "status": status,
+            "score": score,
+            "level": level,
+            "categories": categories,
+        }
+    )

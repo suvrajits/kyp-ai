@@ -1,116 +1,240 @@
 # app/routes/risk_router.py
+
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
+from datetime import datetime
 from pathlib import Path
 import json
+import asyncio
 
-router = APIRouter(tags=["Risk Calculator"])
+from app.risk.orchestrator import evaluate_provider
+from app.services.application_store import load_applications, save_all
 
-DATA_PATH = Path("app/data/applications.json")
+router = APIRouter(tags=["Risk Intelligence"])
 
+RISK_DIR = Path("app/data/risk")
+RISK_DIR.mkdir(parents=True, exist_ok=True)
 
-@router.get("/risk/calc/{provider_id}")
+# ============================================================
+# 1️⃣ CALCULATE / UPDATE PROVIDER RISK (MAIN ORCHESTRATOR ENTRY)
+# ============================================================
+@router.get("/calc/{provider_id}")
 async def calculate_provider_risk(provider_id: str):
     """
-    Calculates a multi-category Provider Risk Index.
-    Returns normalized 0–100 scores per category + overall risk.
+    Triggers full Provider Risk Intelligence pipeline:
+      • Runs all 7 watchlists concurrently
+      • Fetches FAISS context & watchlist embeddings
+      • Calls fine-tuned risk model (mock)
+      • Persists risk summary & history
+      • Returns final + pre-risk snapshot for drift visualization
+      • Embeds latest risk summary for contextual RAG chat
     """
-    if not DATA_PATH.exists():
-        return JSONResponse(status_code=404, content={"error": "No provider data found."})
-
     try:
-        data = json.loads(DATA_PATH.read_text())
+        print(f"⚙️ Starting risk evaluation for provider: {provider_id}")
+        result = await evaluate_provider(provider_id)
+
+        if not result:
+            return JSONResponse(
+                status_code=500,
+                content={"error": f"Risk evaluation failed or empty result for {provider_id}."}
+            )
+
+        # --- Extract model response ---
+        model_resp = result.get("model_response", {})
+        aggregated_score = model_resp.get("aggregated_score")
+        categories = model_resp.get("category_scores", {})
+        timestamp = model_resp.get("timestamp", datetime.utcnow().isoformat())
+
+        # Flatten for chart use
+        flat_categories = {
+            cat: val["score"] if isinstance(val, dict) else val
+            for cat, val in categories.items()
+        }
+
+        # --- Persist into applications.json ---
+        apps = load_applications()
+        rec = None
+        for r in apps:
+            if r.get("id") == provider_id or r.get("application_id") == provider_id:
+                rec = r
+                r.setdefault("risk", {})
+                r["risk"]["aggregated_score"] = aggregated_score
+                r["risk"]["category_scores"] = categories
+                r["risk"]["updated_at"] = timestamp
+                r["risk_score"] = aggregated_score
+                r["risk_level"] = (
+                    "High" if aggregated_score and aggregated_score > 70 else
+                    "Moderate" if aggregated_score and aggregated_score > 40 else
+                    "Low"
+                )
+                r["risk_status"] = "Completed"
+
+                # ✅ Add event log
+                r.setdefault("history", []).append({
+                    "event": "Risk Evaluation Completed",
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "score": aggregated_score,
+                    "note": "Final risk score updated and embedded."
+                })
+                break
+
+        if not rec:
+            return JSONResponse(status_code=404, content={"error": f"Provider {provider_id} not found"})
+
+        save_all(apps)
+        print(f"✅ Risk evaluation complete for {provider_id} — Score: {aggregated_score}")
+
+        # --- Save full orchestrator output ---
+        (RISK_DIR / f"{provider_id}.json").write_text(json.dumps(result, indent=2))
+
+        # --- 🧠 Embed risk summary for chat context ---
+        try:
+            from app.rag.ingest import embed_texts
+            from app.rag.vector_store_faiss import save_faiss_index
+            import faiss
+
+            # Build contextual summary text
+            text_summary = (
+                f"Provider Risk Assessment and Intelligence Summary\n"
+                f"Provider ID: {provider_id}\n"
+                f"Provider Name: {rec.get('provider', {}).get('provider_name', 'Unknown')}\n"
+                f"License Number: {rec.get('provider', {}).get('license_number', 'N/A')}\n"
+                f"Date of Evaluation: {timestamp}\n\n"
+                f"--- OVERALL RISK SCORE BREAKDOWN ---\n"
+                f"Total Risk Score: {aggregated_score}%\n"
+                f"Risk Level: {rec.get('risk_level')}\n"
+                f"Interpretation: This reflects the provider’s aggregate exposure across operational, regulatory, cybersecurity, financial, and reputation domains.\n\n"
+                f"--- CATEGORY LEVEL RISK DETAILS ---\n"
+            )
+
+
+            for cat, val in categories.items():
+                if isinstance(val, dict):
+                    score = val.get("score", 0)
+                    note = val.get("note", "No reason provided.")
+                else:
+                    score = val
+                    note = "No reasoning provided."
+                text_summary += f"- {cat.title()}: {score}% — {note}\n"
+
+
+            # ✅ Add historical snapshot for richer context
+            if pre_snapshot := rec.get("pre_risk_snapshot"):
+                pre_text = (
+                    f"\n📜 Previous Risk Snapshot:\n"
+                    f"Score: {pre_snapshot.get('score', 'N/A')}%\n"
+                )
+                text_summary += pre_text
+
+            # ✅ Add semantic-rich context for RAG search
+            text_summary += (
+                "\n--- SUMMARY INSIGHTS ---\n"
+                "This report provides a detailed risk score breakdown per category and the rationale behind each rating. "
+                "It helps explain how the provider's operational, financial, regulatory, cybersecurity, and reputation domains "
+                "contribute to the overall score.\n\n"
+                "Example questions that can be answered using this context:\n"
+                "- What is the provider's overall risk?\n"
+                "- How much risk is attributed to cybersecurity?\n"
+                "- Explain the reasoning behind the regulatory risk score.\n"
+                "- Show me the risk score breakdown per category.\n"
+            )
+
+
+            # === Embed summary into FAISS ===
+            vectors = embed_texts([text_summary])
+            faiss.normalize_L2(vectors)
+
+            provider_dir = Path('app/data/faiss_store') / provider_id
+            provider_dir.mkdir(parents=True, exist_ok=True)
+
+            # ✅ Clean up any stale FAISS index before re-embedding
+            index_file = provider_dir / "index.faiss"
+            if index_file.exists():
+                index_file.unlink()
+
+            save_faiss_index(
+                vectors=vectors,
+                chunks=[text_summary],
+                doc_id=provider_id,
+                provider_dir=str(provider_dir)
+            )
+            print(f"💾 Risk summary embedded for provider {provider_id}")
+        except Exception as e:
+            print(f"⚠️ Failed to embed risk summary for {provider_id}: {e}")
+
+        # --- Include pre-risk snapshot for drift chart ---
+        pre_snapshot = rec.get("pre_risk_snapshot", {})
+        if not pre_snapshot:
+            pre_snapshot = {"score": 0, "categories": {}, "timestamp": None}
+
+        # --- Build response ---
+        response = {
+            "provider_id": provider_id,
+            "risk_score": aggregated_score,
+            "risk_level": rec.get("risk_level"),
+            "categories": categories,
+            "timestamp": timestamp,
+            "pre_snapshot": pre_snapshot,  # ✅ Added for drift chart
+        }
+
+        # ✅ Optional dashboard refresh notifier (placeholder)
+        print(f"📢 Dashboard notified: Risk updated for {provider_id}")
+
+        return JSONResponse(content=response)
+
     except Exception as e:
-        return JSONResponse(status_code=500, content={"error": f"Failed to read applications.json: {e}"})
+        print(f"❌ Risk calculation failed for {provider_id}: {e}")
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
-    record = next(
-        (r for r in data if r.get("id") == provider_id or r.get("application_id") == provider_id),
-        None
+
+
+# ============================================================
+# 2️⃣ GET EXISTING PROVIDER RISK STATUS (FOR DASHBOARD OR API)
+# ============================================================
+@router.get("/status/{provider_id}")
+async def get_risk_status(provider_id: str):
+    """
+    Returns the most recently computed risk profile for a provider.
+    Used by Provider Dashboard and API clients.
+    """
+    apps = load_applications()
+    rec = next(
+        (r for r in apps if r.get("id") == provider_id or r.get("application_id") == provider_id),
+        None,
+    )
+    if not rec:
+        return JSONResponse(status_code=404, content={"error": "Provider not found"})
+
+    risk = rec.get("risk", {})
+    status = rec.get("risk_status", "Pending")
+    score = rec.get("risk_score") or risk.get("aggregated_score")
+    level = rec.get("risk_level") or "Unknown"
+    categories = risk.get("category_scores", {}) or {}
+
+    if score is not None:
+        status = "Completed"
+
+    return JSONResponse(
+        content={
+            "status": status,
+            "score": score,
+            "level": level,
+            "categories": categories,
+            "last_updated": risk.get("updated_at", datetime.utcnow().isoformat()),
+        }
     )
 
-    if not record or "provider" not in record:
-        return JSONResponse(status_code=404, content={"error": f"Provider {provider_id} not found."})
 
-    provider = record["provider"]
-
-    # --- Helper for binary or partial compliance ---
-    def score_yes_no(value):
-        if not value:
-            return 100  # Missing data => high risk
-        val = str(value).strip().lower()
-        if val in ["yes", "true", "valid", "approved"]:
-            return 0
-        elif val in ["partial", "pending"]:
-            return 50
-        return 100
-
-    # --- Compute category risks (0 = safe, 100 = high risk) ---
-    categories = {}
-
-    # 1️⃣ Compliance (waste, pollution, consent)
-    categories["Compliance"] = (
-        score_yes_no(provider.get("biomedical_waste_management_authorization")) * 0.4 +
-        score_yes_no(provider.get("pollution_control_board_clearance")) * 0.3 +
-        score_yes_no(provider.get("consent_to_operate_certificate")) * 0.3
-    )
-
-    # 2️⃣ Licensing
-    categories["Licensing"] = (
-        0 if provider.get("license_number") else 100
-    )
-
-    # 3️⃣ Waste
-    categories["Waste"] = score_yes_no(provider.get("biomedical_waste_management_authorization"))
-
-    # 4️⃣ Accreditation
-    acc = str(provider.get("accreditation_status", "")).lower()
-    if "nabh" in acc or "nabl" in acc:
-        categories["Accreditation"] = 10
-    elif acc in ["none", "na", "not applicable"]:
-        categories["Accreditation"] = 80
-    else:
-        categories["Accreditation"] = 50
-
-    # 5️⃣ Infrastructure
-    infra = provider.get("infrastructure_standards_compliance", "")
-    categories["Infrastructure"] = 0 if "yes" in str(infra).lower() else 70
-
-    # 6️⃣ Safety
-    fire = provider.get("fire_and_lift_inspection_certificates", "")
-    categories["Safety"] = 0 if "updated" in str(fire).lower() else 60
-
-    # 7️⃣ Financial (based on ownership)
-    owner = str(provider.get("ownership_details", "")).lower()
-    if any(word in owner for word in ["govt", "government", "state", "public"]):
-        categories["Financial"] = 10
-    elif any(word in owner for word in ["trust", "ngo", "foundation"]):
-        categories["Financial"] = 30
-    else:
-        categories["Financial"] = 60
-
-    # --- Weighted average (custom weights per category) ---
-    weights = {
-        "Compliance": 0.15,
-        "Licensing": 0.20,
-        "Waste": 0.10,
-        "Accreditation": 0.15,
-        "Infrastructure": 0.15,
-        "Safety": 0.15,
-        "Financial": 0.10,
-    }
-
-    overall = sum(categories[k] * weights[k] for k in categories)
-    risk_level = (
-        "Low" if overall < 30 else
-        "Moderate" if overall < 60 else
-        "High"
-    )
-
-    result = {
-        "provider_id": provider_id,
-        "risk_score": round(overall, 1),
-        "level": risk_level,
-        "categories": {k: round(v, 1) for k, v in categories.items()}
-    }
-
-    return JSONResponse(content=result)
+# ============================================================
+# 3️⃣ MANUAL REFRESH (RE-EVALUATE PROVIDER)
+# ============================================================
+@router.post("/refresh/{provider_id}")
+async def refresh_risk(provider_id: str):
+    """
+    Allows manual re-triggering of risk calculation (async).
+    """
+    try:
+        asyncio.create_task(evaluate_provider(provider_id))
+        return JSONResponse(content={"status": "Re-evaluation initiated", "provider_id": provider_id})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})

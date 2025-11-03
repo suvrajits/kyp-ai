@@ -1,0 +1,25 @@
+{
+  "category": "regulatory",
+  "hits": 2,
+  "entries": [
+    {
+      "id": "REG-1-9217",
+      "title": "Simulated regulatory hit #1",
+      "detail": "Auto-generated simulated watchlist entry for Nova Faridabad Medical Centre (HRMED20251003).",
+      "severity": 0.4,
+      "source": "simulated_regulatory_watchlist",
+      "timestamp": "2025-11-03T11:49:39.603554"
+    },
+    {
+      "id": "REG-2-9217",
+      "title": "Simulated regulatory hit #2",
+      "detail": "Auto-generated simulated watchlist entry for Nova Faridabad Medical Centre (HRMED20251003).",
+      "severity": 0.2,
+      "source": "simulated_regulatory_watchlist",
+      "timestamp": "2025-11-03T11:49:39.603554"
+    }
+  ],
+  "raw_simulated": {
+    "note": "simulated response"
+  }
+}

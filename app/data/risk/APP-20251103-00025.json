@@ -1,0 +1,102 @@
+{
+  "payload": {
+    "request_id": "risk-APP-20251103-00025-1762152047",
+    "provider": {
+      "provider_id": "APP-20251103-00025",
+      "provider_name": "Anand New Delhi Multispeciality Hospital",
+      "license_number": "DLMED20191008"
+    },
+    "watchlists": {
+      "cybersecurity": {
+        "category": "cybersecurity",
+        "hits": 0,
+        "entries": [],
+        "raw_simulated": {
+          "note": "simulated response"
+        }
+      },
+      "data_privacy": {
+        "category": "data_privacy",
+        "hits": 0,
+        "entries": [],
+        "raw_simulated": {
+          "note": "simulated response"
+        }
+      },
+      "operational": {
+        "category": "operational",
+        "hits": 0,
+        "entries": [],
+        "raw_simulated": {
+          "note": "simulated response"
+        }
+      },
+      "financial": {
+        "category": "financial",
+        "hits": 0,
+        "entries": [],
+        "raw_simulated": {
+          "note": "simulated response"
+        }
+      },
+      "regulatory": {
+        "category": "regulatory",
+        "hits": 0,
+        "entries": [],
+        "raw_simulated": {
+          "note": "simulated response"
+        }
+      },
+      "reputation": {
+        "category": "reputation",
+        "hits": 0,
+        "entries": [],
+        "raw_simulated": {
+          "note": "simulated response"
+        }
+      },
+      "supplychain": {
+        "category": "supplychain",
+        "hits": 0,
+        "entries": [],
+        "raw_simulated": {
+          "note": "simulated response"
+        }
+      }
+    },
+    "embedded_context": {
+      "faiss_snippets": [
+        {
+          "text": "provider_name: Anand New Delhi Multispeciality Hospital\nlicense_number: DLMED20191008\ntype_of_institution: Clinic\naddress: 303 Medical Avenue, New Delhi, Delhi - 291273\nownership_details: Government of India\nlicense_issue_date: 2024-11-24\nlicense_expiry_date: 2029-11-24\ndetails_of_services_offered: Outpatient\nnumber_of_beds: 75\nqualification_and_number_of_medical_staff: 3 Doctors, 9 Nurses, 15 Technicians\nlicensing_authority_name: District Health Authority\ninfrastructure_standards_compliance: Building Safety Certificate: Yes; Fire Safety: Pending\nbiomedical_waste_management_authorization: No\npollution_control_board_clearance: Yes\nconsent_to_operate_certificate: No\ndrug_license: Yes\nradiology_radiation_safety_license: Not Applicable\nregistration_under_any_special_acts: Transplantation of Human Organs Act\ndisplay_of_hospital_charges_and_facilities: No\ncompliance_with_minimum_standards: No\ndetails_of_support_services: Ambulance only\nlist_of_equipment_and_medical_devices_used: 96 devices\nfire_and_lift_inspection_certificates: Not Applicable",
+          "score": -0.0104445219039917
+        }
+      ],
+      "contextual_documents": [
+        "provider_8.pdf"
+      ],
+      "watchlist_embeddings": []
+    },
+    "config": {
+      "model_version": "sim-1"
+    }
+  },
+  "model_response": {
+    "request_id": "risk-APP-20251103-00025-1762152047",
+    "provider_id": "APP-20251103-00025",
+    "category_scores": {
+      "cybersecurity": 10,
+      "data_privacy": 10,
+      "operational": 10,
+      "financial": 10,
+      "regulatory": 10,
+      "reputation": 10,
+      "supplychain": 10
+    },
+    "aggregated_score": 10,
+    "notes": "Simulated risk model response",
+    "confidence": 0.9,
+    "model_version": "risk-sim-v0.1",
+    "timestamp": "2025-11-03T12:10:47.429527"
+  },
+  "timestamp": "2025-11-03T12:10:47.429527"
+}

@@ -1,0 +1,17 @@
+{
+  "category": "financial",
+  "hits": 1,
+  "entries": [
+    {
+      "id": "FIN-1-9443",
+      "title": "Simulated financial hit #1",
+      "detail": "Auto-generated simulated watchlist entry for Greenline Old Delhi Medical Centre Centre (DL/MC/2018/01004).",
+      "severity": 0.4,
+      "source": "simulated_financial_watchlist",
+      "timestamp": "2025-11-03T13:10:18.200246"
+    }
+  ],
+  "raw_simulated": {
+    "note": "simulated response"
+  }
+}

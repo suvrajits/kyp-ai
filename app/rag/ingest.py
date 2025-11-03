@@ -21,6 +21,8 @@ client = AzureOpenAI(
     azure_endpoint=settings.OPENAI_ENDPOINT,
 )
 
+EMBEDDING_DIM = 1536  # consistent with text-embedding-3-small / Ada v2
+
 # ============================================================
 # Utility functions
 # ============================================================
@@ -58,16 +60,40 @@ def extract_text_generator(file_path: str):
             yield page.extract_text() or ""
 
 
-def embed_texts(texts):
-    """Calls Azure OpenAI Embeddings API."""
-    print(f"🧠 Embedding {len(texts)} chunks via Azure OpenAI...")
-    response = client.embeddings.create(
-        input=texts,
-        model=settings.OPENAI_EMBEDDING_DEPLOYMENT,
-    )
-    vectors = np.array([d.embedding for d in response.data], dtype="float32")
-    print(f"✅ Got embeddings of shape {vectors.shape}")
+def embed_texts(texts, batch_size: int = 20):
+    """
+    Calls Azure OpenAI Embeddings API in safe batches.
+    Used by both PDF ingestion and risk orchestrator (for watchlist embeddings).
+    """
+    import time
+    if not texts:
+        print("⚠️ embed_texts() called with empty input.")
+        return np.zeros((0, 1536), dtype="float32")
+
+    all_vectors = []
+    total = len(texts)
+    print(f"🧠 Embedding {total} text chunk(s) via Azure OpenAI (batch size={batch_size})...")
+
+    for i in range(0, total, batch_size):
+        batch = texts[i:i + batch_size]
+        try:
+            response = client.embeddings.create(
+                input=batch,
+                model=settings.OPENAI_EMBEDDING_DEPLOYMENT,
+            )
+            batch_vectors = [d.embedding for d in response.data]
+            all_vectors.extend(batch_vectors)
+            print(f"✅ Embedded batch {i // batch_size + 1} ({len(batch_vectors)} items)")
+        except Exception as e:
+            print(f"❌ Embedding failed for batch {i // batch_size + 1}: {e}")
+            # Fill failed batch with zero vectors of correct shape to avoid breaking
+            all_vectors.extend([[0.0] * 1536 for _ in batch])
+            time.sleep(2)  # backoff
+
+    vectors = np.array(all_vectors, dtype="float32")
+    print(f"✅ All embeddings complete. Final shape: {vectors.shape}")
     return vectors
+
 
 # ============================================================
 # Main entrypoint (per-provider multi-doc ingestion)

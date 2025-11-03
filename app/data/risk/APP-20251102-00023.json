@@ -1,0 +1,95 @@
+{
+  "payload": {
+    "request_id": "risk-APP-20251102-00023-1762141406",
+    "provider": {
+      "provider_id": "APP-20251102-00023",
+      "provider_name": "MetroCare Hospital",
+      "license_number": "LIC-45321"
+    },
+    "watchlists": {
+      "cybersecurity": {
+        "category": "cybersecurity",
+        "hits": 0,
+        "entries": [],
+        "raw_simulated": {
+          "note": "simulated response"
+        }
+      },
+      "data_privacy": {
+        "category": "data_privacy",
+        "hits": 0,
+        "entries": [],
+        "raw_simulated": {
+          "note": "simulated response"
+        }
+      },
+      "operational": {
+        "category": "operational",
+        "hits": 0,
+        "entries": [],
+        "raw_simulated": {
+          "note": "simulated response"
+        }
+      },
+      "financial": {
+        "category": "financial",
+        "hits": 0,
+        "entries": [],
+        "raw_simulated": {
+          "note": "simulated response"
+        }
+      },
+      "regulatory": {
+        "category": "regulatory",
+        "hits": 0,
+        "entries": [],
+        "raw_simulated": {
+          "note": "simulated response"
+        }
+      },
+      "reputation": {
+        "category": "reputation",
+        "hits": 0,
+        "entries": [],
+        "raw_simulated": {
+          "note": "simulated response"
+        }
+      },
+      "supplychain": {
+        "category": "supplychain",
+        "hits": 0,
+        "entries": [],
+        "raw_simulated": {
+          "note": "simulated response"
+        }
+      }
+    },
+    "embedded_context": {
+      "faiss_snippets": [],
+      "contextual_documents": [],
+      "watchlist_embeddings": []
+    },
+    "config": {
+      "model_version": "sim-1"
+    }
+  },
+  "model_response": {
+    "request_id": "risk-APP-20251102-00023-1762141406",
+    "provider_id": "APP-20251102-00023",
+    "category_scores": {
+      "cybersecurity": 10,
+      "data_privacy": 10,
+      "operational": 10,
+      "financial": 10,
+      "regulatory": 10,
+      "reputation": 10,
+      "supplychain": 10
+    },
+    "aggregated_score": 10,
+    "notes": "Simulated risk model response",
+    "confidence": 0.9,
+    "model_version": "risk-sim-v0.1",
+    "timestamp": "2025-11-03T09:13:26.672513"
+  },
+  "timestamp": "2025-11-03T09:13:26.672513"
+}

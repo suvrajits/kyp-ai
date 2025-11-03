@@ -1,7 +1,7 @@
 [
   {
-    "id": "APP-20251101-00022",
-    "application_id": "APP-20251101-00022",
+    "id": "APP-20251103-00028",
+    "application_id": "APP-20251103-00028",
     "provider": {
       "provider_name": "Sanjeevani New Delhi General Hospital",
       "license_number": "DL-HOSP-2019-1001",
@@ -28,7 +28,7 @@
       "fire_and_lift_inspection_certificates": "Pending",
       "accreditation_status": "JCI"
     },
-    "status": "Rejected",
+    "status": "Under Review",
     "confidence": 1.0,
     "match_percent": 100.0,
     "match_result": {
@@ -328,41 +328,103 @@
       }
     },
     "match_recommendation": "Strong Match",
-    "created_at": "2025-11-01T18:48:12.681783",
+    "created_at": "2025-11-03T14:15:32.054621",
     "documents": [
       "provider_1.pdf"
     ],
-    "messages": [
-      {
-        "from": "Reviewer",
-        "text": "\u274c Application rejected. Reason: Wrong application",
-        "timestamp": "2025-11-02T06:55:00.239584"
-      }
-    ],
+    "messages": [],
     "history": [
       {
         "event": "Created",
-        "timestamp": "2025-11-01T18:48:12.684256"
+        "timestamp": "2025-11-03T14:15:32.056175"
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 10.0,
+        "timestamp": "2025-11-03T14:15:32.543102",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-03T14:15:32.543102",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 10.0,
+        "timestamp": "2025-11-03T14:16:23.835072",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-03T14:16:23.835072",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
       },
       {
         "event": "Application Accepted & Promoted",
-        "timestamp": "2025-11-01T18:50:08.644063",
-        "note": "Promoted from TEMP-ID-059 \u2192 APP-20251101-00022 and FAISS built."
+        "timestamp": "2025-11-03T14:16:28.659942",
+        "note": "Promoted from TEMP-ID-069 \u2192 APP-20251103-00028 and FAISS built."
       },
       {
-        "event": "Status changed from Under Review \u2192 Rejected",
-        "timestamp": "2025-11-02T06:55:00.231395",
-        "note": "Wrong application"
-      },
-      {
-        "event": "Message from Reviewer",
-        "timestamp": "2025-11-02T06:55:00.239584"
+        "event": "Risk Evaluation Triggered",
+        "timestamp": "2025-11-03T14:16:29.661206"
       }
-    ]
+    ],
+    "pre_risk_snapshot": {
+      "score": 10.0,
+      "categories": {
+        "cybersecurity": 10.0,
+        "data_privacy": 10.0,
+        "operational": 10.0,
+        "financial": 10.0,
+        "regulatory": 10.0,
+        "reputation": 10.0,
+        "supplychain": 10.0
+      },
+      "timestamp": "2025-11-03T14:16:23.835072"
+    },
+    "risk_status": "Completed",
+    "risk_score": 10,
+    "risk_level": "Low",
+    "risk_triggered_at": "2025-11-03T14:16:29.658388",
+    "risk": {
+      "aggregated_score": 10,
+      "category_scores": {
+        "cybersecurity": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "data_privacy": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "operational": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "financial": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "regulatory": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "reputation": {
+          "score": 10,
+          "note": "simulated response"
+        },
+        "supplychain": {
+          "score": 10,
+          "note": "simulated response"
+        }
+      },
+      "updated_at": "2025-11-03T14:16:30.281086"
+    }
   },
   {
-    "id": "APP-20251101-00021",
-    "application_id": "APP-20251101-00021",
+    "id": "TEMP-ID-070",
+    "application_id": "TEMP-ID-070",
     "provider": {
       "provider_name": "Saraswati Kolkata General Hospital",
       "license_number": "WB/MC/2023/01002",
@@ -389,7 +451,7 @@
       "fire_and_lift_inspection_certificates": "Not Applicable",
       "accreditation_status": "JCI"
     },
-    "status": "Approved",
+    "status": "Denied",
     "confidence": 0.94,
     "match_percent": 93.5,
     "match_result": {
@@ -689,42 +751,92 @@
       }
     },
     "match_recommendation": "Strong Match",
-    "created_at": "2025-11-01T18:48:42.041337",
+    "created_at": "2025-11-03T14:15:56.108712",
     "documents": [
-      "provider_2.pdf",
-      {
-        "filename": "provider_guidelines.pdf",
-        "uploaded_at": "2025-11-02T00:19:52.999603",
-        "type": "supplementary",
-        "path": "app\\data\\faiss_store\\APP-20251101-00021\\provider_guidelines.pdf"
-      }
+      "provider_2.pdf"
     ],
-    "messages": [
-      {
-        "from": "System",
-        "text": "\u2705 Application approved successfully.",
-        "timestamp": "2025-11-02T06:38:09.901041"
-      }
-    ],
+    "messages": [],
     "history": [
       {
         "event": "Created",
-        "timestamp": "2025-11-01T18:48:42.044718"
+        "timestamp": "2025-11-03T14:15:56.111742"
       },
       {
-        "event": "Application Accepted & Promoted",
-        "timestamp": "2025-11-01T18:48:52.113506",
-        "note": "Promoted from TEMP-ID-060 \u2192 APP-20251101-00021 and FAISS built."
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 15.7,
+        "timestamp": "2025-11-03T14:15:56.615413",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
       },
       {
-        "event": "Status changed from Under Review \u2192 Approved",
-        "timestamp": "2025-11-02T06:38:09.891845",
-        "note": "Application approved by reviewer."
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-03T14:15:56.615413",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
       },
       {
-        "event": "Message from System",
-        "timestamp": "2025-11-02T06:38:09.901041"
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 12.9,
+        "timestamp": "2025-11-03T14:16:03.092018",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-03T14:16:03.092018",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 10.0,
+        "timestamp": "2025-11-03T14:16:05.292380",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-03T14:16:05.292380",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 10.0,
+        "timestamp": "2025-11-03T14:16:07.357346",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-03T14:16:07.357346",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 10.0,
+        "timestamp": "2025-11-03T14:16:10.504611",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-03T14:16:10.504611",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Application Denied",
+        "reason": "deny app",
+        "timestamp": "2025-11-03T14:16:20.452028"
       }
-    ]
+    ],
+    "pre_risk_snapshot": {
+      "score": 10.0,
+      "categories": {
+        "cybersecurity": 10.0,
+        "data_privacy": 10.0,
+        "operational": 10.0,
+        "financial": 10.0,
+        "regulatory": 10.0,
+        "reputation": 10.0,
+        "supplychain": 10.0
+      },
+      "timestamp": "2025-11-03T14:16:10.504611"
+    },
+    "risk_status": "N/A",
+    "risk_score": null,
+    "risk_level": null
   }
 ]

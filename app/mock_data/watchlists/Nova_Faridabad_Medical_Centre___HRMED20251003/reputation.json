@@ -1,0 +1,25 @@
+{
+  "category": "reputation",
+  "hits": 2,
+  "entries": [
+    {
+      "id": "REP-1-9217",
+      "title": "Simulated reputation hit #1",
+      "detail": "Auto-generated simulated watchlist entry for Nova Faridabad Medical Centre (HRMED20251003).",
+      "severity": 0.3,
+      "source": "simulated_reputation_watchlist",
+      "timestamp": "2025-11-03T11:49:39.604712"
+    },
+    {
+      "id": "REP-2-9217",
+      "title": "Simulated reputation hit #2",
+      "detail": "Auto-generated simulated watchlist entry for Nova Faridabad Medical Centre (HRMED20251003).",
+      "severity": 0.4,
+      "source": "simulated_reputation_watchlist",
+      "timestamp": "2025-11-03T11:49:39.604712"
+    }
+  ],
+  "raw_simulated": {
+    "note": "simulated response"
+  }
+}

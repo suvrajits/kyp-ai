@@ -87,6 +87,19 @@ async def upload_and_ingest_for_dashboard(
                 "path": str(file_path),
             }
             record["documents"].append(meta)
+            # Risk relevance heuristic and re-evaluation trigger
+            from app.risk.orchestrator import evaluate_provider
+
+            risk_keywords = ["audit", "compliance", "incident", "breach", "financial", "legal", "risk"]
+            doc_marked_risk_relevant = any(k in file.filename.lower() for k in risk_keywords)
+
+            if doc_marked_risk_relevant:
+                print(f"⚠️ Risk-relevant document detected: {file.filename}")
+                loop = asyncio.get_event_loop()
+                loop.create_task(evaluate_provider(provider_id))
+            else:
+                print(f"ℹ️ Non-risk document uploaded: {file.filename}")
+
             new_docs.append(meta)
 
         # --------------------------------------------------------

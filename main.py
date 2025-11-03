@@ -12,6 +12,7 @@ import os
 # ----------------------------------------------------------
 from app.rag.ask_api import router as ask_router
 from app.rag.router import router as rag_router
+
 from app.routes import (
     upload,
     match,
@@ -77,7 +78,8 @@ app.include_router(rag_router, prefix="/rag", tags=["RAG - Ingest"])
 app.include_router(ask_router, prefix="/rag", tags=["RAG - Ask"])
 
 app.include_router(application_review.router, prefix="", tags=["Application Review"])
-app.include_router(risk_router.router, prefix="/risk")
+app.include_router(risk_router.router, prefix="/risk", tags=["Risk Intelligence"])
+
 
 # ----------------------------------------------------------
 # 🧠 Startup / Shutdown Events
@@ -92,6 +94,7 @@ async def on_startup():
     print("   • Provider Dashboard")
     print("   • Trust Card")
     print("   • RAG (Ask + Ingest)")
+    print("   • Risk Intelligence API")
     print("=" * 80 + "\n")
 
 @app.on_event("shutdown")

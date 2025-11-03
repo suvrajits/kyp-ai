@@ -47,7 +47,9 @@
 
     .progress-bar-fill {
       height: 100%;
-      transition: width 0.4s ease;
+      transition: width 0.6s ease, background 0.3s ease;
+      border-radius: 8px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
     }
 
     .match-table {
@@ -128,6 +130,21 @@
       text-decoration: none;
       color: #0077cc;
     }
+    .progress-bar-container {
+      background: #eee;
+      border-radius: 8px;
+      height: 14px;
+      width: 100%;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      transition: width 0.4s ease, background 0.3s ease;
+      border-radius: 8px;
+    }
+
 
     a.back-link:hover { text-decoration: underline; }
   </style>
@@ -146,16 +163,16 @@
     <strong>Overall Match:</strong> {{ match_percent or 0 }}% — {{ recommendation or '—' }}
     <div class="progress-bar-container">
       <div class="progress-bar-fill"
-        style="
-          width: {{ match_percent or 0 }}%;
-          background:
-            {% if match_percent >= 90 %}#28a745
-            {% elif match_percent >= 75 %}#ffc107
-            {% else %}#dc3545{% endif %};
+        style="width: {{ match_percent or 0 }}%; background:
+          {% if match_percent >= 90 %}#28a745
+          {% elif match_percent >= 75 %}#ffc107
+          {% else %}#dc3545
+          {% endif %};
         ">
       </div>
     </div>
   </div>
+
 
   {% if best_match_entry %}
     <p><strong>Closest Registry Entry:</strong>
@@ -164,6 +181,51 @@
     </p>
   {% endif %}
   <hr>
+  <hr>
+<h3>🧠 Preliminary Risk Assessment</h3>
+<div>
+  {% if pre_risk_score is defined %}
+    {% set risk_level = 'Low' if pre_risk_score < 30 else 'Moderate' if pre_risk_score < 60 else 'High' %}
+    {% set risk_color = '#28a745' if pre_risk_score < 30 else '#ffc107' if pre_risk_score < 60 else '#dc3545' %}
+
+    <div style="font-size: 16px; margin-top: 5px;">
+      <strong>Preliminary Risk Score:</strong>
+      <span style="font-weight: 600; color: {{ risk_color }};">
+        {{ pre_risk_score }}% ({{ risk_level }})
+      </span>
+    </div>
+
+    <div class="progress-bar-container" style="margin-top: 8px;">
+      <div class="progress-bar-fill"
+        style="width: {{ pre_risk_score }}%; background: {{ risk_color }};">
+      </div>
+    </div>
+  {% else %}
+    <p style="color:#666;">No risk score available yet.</p>
+  {% endif %}
+
+  <!-- ✅ NEW CATEGORY MINI-CHART -->
+  {% if pre_risk_categories %}
+    <div style="margin-top: 18px;">
+      <h4 style="margin-bottom: 6px;">Category Breakdown</h4>
+      {% for cat, val in pre_risk_categories.items() %}
+        {% set bar_color = '#28a745' if val < 30 else '#ffc107' if val < 60 else '#dc3545' %}
+        <div style="margin-bottom: 8px;">
+          <div style="display:flex; justify-content:space-between;">
+            <span style="font-size:14px; color:#333; font-weight:500;">{{ cat|title }}</span>
+            <span style="font-size:13px; color:#555;">{{ val }}%</span>
+          </div>
+          <div class="progress-bar-container" style="height:10px; margin-top:3px;">
+            <div class="progress-bar-fill"
+                 style="width: {{ val }}%; background: {{ bar_color }};">
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
 
   <div class="legend">
     <span style="background:#e8f8ed;">✅ Match (≥90%)</span>

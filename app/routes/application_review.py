@@ -9,6 +9,10 @@ from app.services.registry_matcher import match_provider
 from datetime import datetime
 from pathlib import Path
 from shutil import move
+# inside accept_application, after save_all(apps)
+import asyncio
+from app.risk.orchestrator import evaluate_provider
+from app.risk.watchlist_simulator import CATEGORIES, simulate_watchlist_call
 
 router = APIRouter()
 
@@ -24,7 +28,8 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 async def review_application(request: Request, app_id: str):
     """
     Render the application review page for an analyst.
-    Displays structured provider data, match percent, and per-field comparison.
+    Displays structured provider data, match percent, per-field comparison,
+    and a preliminary risk snapshot (category-level simulation).
     """
     apps = load_applications()
     record = next(
@@ -74,6 +79,56 @@ async def review_application(request: Request, app_id: str):
 
     print(f"🧾 Review {app_id}: {match_percent}% match ({recommendation})")
 
+    # --- 🧠 Pre-Risk Snapshot Simulation (lightweight async) ---
+    async def simulate_pre_risk(provider):
+        """Runs async simulated watchlist checks for preliminary scoring."""
+        name = provider.get("provider_name")
+        lic = provider.get("license_number")
+        results = await asyncio.gather(*[simulate_watchlist_call(name, lic, c) for c in CATEGORIES])
+
+        # Compute category-level scores
+        category_scores = {}
+        for r in results:
+            cat = r["category"]
+            hits = r.get("entries", [])
+            avg_sev = (
+                sum(e.get("severity", 0.3) for e in hits) / max(1, len(hits))
+                if hits else 0.1
+            )
+            category_scores[cat] = round(avg_sev * 100, 1)
+
+        # Aggregate total score
+        total = sum(category_scores.values()) / max(1, len(category_scores))
+        return round(total, 1), category_scores
+
+    # Run the pre-risk simulation for this provider
+    pre_risk_score, pre_risk_categories = await simulate_pre_risk(provider_struct)
+    print(f"🧮 Preliminary risk estimate for {app_id}: {pre_risk_score}%")
+
+    # ✅ Save snapshot into record and append to history
+    record["pre_risk_snapshot"] = {
+        "score": pre_risk_score,
+        "categories": pre_risk_categories,
+        "timestamp": datetime.utcnow().isoformat()
+    }
+    record.setdefault("history", []).append({
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": pre_risk_score,
+        "timestamp": datetime.utcnow().isoformat(),
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+    })
+
+    if "pre_risk_snapshot" in record:
+        record["history"].append({
+            "event": "Pre-Risk Snapshot Linked",
+            "timestamp": datetime.utcnow().isoformat(),
+            "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+        })
+
+    save_all(apps)
+
+
+    # ✅ Render HTML with new risk context
     return templates.TemplateResponse(
         "application_review.html",
         {
@@ -81,10 +136,14 @@ async def review_application(request: Request, app_id: str):
             "application": record,
             "match_percent": round(match_percent, 1),
             "recommendation": recommendation,
-            "per_field": per_field or {},   # ✅ safe fallback
+            "per_field": per_field or {},
             "best_match_entry": best_match_entry or {},
+            "pre_risk_score": pre_risk_score,              # ✅ added
+            "pre_risk_categories": pre_risk_categories,    # ✅ added
         },
     )
+
+
 
 
 
@@ -141,7 +200,12 @@ async def accept_application(request: Request, app_id: str):
             faiss.normalize_L2(vectors)
             provider_dir = Path("app/data/faiss_store") / new_app_id
             provider_dir.mkdir(parents=True, exist_ok=True)
-            save_faiss_index(vectors=vectors, chunks=[text_data], doc_id=new_app_id, provider_dir=str(provider_dir))
+            save_faiss_index(
+                vectors=vectors,
+                chunks=[text_data],
+                doc_id=new_app_id,
+                provider_dir=str(provider_dir)
+            )
             print(f"💾 FAISS index created for {new_app_id}")
     except Exception as e:
         print(f"❌ Failed FAISS creation for {new_app_id}: {e}")
@@ -152,11 +216,35 @@ async def accept_application(request: Request, app_id: str):
         "timestamp": datetime.utcnow().isoformat(),
         "note": f"Promoted from {app_id} → {new_app_id} and FAISS built."
     })
-
+    record["risk_status"] = "Evaluating"
+    record["risk_score"] = None
+    record["risk_level"] = None
+    
     save_all(apps)
+
+    print(f"🧠 Triggering async risk evaluation for {new_app_id} at {datetime.utcnow().isoformat()} ...")
+
+    # kick-off async evaluation (fire-and-forget)
+    await asyncio.sleep(1)
+
+# After save_all(apps)
+# Fire-and-forget but avoid duplicate triggers
+    if record.get("risk_status") != "Evaluating" or not record.get("risk_triggered_at"):
+        record["risk_status"] = "Evaluating"
+        record["risk_triggered_at"] = datetime.utcnow().isoformat()
+        save_all(apps)
+        asyncio.create_task(evaluate_provider(new_app_id))
+        record.setdefault("history",[]).append({
+            "event":"Risk Evaluation Triggered",
+            "timestamp": datetime.utcnow().isoformat()
+        })
+        save_all(apps)
+    else:
+        print(f"⚠️ Risk evaluation already in progress for {new_app_id}")
+
+
     print(f"✅ Application {app_id} → {new_app_id} accepted successfully.")
     return RedirectResponse(url=f"/dashboard/view/{new_app_id}", status_code=303)
-
 
 # ============================================================
 # 🔴 3️⃣ Deny Application → Close It Out
@@ -179,14 +267,15 @@ async def deny_application(request: Request, app_id: str, reason: str = Form(...
         "timestamp": datetime.utcnow().isoformat()
     })
 
+    # 🧠 Initialize risk evaluation state
+    record["risk_status"] = "N/A"
+    record["risk_score"] = None
+    record["risk_level"] = None
+
     save_all(apps)
     print(f"❌ Application {app_id} denied (Reason: {reason})")
 
-    return templates.TemplateResponse(
-        "application_review.html",
-        {
-            "request": request,
-            "application": record,
-            "message": f"❌ Application denied: {reason}",
-        },
-    )
+    # ✅ Redirect back to dashboard list
+    return RedirectResponse(url="/upload/upload-form", status_code=303)
+
+

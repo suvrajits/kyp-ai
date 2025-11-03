@@ -12,7 +12,28 @@
       font-family: "Inter", sans-serif;
       overflow: hidden;
     }
+    canvas {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    #riskChart, #riskDriftChart, #driftLabel {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .chart-visible {
+      opacity: 1;
+    }
+    #riskNotesContainer {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    #riskNotesContainer.visible {
+      opacity: 1;
+    }
 
+
+    
     /* Sidebar */
     .sidebar {
       position: fixed;
@@ -163,6 +184,7 @@
       transition: left 0.3s ease;
       box-shadow: 2px 0 10px rgba(0,0,0,0.1);
       z-index: 15;
+      scroll-padding-bottom: 80px;
     }
     .side-panel.active { left: 80px; }
 
@@ -193,6 +215,13 @@
     .doc-list li span {
       font-size: 14px;
       color: #444;
+    }
+    #riskDriftContainer {
+      background: #f8faff;
+      border: 1px solid #e0ecff;
+      border-radius: 8px;
+      padding: 10px 14px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
     }
   </style>
 </head>
@@ -226,6 +255,17 @@
       <p style="margin:0;">
         {{ provider.provider_name }} — {{ provider.license_number }}
       </p>
+      <span id="risk-badge" style="
+        background:#e0f2ff;
+        color:#004c91;
+        border:1px solid #b3d9ff;
+        padding:4px 10px;
+        border-radius:8px;
+        font-size:13px;
+        font-weight:600;">
+        🕒 Evaluating Risk...
+      </span>
+
 
       {% set status = status or 'Under Review' %}
       {% if 'Approved' in status %}
@@ -267,11 +307,54 @@
   </div>
 
   <!-- Panels -->
+  <!-- Risk Side Panel -->
   <div id="risk-panel" class="side-panel">
     <div class="close-panel" onclick="togglePanel('risk')">⬅ Close</div>
-    <h3>📊 Provider Risk Breakdown</h3>
-    <canvas id="riskChart"></canvas>
+    <h3>📊 Provider Risk Insights</h3>
+
+    <!-- 🧠 Primary Category-Level Risk Chart -->
+    <div id="riskCategoryContainer" style="
+          background:#f8faff;
+          border:1px solid #e0ecff;
+          border-radius:8px;
+          padding:12px 14px;
+          box-shadow:inset 0 1px 3px rgba(0,0,0,0.05);
+          margin-bottom:18px;">
+      <h4 style="margin:0 0 8px 0;">📈 Category-Level Risk Profile</h4>
+      <canvas id="riskChart" style="margin-top:4px; height:220px; width:100%;"></canvas>
+    </div>
+
+    <!-- ⚖️ Risk Drift Comparison -->
+    <div id="riskDriftContainer" style="
+          background:#f8faff;
+          border:1px solid #e0ecff;
+          border-radius:8px;
+          padding:12px 14px;
+          box-shadow:inset 0 1px 3px rgba(0,0,0,0.05);">
+      <h4 style="margin:0 0 8px 0;">⚖️ Risk Drift Comparison</h4>
+      <canvas id="riskDriftChart" style="margin-top:4px; height:220px; width:100%;"></canvas>
+      <p id="driftLabel" style="font-size:13px; color:#555; margin-top:8px;"></p>
+    </div>
+    <!-- 🧩 Category Explanations -->
+    <div id="riskNotesContainer" style="
+          background:#ffffff;
+          border:1px solid #e0ecff;
+          border-radius:8px;
+          padding:12px 14px 60px 14px; /* added bottom padding */
+          margin-top:14px;
+          margin-bottom:40px; /* avoid clipping */
+          box-shadow:inset 0 1px 3px rgba(0,0,0,0.05);">
+      <h4 style="margin:0 0 8px 0;">🧠 Category Explanations</h4>
+      <div id="riskNotesList" style="font-size:14px; color:#333;">
+        <em>Loading reasoning details...</em>
+      </div>
+    </div>
+
   </div>
+
+
+
+
 
   <div id="details-panel" class="side-panel">
     <div class="close-panel" onclick="togglePanel('details')">⬅ Close</div>
@@ -339,7 +422,7 @@
     const queryInput = document.getElementById("query");
     const badge = document.getElementById("upload-badge");
     const docList = document.getElementById("doc-list");
-
+    let lastRiskData = null;
     function togglePanel(name) {
       ["risk","details","upload","actions"].forEach(id => {
         const el = document.getElementById(`${id}-panel`);
@@ -413,23 +496,139 @@
     document.getElementById("send-btn").addEventListener("click", sendMessage);
     queryInput.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
 
+    let riskChartInstance = null;
+    let driftChartInstance = null;
+
     async function loadRiskChart() {
+      
       const ctx = document.getElementById("riskChart");
-      const res = await fetch(`/risk/calc/{{ app_id }}`);
-      const data = await res.json();
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: Object.keys(data.categories),
-          datasets: [{
-            label: 'Risk %',
-            data: Object.values(data.categories),
-            backgroundColor: '#0077cc'
-          }]
-        },
-        options: { scales: { y: { beginAtZero: true, max: 100 } } }
-      });
+      const driftCtx = document.getElementById("riskDriftChart");
+      const driftLabel = document.getElementById("driftLabel");
+
+      // 🧠 Show loading indicator before fetch
+      driftLabel.textContent = "🔄 Loading risk insights...";
+      driftLabel.style.color = "#555";
+
+      try {
+        const res = await fetch(`/risk/status/{{ app_id }}`);
+        const data = await res.json();
+
+        if (riskChartInstance) riskChartInstance.destroy();
+        if (driftChartInstance) driftChartInstance.destroy();
+
+
+        // === 1️⃣ Draw Category-Level Risk Chart ===
+        // 🧮 Extract category scores (handle object format)
+        const categoryLabels = Object.keys(data.categories || {});
+        const categoryScores = categoryLabels.map(cat =>
+          typeof data.categories[cat] === "object"
+            ? data.categories[cat].score
+            : data.categories[cat]
+        );
+
+        riskChartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: categoryLabels,
+            datasets: [{
+              label: 'Category Risk %',
+              data: categoryScores,
+              backgroundColor: categoryScores.map(v =>
+                v < 30 ? '#28a745' : v < 60 ? '#ffc107' : '#dc3545'
+              ),
+              borderRadius: 6,
+              borderSkipped: false
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true, max: 100 } },
+            plugins: {
+              legend: { display: false },
+              title: { display: true, text: '🧠 Category-Level Risk Profile', color: '#333' }
+            }
+          }
+        });
+
+
+        // === 2️⃣ Drift Visualization (if pre-snapshot available) ===
+        if (data.pre_snapshot && data.risk_score) {
+          const pre = data.pre_snapshot.score || 0;
+          const post = data.risk_score || 0;
+          const drift = (post - pre).toFixed(1);
+          const driftAbs = Math.abs(drift);
+
+          // 🟢 Color-coded drift
+          const improved = drift < -3;
+          const worsened = drift > 3;
+
+          const driftText =
+            worsened
+              ? `⚠️ Risk increased by ${driftAbs}% since preliminary assessment`
+              : improved
+                ? `✅ Risk decreased by ${driftAbs}% since preliminary assessment`
+                : `➖ Minimal change (${driftAbs}% drift)`;
+
+          driftLabel.textContent = driftText;
+          driftLabel.style.color = worsened ? "#b22222" : improved ? "#1b5e20" : "#555";
+
+          driftChartInstance = new Chart(driftCtx, {
+            type: 'bar',
+            data: {
+              labels: ['Preliminary', 'Final'],
+              datasets: [{
+                label: 'Overall Risk %',
+                data: [pre, post],
+                backgroundColor: [improved ? '#28a745' : '#ffc107', worsened ? '#dc3545' : '#0077cc'],
+                borderRadius: 8,
+                borderSkipped: false
+              }]
+            },
+            options: {
+              responsive: true,
+              scales: { y: { beginAtZero: true, max: 100 } },
+              plugins: {
+                legend: { display: false },
+                title: { display: true, text: '📈 Pre vs Final Risk Comparison', color: '#333' }
+              }
+            }
+          });
+        } else {
+          driftLabel.textContent = "ℹ️ Waiting for final risk evaluation...";
+          driftLabel.style.color = "#777";
+        }
+        // === 3️⃣ Render Category Reasoning Notes ===
+        const notesContainer = document.getElementById("riskNotesList");
+        if (data.categories) {
+          let html = "";
+          for (const [cat, val] of Object.entries(data.categories)) {
+            const score = typeof val === "object" ? val.score : val;
+            const note = typeof val === "object" ? val.note : "No reasoning available";
+            const icon = score < 30 ? "🟢" : score < 60 ? "🟡" : "🔴";
+            html += `<div style="margin-bottom:12px; line-height:1.5;">
+                      <strong>${icon} ${cat}</strong> — ${score}%<br>
+                      <span style="font-size:13px; color:#555;">${note}</span>
+                    </div>`;
+
+          }
+          notesContainer.innerHTML = html;
+          document.getElementById("riskNotesContainer").classList.add("visible");
+
+        } else {
+          notesContainer.innerHTML = "<em>No category explanations available.</em>";
+        }
+        // ✅ Fade in charts and text smoothly after load
+        ctx.classList.add("chart-visible");
+        driftCtx.classList.add("chart-visible");
+        driftLabel.classList.add("chart-visible");
+        document.getElementById("riskNotesContainer").classList.add("visible");
+
+      } catch (err) {
+        console.warn("⚠️ Risk chart load failed:", err);
+      }
     }
+
+
 
     // Upload handler
     document.getElementById("file-input").addEventListener("change", async (e) => {
@@ -443,10 +642,65 @@
       if (res.ok && data.status === "success") {
         alert("✅ Document uploaded and embedded successfully!");
         refreshDocumentList();
+
+        // 🧠 Immediately recheck risk after new upload
+        checkRiskStatus();   // 🔥 This ensures the badge refreshes right away
+
       } else {
         alert("❌ Upload failed");
       }
     });
+
+    // === 🧠 Live Risk Status Polling ===
+    const riskBadge = document.getElementById("risk-badge");
+    const appId = "{{ app_id }}";
+    let lastRiskScore = null;
+
+    async function checkRiskStatus() {
+      try {
+        const res = await fetch(`/risk/status/${appId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (data.status === "Evaluating") {
+          riskBadge.textContent = "🕒 Evaluating Risk...";
+          riskBadge.style.background = "#e0f2ff";
+          riskBadge.style.color = "#004c91";
+          riskBadge.style.borderColor = "#b3d9ff";
+        } else {
+          const level = data.level || "Unknown";
+          const score = data.score || "N/A";
+          riskBadge.textContent = `⚖️ ${level} (${score}%)`;
+
+          if (level === "High") {
+            riskBadge.style.background = "#fde2e4";
+            riskBadge.style.color = "#861010";
+            riskBadge.style.borderColor = "#f5c4c4";
+          } else if (level === "Moderate") {
+            riskBadge.style.background = "#fff8e6";
+            riskBadge.style.color = "#7a6200";
+            riskBadge.style.borderColor = "#f0e1a0";
+          } else {
+            riskBadge.style.background = "#d4f5d4";
+            riskBadge.style.color = "#126612";
+            riskBadge.style.borderColor = "#a8e3a8";
+          }
+
+          // Reload chart only if risk score changed
+          if (score !== lastRiskScore && data.categories) {
+            lastRiskScore = score;
+            loadRiskChart();
+          }
+        }
+      } catch (err) {
+        console.warn("⚠️ Risk status fetch failed:", err);
+      }
+    }
+
+    // Poll every 5 seconds
+    setInterval(checkRiskStatus, 5000);
+    checkRiskStatus();
+
   </script>
 </body>
 </html>

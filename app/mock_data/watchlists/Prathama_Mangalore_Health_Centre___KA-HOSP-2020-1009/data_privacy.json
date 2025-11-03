@@ -1,0 +1,25 @@
+{
+  "category": "data_privacy",
+  "hits": 2,
+  "entries": [
+    {
+      "id": "DAT-1-2111",
+      "title": "Simulated data_privacy hit #1",
+      "detail": "Auto-generated simulated watchlist entry for Prathama Mangalore Health Centre (KA-HOSP-2020-1009).",
+      "severity": 0.2,
+      "source": "simulated_data_privacy_watchlist",
+      "timestamp": "2025-11-03T11:59:48.658265"
+    },
+    {
+      "id": "DAT-2-2111",
+      "title": "Simulated data_privacy hit #2",
+      "detail": "Auto-generated simulated watchlist entry for Prathama Mangalore Health Centre (KA-HOSP-2020-1009).",
+      "severity": 0.1,
+      "source": "simulated_data_privacy_watchlist",
+      "timestamp": "2025-11-03T11:59:48.658265"
+    }
+  ],
+  "raw_simulated": {
+    "note": "simulated response"
+  }
+}

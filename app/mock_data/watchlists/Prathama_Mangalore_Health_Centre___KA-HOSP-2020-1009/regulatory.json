@@ -1,0 +1,17 @@
+{
+  "category": "regulatory",
+  "hits": 1,
+  "entries": [
+    {
+      "id": "REG-1-2111",
+      "title": "Simulated regulatory hit #1",
+      "detail": "Auto-generated simulated watchlist entry for Prathama Mangalore Health Centre (KA-HOSP-2020-1009).",
+      "severity": 0.2,
+      "source": "simulated_regulatory_watchlist",
+      "timestamp": "2025-11-03T11:59:48.551750"
+    }
+  ],
+  "raw_simulated": {
+    "note": "simulated response"
+  }
+}
