@@ -1,8 +1,34 @@
 {
   "category": "financial",
-  "hits": 0,
-  "entries": [],
+  "hits": 3,
+  "entries": [
+    {
+      "id": "FIN-1-4018",
+      "title": "Delayed GST filing",
+      "detail": "Sanjeevani New Delhi General Hospital filed monthly GST returns 45 days late in last quarter.",
+      "severity": 0.39,
+      "source": "financial_compliance_feed",
+      "timestamp": "2025-05-08T14:41:49.291096"
+    },
+    {
+      "id": "FIN-2-4018",
+      "title": "Delayed GST filing",
+      "detail": "Sanjeevani New Delhi General Hospital filed monthly GST returns 45 days late in last quarter.",
+      "severity": 0.93,
+      "source": "financial_compliance_feed",
+      "timestamp": "2024-05-05T14:41:49.291096"
+    },
+    {
+      "id": "FIN-3-4018",
+      "title": "Auditor remark on working capital",
+      "detail": "Annual audit flagged liquidity constraint indicators for Sanjeevani New Delhi General Hospital.",
+      "severity": 0.69,
+      "source": "financial_compliance_feed",
+      "timestamp": "2025-01-04T14:41:49.291096"
+    }
+  ],
+  "last_reported": "2025-05-08T14:41:49.291096",
   "raw_simulated": {
-    "note": "simulated response"
+    "note": "Financial discrepancies or delayed statutory filings noted in public or regulatory databases."
   }
 }

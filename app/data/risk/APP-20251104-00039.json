@@ -1,0 +1,54 @@
+{
+  "model_response": {
+    "provider_name": "Samarth Vadodara General Hospital",
+    "license_number": "GJ/MC/2021/01011",
+    "aggregated_score": 5.0,
+    "category_scores": {
+      "operational": {
+        "score": 5.0,
+        "note": "Operational continuity or service disruption reports identified through third-party audits. No alerts found.",
+        "hits": 0,
+        "last_reported": null
+      },
+      "cybersecurity": {
+        "score": 5.0,
+        "note": "Potential vulnerabilities detected in external systems or breach notifications from security intelligence sources. No alerts found.",
+        "hits": 0,
+        "last_reported": null
+      },
+      "financial": {
+        "score": 5.0,
+        "note": "No alerts found for this domain. No alerts found.",
+        "hits": 0,
+        "last_reported": null
+      },
+      "reputation": {
+        "score": 5.0,
+        "note": "No alerts found for this domain. No alerts found.",
+        "hits": 0,
+        "last_reported": null
+      },
+      "regulatory": {
+        "score": 5.0,
+        "note": "No alerts found for this domain. No alerts found.",
+        "hits": 0,
+        "last_reported": null
+      },
+      "supplychain": {
+        "score": 5.0,
+        "note": "No alerts found for this domain. No alerts found.",
+        "hits": 0,
+        "last_reported": null
+      },
+      "data_privacy": {
+        "score": 5.0,
+        "note": "No alerts found for this domain. No alerts found.",
+        "hits": 0,
+        "last_reported": null
+      }
+    },
+    "risk_level": "Low",
+    "timestamp": "2025-11-04T14:47:26.863124",
+    "summary": "Provider 'Samarth Vadodara General Hospital' evaluated across 7 domains. 0 category(ies) showed alerts. Overall risk assessed as Low (5.0%)."
+  }
+}

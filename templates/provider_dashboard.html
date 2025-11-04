@@ -18,6 +18,7 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
     #riskChart, #riskDriftChart, #driftLabel {
+      background: #fff0f0;
       opacity: 0;
       transition: opacity 0.5s ease;
     }
@@ -311,7 +312,20 @@
   <div id="risk-panel" class="side-panel">
     <div class="close-panel" onclick="togglePanel('risk')">⬅ Close</div>
     <h3>📊 Provider Risk Insights</h3>
-
+    <!-- 🧩 Category Explanations -->
+    <div id="riskNotesContainer" style="
+          background:#ffffff;
+          border:1px solid #e0ecff;
+          border-radius:8px;
+          padding:12px 14px 60px 14px; /* added bottom padding */
+          margin-top:14px;
+          margin-bottom:40px; /* avoid clipping */
+          box-shadow:inset 0 1px 3px rgba(0,0,0,0.05);">
+      <h4 style="margin:0 0 8px 0;">🧠 Category Explanations</h4>
+      <div id="riskNotesList" style="font-size:14px; color:#333;">
+        <em>Loading reasoning details...</em>
+      </div>
+    </div>
     <!-- 🧠 Primary Category-Level Risk Chart -->
     <div id="riskCategoryContainer" style="
           background:#f8faff;
@@ -335,20 +349,7 @@
       <canvas id="riskDriftChart" style="margin-top:4px; height:220px; width:100%;"></canvas>
       <p id="driftLabel" style="font-size:13px; color:#555; margin-top:8px;"></p>
     </div>
-    <!-- 🧩 Category Explanations -->
-    <div id="riskNotesContainer" style="
-          background:#ffffff;
-          border:1px solid #e0ecff;
-          border-radius:8px;
-          padding:12px 14px 60px 14px; /* added bottom padding */
-          margin-top:14px;
-          margin-bottom:40px; /* avoid clipping */
-          box-shadow:inset 0 1px 3px rgba(0,0,0,0.05);">
-      <h4 style="margin:0 0 8px 0;">🧠 Category Explanations</h4>
-      <div id="riskNotesList" style="font-size:14px; color:#333;">
-        <em>Loading reasoning details...</em>
-      </div>
-    </div>
+
 
   </div>
 
@@ -424,14 +425,24 @@
     const docList = document.getElementById("doc-list");
     let lastRiskData = null;
     function togglePanel(name) {
-      ["risk","details","upload","actions"].forEach(id => {
+      ["risk", "details", "upload", "actions"].forEach(id => {
         const el = document.getElementById(`${id}-panel`);
-        if (name === id && !el.classList.contains("active")) el.classList.add("active");
-        else el.classList.remove("active");
+        if (name === id && !el.classList.contains("active")) {
+          el.classList.add("active");
+        } else {
+          el.classList.remove("active");
+        }
       });
-      if (name === "risk") loadRiskChart();
+
+      // 🧠 Add slight delay to allow Risk panel to render before drawing charts
+      if (name === "risk") {
+        console.log("📊 Risk panel opened — rendering charts after delay...");
+        setTimeout(() => loadRiskChart(), 200);
+      }
+
       if (name === "upload") refreshDocumentList();
     }
+
 
     async function refreshDocumentList() {
       const res = await fetch(`/dashboard/docs/{{ app_id }}`);
@@ -552,8 +563,8 @@
 
 
         // === 2️⃣ Drift Visualization (if pre-snapshot available) ===
-        if (data.pre_snapshot && data.risk_score) {
-          const pre = data.pre_snapshot.score || 0;
+        if (data.risk_score) {
+          const pre = (data.pre_snapshot && data.pre_snapshot.score) || data.risk_score || 0;
           const post = data.risk_score || 0;
           const drift = (post - pre).toFixed(1);
           const driftAbs = Math.abs(drift);

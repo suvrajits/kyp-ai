@@ -1,0 +1,18 @@
+{
+  "category": "supplychain",
+  "hits": 1,
+  "entries": [
+    {
+      "id": "SUP-1-9834",
+      "title": "Import delay of consumables",
+      "detail": "Samarth Vadodara General Hospital reported customs delay for imported medical consumables.",
+      "severity": 0.15,
+      "source": "supplychain_compliance_feed",
+      "timestamp": "2025-09-08T14:47:26.312773"
+    }
+  ],
+  "last_reported": "2025-09-08T14:47:26.312773",
+  "raw_simulated": {
+    "note": "Vendor reliability issues or dependency risks found in procurement and logistics reports."
+  }
+}

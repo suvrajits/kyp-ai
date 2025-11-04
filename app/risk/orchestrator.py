@@ -5,7 +5,8 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, List
 
-from app.risk.watchlist_simulator import CATEGORIES, simulate_watchlist_call
+from app.risk.watchlist_simulator import CATEGORIES, simulate_watchlist_call, simulate_all_watchlists
+
 from app.services.application_store import load_applications, save_all  # reuse your persistence
 from app.rag.vector_store_faiss import query_faiss_index  # optional use
 # optional import for summarization if available
@@ -13,6 +14,17 @@ try:
     from app.rag.ingest import summarize_pdf_text  # optional contextual summarization
 except ImportError:
     summarize_pdf_text = None  # fallback if not implemented yet
+
+CATEGORY_WEIGHTS = {
+    "cybersecurity": 1.2,
+    "data_privacy": 1.1,
+    "operational": 1.0,
+    "financial": 1.0,
+    "regulatory": 1.1,
+    "reputation": 0.9,
+    "supplychain": 0.8,
+}
+
 
 RISK_DIR = Path("app/data/risk")
 RISK_DIR.mkdir(parents=True, exist_ok=True)
@@ -54,133 +66,119 @@ async def call_risk_model(payload: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-async def evaluate_provider(provider_id: str, fire_watchlists=True, include_faiss_context=True) -> Dict[str, Any]:
-    """Main orchestrator function to evaluate risk for a provider_id."""
+async def evaluate_provider(provider_id: str) -> Dict[str, Any]:
+    """
+    Main orchestrator for provider-level risk evaluation.
+    Uses realistic watchlist simulation + weighted aggregation.
+    """
+
+    from app.services.application_store import load_applications, save_all
+
     apps = load_applications()
-    rec = next((r for r in apps if r.get("id") == provider_id or r.get("application_id") == provider_id), None)
-    if not rec:
-        raise ValueError(f"Provider {provider_id} not found")
+    record = next((r for r in apps if r.get("id") == provider_id or r.get("application_id") == provider_id), None)
+    if not record:
+        print(f"❌ No record found for provider {provider_id}")
+        return None
 
-    provider_name = (rec.get("provider") or {}).get("provider_name") or rec.get("provider_name") or "Unknown"
-    license_number = (rec.get("provider") or {}).get("license_number") or rec.get("license_number") or "UNKNOWN"
+    provider = record.get("provider", {})
+    name = provider.get("provider_name", "Unknown Provider")
+    license_num = provider.get("license_number", "N/A")
 
-    # 1) Run watchlist calls concurrently
-    watchlist_results = {}
-    if fire_watchlists:
-        tasks = [simulate_watchlist_call(provider_name, license_number, cat) for cat in CATEGORIES]
-        results = await asyncio.gather(*tasks, return_exceptions=False)
-        for r in results:
-            watchlist_results[r["category"]] = r
+    print(f"🧠 [Pipeline] Evaluating provider risk for {provider_id}...")
+
+    # --- 1️⃣ Simulate multi-watchlist calls (1–3 categories active)
+    watchlist_results = await simulate_all_watchlists(name, license_num)
+
+    # --- 2️⃣ Compute category-level severity scores
+    category_scores = {}
+    total_weighted = 0.0
+    total_weight = 0.0
+
+    for result in watchlist_results:
+        cat = result["category"]
+        entries = result.get("entries", [])
+        hits = len(entries)
+
+        # ✅ Safe log — no undefined variable usage
+        if hits > 0:
+            print(f"📂 [Watchlist] {cat}: {hits} hit(s) detected.")
+        else:
+            print(f"📂 [Watchlist] {cat}: No alerts found (clean).")
+
+
+        # If no entries, give a low baseline score (almost safe)
+        if hits == 0:
+            avg_score = 5.0  # baseline
+            note = result["raw_simulated"]["note"]
+        else:
+            avg_severity = sum(e["severity"] for e in entries) / len(entries)
+            avg_score = round(avg_severity * 100, 1)
+            note = result["raw_simulated"]["note"]
+
+        # Weighted contribution
+        weight = CATEGORY_WEIGHTS.get(cat, 1.0)
+        total_weighted += avg_score * weight
+        total_weight += weight
+
+        # Optional descriptive reasoning per category
+        if hits == 0:
+            category_reason = f"{note.strip()}"
+        else:
+            category_reason = f"{note.strip()} {hits} alert(s) identified with average severity {avg_score}%."
+
+
+        category_scores[cat] = {
+            "score": avg_score,
+            "note": category_reason,
+            "hits": hits,
+            "last_reported": result.get("last_reported"),
+        }
+
+    # --- 3️⃣ Aggregate overall risk score
+    aggregated_score = round(total_weighted / max(total_weight, 1.0), 1)
+
+    # --- 4️⃣ Derive qualitative risk level
+    if aggregated_score > 70:
+        risk_level = "High"
+    elif aggregated_score > 40:
+        risk_level = "Moderate"
     else:
-        for cat in CATEGORIES:
-            watchlist_results[cat] = {"category": cat, "hits": 0, "entries": []}
+        risk_level = "Low"
 
-    # 2) Optional: fetch FAISS snippets (best-effort)
-    faiss_snippets = []
-    try:
-        if include_faiss_context:
-            # try to fetch a tiny context to feed model
-            # NOTE: your query vector creation logic could be more advanced; here keep simple
-            # If query_faiss_index not available for import (for POC) skip
-            try:
-                import numpy as np
-                vect = np.random.rand(1, 1536).astype("float32")  # dummy query vector
-                raw = await asyncio.to_thread(query_faiss_index, vect, str(Path("app/data/faiss_store") / provider_id), 3)
-                if raw:
-                    faiss_snippets = [{"text": r.get("text"), "score": r.get("score", 0)} for r in raw]
-            except Exception:
-                faiss_snippets = []
-    except Exception:
-        faiss_snippets = []
+    timestamp = datetime.utcnow().isoformat()
 
-    # === Embed watchlist textual summaries (so risk model receives semantic vectors) ===
-    watchlist_embeddings = []
-    try:
-        # import embedding helper (wrap in try so POC still runs if missing)
-        from app.rag.ingest import embed_texts
-        import faiss
-        import numpy as np
-
-        # collect texts
-        watchlist_texts = []
-        wl_meta = []  # keep mapping for later
-        for cat, data in watchlist_results.items():
-            for e in data.get("entries", []):
-                txt = f"[{cat}] {e.get('title','')}: {e.get('detail','')}"
-                watchlist_texts.append(txt)
-                wl_meta.append({"category": cat, "entry_id": e.get("id")})
-
-        if watchlist_texts:
-            vectors = embed_texts(watchlist_texts)  # expected: numpy array or list of vectors
-            # normalize & convert to plain lists for JSON persistence (safe)
-            try:
-                faiss.normalize_L2(vectors)
-            except Exception:
-                pass
-            # ensure we can JSON-serialize: convert numpy arrays to lists
-            for txt, vec, meta in zip(watchlist_texts, vectors, wl_meta):
-                vec_list = vec.tolist() if hasattr(vec, "tolist") else list(vec)
-                watchlist_embeddings.append({"text": txt, "embedding": vec_list, **meta})
-    except Exception as e:
-        # don't fail the whole evaluation if embedding is broken — log and continue
-        print(f"⚠️ watchlist embedding skipped: {e}")
-        watchlist_embeddings = []
-
-    # 3) Assemble payload
-    payload = {
-        "request_id": f"risk-{provider_id}-{int(datetime.utcnow().timestamp())}",
-        "provider": {
-            "provider_id": provider_id,
-            "provider_name": provider_name,
-            "license_number": license_number
-        },
-        "watchlists": watchlist_results,
-        # 🧠 include embeddings from FAISS, contextual docs, and watchlist text embeddings
-        "embedded_context": {
-            "faiss_snippets": faiss_snippets,
-            "contextual_documents": rec.get("documents", []),
-            "watchlist_embeddings": watchlist_embeddings
-        },
-        "config": {"model_version": "sim-1"}
+    model_response = {
+        "provider_name": name,
+        "license_number": license_num,
+        "aggregated_score": aggregated_score,
+        "category_scores": category_scores,
+        "risk_level": risk_level,
+        "timestamp": timestamp,
+        "summary": (
+            f"Provider '{name}' evaluated across {len(CATEGORIES)} domains. "
+            f"{len([c for c in category_scores.values() if c['hits']>0])} category(ies) showed alerts. "
+            f"Overall risk assessed as {risk_level} ({aggregated_score}%)."
+        ),
     }
 
+    # --- 5️⃣ Update persistent record
+    record["risk_status"] = "Completed"
+    record["risk_score"] = aggregated_score
+    record["risk_level"] = risk_level
+    record["risk"] = model_response
+    record.setdefault("history", []).append({
+        "event": "Risk Evaluation Completed",
+        "timestamp": timestamp,
+        "score": aggregated_score,
+        "note": f"Auto-evaluated risk level: {risk_level}",
+    })
 
-    # 4) Call risk model (mock)
-    model_resp = await call_risk_model(payload)
-
-    # 5) Persist results (single file and history)
-    out = {
-        "payload": payload,
-        "model_response": model_resp,
-        "timestamp": datetime.utcnow().isoformat()
-    }
-    (RISK_DIR / f"{provider_id}.json").write_text(json.dumps(out, indent=2))
-
-    # append to history
-    hist_file = RISK_HISTORY_DIR / f"{provider_id}.json"
-    history = json.loads(hist_file.read_text()) if hist_file.exists() else []
-    history.append({"timestamp": datetime.utcnow().isoformat(), "result": out})
-    hist_file.write_text(json.dumps(history, indent=2))
-
-    # 6) Optionally update the application record with latest risk summary
-    # keep this minimal: add risk_summary in record and save_all
-# 6️⃣ Update the application record with the latest risk summary
-    rec.setdefault("risk", {})
-    rec["risk"]["aggregated_score"] = model_resp["aggregated_score"]
-    rec["risk"]["category_scores"] = model_resp["category_scores"]
-    rec["risk"]["updated_at"] = model_resp["timestamp"]
-
-    # Store flattened fields for quick dashboard access
-    rec["risk_score"] = model_resp["aggregated_score"]
-    rec["risk_level"] = (
-        "High" if rec["risk_score"] > 70 else
-        "Moderate" if rec["risk_score"] > 40 else
-        "Low"
-    )
-    rec["risk_status"] = "Completed"
-
-    # ✅ Persist back into applications.json (using same in-memory apps list)
     save_all(apps)
-    print(f"✅ Risk evaluation complete for {provider_id} — Score: {rec['risk_score']}")
+    # --- 🧾 Persist standalone risk file for dashboard ---
+    risk_output = {"model_response": model_response}
+    risk_file = RISK_DIR / f"{provider_id}.json"
+    risk_file.write_text(json.dumps(risk_output, indent=2))
+    print(f"💾 Risk file saved: {risk_file}")
 
-    return out
+    print(f"✅ [Pipeline] Risk model evaluation done for {provider_id} → {risk_level} ({aggregated_score}%)")
+    return {"model_response": model_response}
