@@ -1,0 +1,18 @@
+{
+  "category": "regulatory",
+  "hits": 1,
+  "entries": [
+    {
+      "id": "REG-1-9400",
+      "title": "Pending statutory renewal",
+      "detail": "Simulated event for HealthFirst Old Delhi Medical Centre (DL-HOSP-2020-1022).",
+      "severity": 0.9,
+      "source": "simulated_regulatory_watchlist",
+      "timestamp": "2025-11-12T18:31:38.801227"
+    }
+  ],
+  "last_reported": "2025-11-12T18:31:38.801227",
+  "raw_simulated": {
+    "note": "Non-compliance alerts or expired certifications detected in state health registries."
+  }
+}

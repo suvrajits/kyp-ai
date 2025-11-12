@@ -1,0 +1,18 @@
+{
+  "category": "cybersecurity",
+  "hits": 1,
+  "entries": [
+    {
+      "id": "CYB-1-9400",
+      "title": "Firewall misconfiguration found",
+      "detail": "Simulated event for HealthFirst Old Delhi Medical Centre (DL-HOSP-2020-1022).",
+      "severity": 0.3,
+      "source": "simulated_cybersecurity_watchlist",
+      "timestamp": "2025-11-12T18:31:38.986838"
+    }
+  ],
+  "last_reported": "2025-11-12T18:31:38.986838",
+  "raw_simulated": {
+    "note": "Potential vulnerabilities detected in external systems or breach notifications from security intelligence sources."
+  }
+}

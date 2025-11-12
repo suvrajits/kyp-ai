@@ -1,8 +1,33 @@
 {
   "category": "financial",
-  "hits": 0,
-  "entries": [],
-  "last_reported": null,
+  "hits": 3,
+  "entries": [
+    {
+      "id": "FIN-1-9395",
+      "title": "Minor discrepancy in annual report",
+      "detail": "Simulated event for Niramaya Old Delhi Health Centre (DL-LIC-2022-01036).",
+      "severity": 0.5,
+      "source": "simulated_financial_watchlist",
+      "timestamp": "2025-11-12T18:16:05.911201"
+    },
+    {
+      "id": "FIN-2-9395",
+      "title": "Auditor remark on working capital",
+      "detail": "Simulated event for Niramaya Old Delhi Health Centre (DL-LIC-2022-01036).",
+      "severity": 0.9,
+      "source": "simulated_financial_watchlist",
+      "timestamp": "2025-11-12T18:16:05.911201"
+    },
+    {
+      "id": "FIN-3-9395",
+      "title": "Minor discrepancy in annual report",
+      "detail": "Simulated event for Niramaya Old Delhi Health Centre (DL-LIC-2022-01036).",
+      "severity": 0.1,
+      "source": "simulated_financial_watchlist",
+      "timestamp": "2025-11-12T18:16:05.911201"
+    }
+  ],
+  "last_reported": "2025-11-12T18:16:05.911201",
   "raw_simulated": {
     "note": "Financial discrepancies or delayed statutory filings noted in public or regulatory databases."
   }

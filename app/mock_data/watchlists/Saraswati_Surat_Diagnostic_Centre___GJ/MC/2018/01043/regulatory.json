@@ -1,0 +1,9 @@
+{
+  "category": "regulatory",
+  "hits": 0,
+  "entries": [],
+  "last_reported": null,
+  "raw_simulated": {
+    "note": "Non-compliance alerts or expired certifications detected in state health registries."
+  }
+}

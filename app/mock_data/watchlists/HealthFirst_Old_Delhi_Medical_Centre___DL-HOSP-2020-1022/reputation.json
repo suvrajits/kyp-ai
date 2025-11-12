@@ -1,0 +1,18 @@
+{
+  "category": "reputation",
+  "hits": 1,
+  "entries": [
+    {
+      "id": "REP-1-9400",
+      "title": "Negative press mention detected",
+      "detail": "Simulated event for HealthFirst Old Delhi Medical Centre (DL-HOSP-2020-1022).",
+      "severity": 0.2,
+      "source": "simulated_reputation_watchlist",
+      "timestamp": "2025-11-12T18:31:38.836016"
+    }
+  ],
+  "last_reported": "2025-11-12T18:31:38.836016",
+  "raw_simulated": {
+    "note": "Negative public sentiment or adverse media coverage observed in recent monitoring cycles."
+  }
+}

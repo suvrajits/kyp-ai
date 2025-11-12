@@ -1,0 +1,16 @@
+{
+  "provider_name": "Niramaya Old Delhi Health Centre",
+  "license_number": "DL-LIC-2022-01036",
+  "aggregated_score": 20,
+  "risk_level": "Low",
+  "category_scores": {
+    "financial": 30,
+    "operational": 25,
+    "reputational": 20,
+    "regulatory": 15,
+    "strategic": 10
+  },
+  "confidence": 0.95,
+  "timestamp": "2025-11-12T17:26:12.774487",
+  "summary": "Fine-tuned model evaluation complete. Risk level: Low (20%), confidence: 0.95."
+}

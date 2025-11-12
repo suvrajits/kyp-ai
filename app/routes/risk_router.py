@@ -52,6 +52,30 @@ async def calculate_provider_risk(provider_id: str, internal: bool = False):
         categories = model_resp.get("category_scores", {})
         timestamp = model_resp.get("timestamp", datetime.utcnow().isoformat())
 
+        # --- ✅ Normalize category_scores to always include {score, note}
+        if isinstance(categories, dict):
+            normalized = {}
+            for cat, val in categories.items():
+                if isinstance(val, (int, float)):
+                    # Wrap numeric-only entries with default reasoning
+                    normalized[cat] = {
+                        "score": val,
+                        "note": "No reasoning available (model returned numeric-only score)."
+                    }
+                elif isinstance(val, dict):
+                    normalized[cat] = {
+                        "score": val.get("score", 0),
+                        "note": val.get("note", val.get("reason", "No reasoning provided."))
+                    }
+                else:
+                    normalized[cat] = {
+                        "score": 0,
+                        "note": "Invalid category value format."
+                    }
+            categories = normalized
+            model_resp["category_scores"] = normalized
+
+
         # --- Persist into applications.json ---
         apps = load_applications()
         rec = None
@@ -200,6 +224,7 @@ async def get_risk_status(provider_id: str):
         (r for r in apps if r.get("id") == provider_id or r.get("application_id") == provider_id),
         None,
     )
+
     if not rec:
         return JSONResponse(status_code=404, content={"error": "Provider not found"})
 
@@ -208,6 +233,27 @@ async def get_risk_status(provider_id: str):
     score = rec.get("risk_score") or risk.get("aggregated_score")
     level = rec.get("risk_level") or "Unknown"
     categories = risk.get("category_scores", {}) or {}
+
+    # --- ✅ Normalize category_scores if still numeric-only ---
+    if isinstance(categories, dict):
+        normalized = {}
+        for cat, val in categories.items():
+            if isinstance(val, (int, float)):
+                normalized[cat] = {
+                    "score": val,
+                    "note": "No reasoning available (legacy or numeric-only record)."
+                }
+            elif isinstance(val, dict):
+                normalized[cat] = {
+                    "score": val.get("score", 0),
+                    "note": val.get("note", val.get("reason", "No reasoning provided."))
+                }
+            else:
+                normalized[cat] = {
+                    "score": 0,
+                    "note": "Invalid category value format."
+                }
+        categories = normalized
 
     if score is not None:
         status = "Completed"
@@ -221,6 +267,7 @@ async def get_risk_status(provider_id: str):
             "last_updated": risk.get("updated_at", datetime.utcnow().isoformat()),
         }
     )
+
 
 
 # ============================================================

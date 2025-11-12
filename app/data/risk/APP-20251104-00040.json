@@ -2,53 +2,17 @@
   "model_response": {
     "provider_name": "Nova Old Delhi General Hospital",
     "license_number": "DL-HOSP-2023-1005",
-    "aggregated_score": 5.0,
-    "category_scores": {
-      "cybersecurity": {
-        "score": 5.0,
-        "note": "Potential vulnerabilities detected in external systems or breach notifications from security intelligence sources. No alerts found.",
-        "hits": 0,
-        "last_reported": null
-      },
-      "data_privacy": {
-        "score": 5.0,
-        "note": "Possible data privacy compliance gaps or exposure incidents identified through open datasets. No alerts found.",
-        "hits": 0,
-        "last_reported": null
-      },
-      "operational": {
-        "score": 5.0,
-        "note": "Operational continuity or service disruption reports identified through third-party audits. No alerts found.",
-        "hits": 0,
-        "last_reported": null
-      },
-      "financial": {
-        "score": 5.0,
-        "note": "Financial discrepancies or delayed statutory filings noted in public or regulatory databases. No alerts found.",
-        "hits": 0,
-        "last_reported": null
-      },
-      "regulatory": {
-        "score": 5.0,
-        "note": "Non-compliance alerts or expired certifications detected in state health registries. No alerts found.",
-        "hits": 0,
-        "last_reported": null
-      },
-      "reputation": {
-        "score": 5.0,
-        "note": "Negative public sentiment or adverse media coverage observed in recent monitoring cycles. No alerts found.",
-        "hits": 0,
-        "last_reported": null
-      },
-      "supplychain": {
-        "score": 5.0,
-        "note": "Vendor reliability issues or dependency risks found in procurement and logistics reports. No alerts found.",
-        "hits": 0,
-        "last_reported": null
-      }
-    },
+    "aggregated_score": 20,
     "risk_level": "Low",
-    "timestamp": "2025-11-04T15:06:14.576166",
-    "summary": "Provider 'Nova Old Delhi General Hospital' evaluated across 7 domains. 0 category(ies) showed alerts. Overall risk assessed as Low (5.0%)."
+    "category_scores": {
+      "financial": 30,
+      "operational": 25,
+      "reputational": 20,
+      "regulatory": 15,
+      "strategic": 10
+    },
+    "confidence": 0.95,
+    "timestamp": "2025-11-12T18:06:34.174369",
+    "summary": "Fine-tuned model evaluation complete. Risk level: Low (20%), confidence: 0.95."
   }
 }
