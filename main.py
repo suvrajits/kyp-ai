@@ -97,6 +97,32 @@ async def on_startup():
     print("   • Risk Intelligence API")
     print("=" * 80 + "\n")
 
+    # -----------------------------------------------
+    # 🔐 INITIALIZE RISK MODEL CLIENT HERE
+    # -----------------------------------------------
+    from azure.identity import DefaultAzureCredential
+    from azure.keyvault.secrets import SecretClient
+    from app.services.risk_model_client import init_client
+
+    print("🔐 Fetching Risk Model secrets from Azure Key Vault...")
+
+    KEYVAULT_URL = "https://providergpt-kv.vault.azure.net/"
+    credential = DefaultAzureCredential()
+    secret_client = SecretClient(vault_url=KEYVAULT_URL, credential=credential)
+
+    risk_model_endpoint = secret_client.get_secret("riskModelEndpoint").value
+    risk_model_key = secret_client.get_secret("riskModelKey").value
+    print("🔍 DEBUG: risk_model_endpoint =", risk_model_endpoint)
+    print("🔍 DEBUG: risk_model_key =", risk_model_key[:6] + "********")
+
+    print("🤖 Initializing Azure OpenAI Risk Model client...")
+    init_client(
+        endpoint=risk_model_endpoint,
+        api_key=risk_model_key,
+        api_version="2024-05-01-preview"
+    )
+    print("✅ Risk Model client initialized successfully.")
+
 @app.on_event("shutdown")
 async def on_shutdown():
     print("🧩 Graceful shutdown: releasing any in-memory state / connections.")

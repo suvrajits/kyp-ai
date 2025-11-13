@@ -1,51 +1,76 @@
 # app/services/risk_model_client.py
-
 import json
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.secrets import SecretClient
+import time
 from openai import AzureOpenAI
+from typing import Dict, Any, Union
+from app.risk.schema import validate_payload
 
-KEY_VAULT_URL = "https://providergpt-kv.vault.azure.net/"
-credential = DefaultAzureCredential()
-secret_client = SecretClient(vault_url=KEY_VAULT_URL, credential=credential)
+client = None
+def init_client(endpoint, api_key, api_version="2024-02-15-preview"):
+    global client
+    client = AzureOpenAI(azure_endpoint=endpoint, api_key=api_key, api_version=api_version)
+    return client
 
-RISK_MODEL_ENDPOINT = secret_client.get_secret("riskModelEndpoint").value
-RISK_MODEL_KEY = secret_client.get_secret("riskModelKey").value
-
-client = AzureOpenAI(
-    azure_endpoint=RISK_MODEL_ENDPOINT,
-    api_key=RISK_MODEL_KEY,
-    api_version="2024-02-15-preview",
-)
-
-async def call_risk_model(payload: dict) -> dict:
+def call_risk_model(payload: Union[Dict[str, Any], str], model_name: str):
     """
-    Calls the fine-tuned risk model and returns structured JSON.
+    Accepts either:
+     - payload: dict (will be validated via schema)
+     - payload: str  (preformatted YAML-style prompt text)
+    Returns parsed JSON (dict) when model returns JSON; otherwise raw string.
     """
-    messages = [
-        {
-            "role": "system",
-            "content": (
-                "You are a financial risk evaluation assistant that predicts "
-                "category-wise risks and an overall aggregated risk score based on user data. "
-                "Always output valid JSON with these keys: "
-                "category_scores (each must contain {score: <0-100>, note: <textual reasoning>}), "
-                "aggregated_score, risk_level, and confidence. "
-                "The 'note' field must summarize the reason for each risk score clearly."
-            ),
-        },
-        {"role": "user", "content": json.dumps(payload, indent=2)},
-    ]
+    # If payload is a dict -> validate
+    if isinstance(payload, dict):
+        ok, err = validate_payload(payload)
+        if not ok:
+            raise ValueError(f"Model payload validation failed: {err}")
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini-2024-07-18-risk-eval-v2",
-        messages=messages,
-        temperature=0.2,
-        max_tokens=1024,
-    )
+        # Use JSON as fallback user content
+        user_content = json.dumps(payload)
 
-    content = response.choices[0].message.content
-    try:
-        return json.loads(content)
-    except json.JSONDecodeError:
-        raise ValueError(f"Model did not return valid JSON:\n{content}")
+    elif isinstance(payload, str):
+        # It's a pre-built text prompt (YAML-like). Skip schema validation.
+        user_content = payload
+
+    else:
+        raise ValueError("call_risk_model: payload must be dict or str")
+
+    # Logging request
+    print("\n\n==================== RISK MODEL REQUEST ====================")
+    # print user_content truncated for logs if big
+    if isinstance(user_content, str) and len(user_content) > 3000:
+        print(user_content[:3000] + "\n...<truncated>")
+    else:
+        print(user_content)
+    print("============================================================\n")
+
+    # Call
+    for attempt in range(1, 3):
+        try:
+            resp = client.chat.completions.create(
+                model=model_name,
+                messages=[
+                    {"role": "system", "content": "You are a provider risk explanation assistant. RETURN ONLY JSON EXPLAINERS."},
+                    {"role": "user", "content": user_content}
+                ],
+                temperature=0.0,
+                max_tokens=1200
+            )
+            raw = resp.choices[0].message.content
+            print("\n\n==================== RISK MODEL RAW RESPONSE ====================")
+            if len(raw) > 3000:
+                print(raw[:3000] + "\n...<truncated>")
+            else:
+                print(raw)
+            print("==================================================================\n")
+            # try parse
+            try:
+                return json.loads(raw)
+            except Exception:
+                return raw
+
+        except Exception as e:
+            print(f"⚠️ Risk model call failed (attempt {attempt}): {e}")
+            if attempt < 2:
+                time.sleep(1)
+            else:
+                raise

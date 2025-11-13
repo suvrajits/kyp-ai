@@ -1,5 +1,4 @@
 # app/routes/application_review.py
-
 from fastapi import APIRouter, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -9,58 +8,36 @@ from app.services.registry_matcher import match_provider
 from datetime import datetime
 from pathlib import Path
 from shutil import move
-# inside accept_application, after save_all(apps)
 import asyncio
-from app.risk.orchestrator import evaluate_provider
-from app.risk.watchlist_simulator import CATEGORIES, simulate_watchlist_call
+
+from app.risk.watchlist_simulator import CATEGORIES, simulate_watchlist_light
 from app.routes.risk_router import calculate_provider_risk
+from app.rag.ingest import embed_texts, save_faiss_index  # optional
 
 router = APIRouter()
 
-# ✅ Templates path
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 
-# ============================================================
-# 🟢 1️⃣ Review Page – Display Application + Matching Summary
-# ============================================================
 @router.get("/review/{app_id}", response_class=HTMLResponse)
 async def review_application(request: Request, app_id: str):
-    """
-    Render the application review page for an analyst.
-    Displays structured provider data, match percent, per-field comparison,
-    and a preliminary risk snapshot (category-level simulation).
-    """
     apps = load_applications()
-    record = next(
-        (r for r in apps if r.get("id") == app_id or r.get("application_id") == app_id),
-        None,
-    )
-
+    record = next((r for r in apps if r.get("id") == app_id or r.get("application_id") == app_id), None)
     if not record:
         return HTMLResponse(f"<h3>❌ No application found for ID: {app_id}</h3>", status_code=404)
 
-    # Workflow logic: analyst can only review "New" or "Pending"
     if record.get("status") not in ["New", "Pending", "Under Review"]:
         return RedirectResponse(f"/dashboard/view/{record.get('id')}", status_code=303)
 
     provider_struct = record.get("provider", {}) or {}
 
-    # --- Registry Matching (safe retry) ---
     try:
         best_match_entry, match_result = match_provider(provider_struct, debug=False)
     except Exception as e:
-        print(f"⚠️ Registry matching failed for {app_id}: {e}")
         best_match_entry = None
-        match_result = {
-            "match_percent": 0.0,
-            "per_field": {},
-            "recommendation": "Matcher error",
-            "reason": str(e),
-        }
+        match_result = {"match_percent": 0.0, "per_field": {}, "recommendation": "Matcher error", "reason": str(e)}
 
-    # --- Safely extract matching metrics ---
     match_percent = match_result.get("match_percent", 0.0)
     if not isinstance(match_percent, (float, int)):
         match_percent = 0.0
@@ -68,7 +45,6 @@ async def review_application(request: Request, app_id: str):
     recommendation = match_result.get("recommendation", "Unknown")
     per_field = match_result.get("per_field", {})
 
-    # Add human-readable "status" to each field comparison
     for field, info in per_field.items():
         score = info.get("score", 0)
         if score >= 0.9:
@@ -78,35 +54,25 @@ async def review_application(request: Request, app_id: str):
         else:
             info["status"] = "❌ Mismatch"
 
-    print(f"🧾 Review {app_id}: {match_percent}% match ({recommendation})")
-
-    # --- 🧠 Pre-Risk Snapshot Simulation (lightweight async) ---
+    # --- Pre-risk snapshot (lightweight, in-memory only) ---
     async def simulate_pre_risk(provider):
-        """Runs async simulated watchlist checks for preliminary scoring."""
         name = provider.get("provider_name")
         lic = provider.get("license_number")
-        results = await asyncio.gather(*[simulate_watchlist_call(name, lic, c) for c in CATEGORIES])
+        # call the lightweight simulator (does not write files)
+        results = await asyncio.gather(*[simulate_watchlist_light(name, lic, c) for c in CATEGORIES])
 
-        # Compute category-level scores
         category_scores = {}
         for r in results:
             cat = r["category"]
             hits = r.get("entries", [])
-            avg_sev = (
-                sum(e.get("severity", 0.3) for e in hits) / max(1, len(hits))
-                if hits else 0.1
-            )
+            avg_sev = (sum(e.get("severity", 0.3) for e in hits) / max(1, len(hits))) if hits else 0.1
             category_scores[cat] = round(avg_sev * 100, 1)
 
-        # Aggregate total score
         total = sum(category_scores.values()) / max(1, len(category_scores))
         return round(total, 1), category_scores
 
-    # Run the pre-risk simulation for this provider
     pre_risk_score, pre_risk_categories = await simulate_pre_risk(provider_struct)
-    print(f"🧮 Preliminary risk estimate for {app_id}: {pre_risk_score}%")
 
-    # ✅ Save snapshot into record and append to history
     record["pre_risk_snapshot"] = {
         "score": pre_risk_score,
         "categories": pre_risk_categories,
@@ -126,10 +92,9 @@ async def review_application(request: Request, app_id: str):
             "note": "Preliminary risk snapshot linked to provider record for drift comparison."
         })
 
+    # Save after adding pre-risk snapshot
     save_all(apps)
 
-
-    # ✅ Render HTML with new risk context
     return templates.TemplateResponse(
         "application_review.html",
         {
@@ -139,60 +104,45 @@ async def review_application(request: Request, app_id: str):
             "recommendation": recommendation,
             "per_field": per_field or {},
             "best_match_entry": best_match_entry or {},
-            "pre_risk_score": pre_risk_score,              # ✅ added
-            "pre_risk_categories": pre_risk_categories,    # ✅ added
+            "pre_risk_score": pre_risk_score,
+            "pre_risk_categories": pre_risk_categories,
         },
     )
 
 
-
-
-
-# ============================================================
-# 🟢 2️⃣ Accept Application → Move to Provider Stage
-# ============================================================
 @router.post("/review/{app_id}/accept")
 async def accept_application(request: Request, app_id: str):
-    """
-    Accepts an application, promotes TEMP-ID → APP-ID,
-    builds FAISS index for license data, and redirects to dashboard.
-    """
-    from app.rag.ingest import embed_texts
-    from app.rag.vector_store_faiss import save_faiss_index
+    from app.rag.ingest import embed_texts, save_faiss_index
     import faiss
 
     apps = load_applications()
-    record = next(
-        (r for r in apps if r.get("id") == app_id or r.get("application_id") == app_id),
-        None,
-    )
+    record = next((r for r in apps if r.get("id") == app_id or r.get("application_id") == app_id), None)
     if not record:
         return HTMLResponse(f"<h3>❌ Application not found for ID: {app_id}</h3>", status_code=404)
 
-    # 🚧 Prevent double acceptance
     if record.get("id", "").startswith("APP-"):
-        print(f"⚠️ Application {app_id} already promoted → {record['id']}")
         return RedirectResponse(url=f"/dashboard/view/{record['id']}", status_code=303)
 
     new_app_id = generate_app_id()
-    print(f"🔁 Promoting {app_id} → {new_app_id}")
 
-    # Move FAISS directory if present
+    # Move FAISS directory if present (keep existing behavior)
     old_faiss_dir = Path("app/data/faiss_store") / app_id
     new_faiss_dir = Path("app/data/faiss_store") / new_app_id
     try:
         if old_faiss_dir.exists():
             move(str(old_faiss_dir), str(new_faiss_dir))
-            print(f"📦 Moved FAISS data from {old_faiss_dir.name} → {new_faiss_dir.name}")
     except Exception as e:
         print(f"⚠️ Could not move FAISS folder ({app_id}): {e}")
 
-    # Update record workflow state
+    # Update record id and workflow state
     record["id"] = new_app_id
     record["application_id"] = new_app_id
     record["status"] = "Under Review"
 
-    # Create FAISS embeddings
+    # IMPORTANT: save the updated apps *before* triggering the async risk pipeline
+    save_all(apps)
+
+    # Build FAISS for provider profile (non-blocking error-safe)
     try:
         provider = record.get("provider", {})
         if provider:
@@ -207,11 +157,10 @@ async def accept_application(request: Request, app_id: str):
                 doc_id=new_app_id,
                 provider_dir=str(provider_dir)
             )
-            print(f"💾 FAISS index created for {new_app_id}")
     except Exception as e:
         print(f"❌ Failed FAISS creation for {new_app_id}: {e}")
 
-    # Log + Save
+    # Update history + risk state
     record.setdefault("history", []).append({
         "event": "Application Accepted & Promoted",
         "timestamp": datetime.utcnow().isoformat(),
@@ -220,45 +169,25 @@ async def accept_application(request: Request, app_id: str):
     record["risk_status"] = "Evaluating"
     record["risk_score"] = None
     record["risk_level"] = None
-    
+
+    # Persist the change (again to be safe)
     save_all(apps)
 
     print(f"🧠 Triggering async risk evaluation for {new_app_id} at {datetime.utcnow().isoformat()} ...")
 
-    # kick-off async evaluation (fire-and-forget)
-    await asyncio.sleep(1)
-
-# After save_all(apps)
-# Fire-and-forget but avoid duplicate triggers
+    # Fire-and-forget risk pipeline — avoid duplicates using a trigger timestamp
     if record.get("risk_status") != "Evaluating" or not record.get("risk_triggered_at"):
         record["risk_status"] = "Evaluating"
         record["risk_triggered_at"] = datetime.utcnow().isoformat()
         save_all(apps)
 
-        async def risk_pipeline(app_id: str):
-            """Runs risk evaluation followed by FAISS embedding."""
+        async def risk_pipeline(app_id_inner: str):
             try:
-                print(f"🧠 [Pipeline] Evaluating provider risk for {app_id}...")
-                await evaluate_provider(app_id)
-                print(f"✅ [Pipeline] Risk model evaluation done for {app_id}")
-                await calculate_provider_risk(app_id, internal=True)
-                print(f"💾 [Pipeline] Risk embeddings stored in FAISS for {app_id}")
-                # Update JSON record
-                apps_latest = load_applications()
-                rec = next((r for r in apps_latest if r.get("id") == app_id), None)
-                if rec:
-                    rec["risk_status"] = "Completed"
-                    rec.setdefault("history", []).append({
-                        "event": "Risk Evaluation & Embedding Complete",
-                        "timestamp": datetime.utcnow().isoformat()
-                    })
-                    save_all(apps_latest)
+                await calculate_provider_risk(app_id_inner, internal=True)
             except Exception as e:
-                print(f"❌ Risk pipeline failed for {app_id}: {e}")
+                print(f"❌ Risk pipeline failed for {app_id_inner}: {e}")
 
-        # Run asynchronously without blocking UI
         asyncio.create_task(risk_pipeline(new_app_id))
-
         record.setdefault("history", []).append({
             "event": "Risk Evaluation Pipeline Triggered",
             "timestamp": datetime.utcnow().isoformat()
@@ -267,22 +196,14 @@ async def accept_application(request: Request, app_id: str):
     else:
         print(f"⚠️ Risk evaluation already in progress for {new_app_id}")
 
-
-
     print(f"✅ Application {app_id} → {new_app_id} accepted successfully.")
     return RedirectResponse(url=f"/dashboard/view/{new_app_id}", status_code=303)
 
-# ============================================================
-# 🔴 3️⃣ Deny Application → Close It Out
-# ============================================================
+
 @router.post("/review/{app_id}/deny", response_class=HTMLResponse)
 async def deny_application(request: Request, app_id: str, reason: str = Form(...)):
-    """Marks an application as Denied and logs the reason."""
     apps = load_applications()
-    record = next(
-        (r for r in apps if r.get("id") == app_id or r.get("application_id") == app_id),
-        None,
-    )
+    record = next((r for r in apps if r.get("id") == app_id or r.get("application_id") == app_id), None)
     if not record:
         return HTMLResponse(f"<h3>❌ Application not found for ID: {app_id}</h3>", status_code=404)
 
@@ -292,16 +213,8 @@ async def deny_application(request: Request, app_id: str, reason: str = Form(...
         "reason": reason,
         "timestamp": datetime.utcnow().isoformat()
     })
-
-    # 🧠 Initialize risk evaluation state
     record["risk_status"] = "N/A"
     record["risk_score"] = None
     record["risk_level"] = None
-
     save_all(apps)
-    print(f"❌ Application {app_id} denied (Reason: {reason})")
-
-    # ✅ Redirect back to dashboard list
     return RedirectResponse(url="/upload/upload-form", status_code=303)
-
-

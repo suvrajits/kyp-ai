@@ -45,13 +45,48 @@ messages = [
 provider_name: Global Pharma Alliance
 license_number: LIC-8821
 watchlists:
-- cybersecurity: 1 hits: ['Endpoint compromise contained within 24 hours (severity 0.4)']
-- data_privacy: 1 hits: ['Outdated GDPR policy; updated post-audit (severity 0.3)']
-- operational: 2 hits: ['Factory downtime due to flood (severity 0.8)', 'Temporary logistics disruption (severity 0.6)']
-- financial: 1 hits: ['Exchange rate impact on procurement (severity 0.4)']
-- regulatory: 2 hits: ['Minor labeling violation (severity 0.4)', 'Documentation delay for new product (severity 0.3)']
-- reputation: 1 hits: ['Positive media coverage for disaster response (severity 0.1)']
-- supplychain: 2 hits: ['Raw material shortage (severity 0.5)', 'Backup supplier under evaluation (severity 0.4)']
+- cybersecurity: 0 hits
+  entries: []
+  note: "no risk found"
+
+- data_privacy: 2 hits
+  entries:
+    - ID: DAT-1-6895
+      Title: GDPR compliance gap report
+      Detail: Simulated event for Fortis Coimbatore Surgical Centre (TN-LIC-2022-01007).
+      Severity: 0.4
+      Source: simulated_data_privacy_watchlist
+      Timestamp: 2025-11-13T06:55:20.183975
+
+    - ID: DAT-2-6895
+      Title: Unauthorized access incident
+      Detail: Simulated event for Fortis Coimbatore Surgical Centre (TN-LIC-2022-01007).
+      Severity: 0.2
+      Source: simulated_data_privacy_watchlist
+      Timestamp: 2025-11-13T06:55:20.183975
+
+  note: "Data leaked from the hospital and sold to startups. Several other risk found regarding customers complaining of prank calls after visiting the hospital"
+
+- operational: 0 hits  
+  entries: []
+  note: "no risk found"
+
+- financial: 0 hits
+  entries: []
+  note: ""
+
+- regulatory: 0 hits
+  entries: []
+  note: "no risk found"
+
+- reputation: 0 hits
+  entries: []
+  note: ""
+
+- supplychain: 0 hits
+  entries: []
+  note: "no risk found"
+
 web_research: 'Balanced feedback: strong recovery actions praised.'
 doc_summary: 'All audit issues addressed; follow-up due next quarter.'
 Produce JSON as specified."""

@@ -1,0 +1,29 @@
+{
+  "provider_id": "APP-20251113-00068",
+  "category": "supplychain",
+  "hits": 3,
+  "entries": [
+    {
+      "severity": 0.8,
+      "detail": "Simulated supplychain issue for Nova Thiruvananthapuram Surgical Centre",
+      "timestamp": "2025-11-13T13:35:59.762203",
+      "source": "simulated_supplychain_watchlist"
+    },
+    {
+      "severity": 0.3,
+      "detail": "Simulated supplychain issue for Nova Thiruvananthapuram Surgical Centre",
+      "timestamp": "2025-11-13T13:35:59.762203",
+      "source": "simulated_supplychain_watchlist"
+    },
+    {
+      "severity": 0.8,
+      "detail": "Simulated supplychain issue for Nova Thiruvananthapuram Surgical Centre",
+      "timestamp": "2025-11-13T13:35:59.762203",
+      "source": "simulated_supplychain_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-13T13:35:59.762203",
+  "raw_simulated": {
+    "note": "Vendor reliability or delivery issues detected."
+  }
+}

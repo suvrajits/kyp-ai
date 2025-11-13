@@ -50,7 +50,83 @@ async def calculate_provider_risk(provider_id: str, internal: bool = False):
         model_resp = result.get("model_response", {})
         aggregated_score = model_resp.get("aggregated_score")
         categories = model_resp.get("category_scores", {})
+        print("\n\n==================== RISK ROUTER RECEIVED ====================")
+        print("Aggregated:", aggregated_score)
+        print("Categories:", json.dumps(categories, indent=2))
+        print("Original_explanations:", model_resp.get("original_explanations"))
+        print("==============================================================\n")
+
         timestamp = model_resp.get("timestamp", datetime.utcnow().isoformat())
+        # ============================================================
+        # 🧠 PRESERVE ORIGINAL CATEGORY EXPLANATIONS
+        # ============================================================
+
+        # Load existing record to check for previous explanations
+        apps_existing = load_applications()
+        record_existing = next(
+            (r for r in apps_existing if r.get("id") == provider_id or r.get("application_id") == provider_id),
+            None
+        )
+
+        previous_notes = None
+
+        if record_existing:
+            previous_notes = (
+                record_existing.get("risk", {}).get("original_explanations")
+                or {cat: data.get("note") for cat, data in 
+                record_existing.get("risk", {}).get("category_scores", {}).items()}
+            )
+
+        # If we already have original explanations → reattach them
+        # ============================================================
+        # 🧠 FULL 7-CATEGORY MERGE — MODEL MAY RETURN ONLY SOME
+        # ============================================================
+
+        merged = {}
+
+        # 1️⃣ Load previous categories (full set of 7, if they exist)
+        previous_categories = {}
+        if record_existing:
+            previous_categories = record_existing.get("risk", {}).get("category_scores", {})
+
+        # 2️⃣ Merge across full set
+        all_category_keys = set(previous_categories.keys()) | set(categories.keys())
+
+        for cat in all_category_keys:
+            # Determine score
+            if cat in categories:  # new score from model
+                model_val = categories[cat]
+                new_score = model_val.get("score") if isinstance(model_val, dict) else model_val
+            else:
+                # Model did not return this category → reuse old score OR set default
+                old_val = previous_categories.get(cat, {})
+                new_score = old_val.get("score", 0)
+
+            # Determine explanation
+            if previous_notes and cat in previous_notes:
+                note = previous_notes[cat]
+            elif cat in previous_categories:
+                note = previous_categories[cat].get("note", "No explanation provided.")
+            else:
+                note = "No explanation available."
+
+            merged[cat] = {
+                "score": new_score,
+                "note": note
+            }
+
+        # 3️⃣ Replace model categories with merged full set
+        categories = merged
+        model_resp["category_scores"] = merged
+
+
+
+        # ============================================================
+        # ✅ FIX #3 — Ensure authoritative original_explanations
+        # ============================================================
+        if record_existing and previous_notes:
+            # If previous notes exist, ALWAYS use them as the source of truth
+            model_resp["original_explanations"] = previous_notes
 
         # --- ✅ Normalize category_scores to always include {score, note}
         if isinstance(categories, dict):
@@ -63,10 +139,19 @@ async def calculate_provider_risk(provider_id: str, internal: bool = False):
                         "note": "No reasoning available (model returned numeric-only score)."
                     }
                 elif isinstance(val, dict):
+                    # Determine the note: priority → val.note → val.reason → previous_notes → fallback
+                    note_val = (
+                        val.get("note")
+                        or val.get("reason")
+                        or (previous_notes.get(cat) if previous_notes else None)
+                        or "No reasoning provided."
+                    )
+
                     normalized[cat] = {
                         "score": val.get("score", 0),
-                        "note": val.get("note", val.get("reason", "No reasoning provided."))
+                        "note": note_val
                     }
+
                 else:
                     normalized[cat] = {
                         "score": 0,
@@ -74,6 +159,10 @@ async def calculate_provider_risk(provider_id: str, internal: bool = False):
                     }
             categories = normalized
             model_resp["category_scores"] = normalized
+            print("\n\n==================== RISK ROUTER POST-MERGE ====================")
+            print(json.dumps(model_resp["category_scores"], indent=2))
+            print("================================================================\n")
+
 
 
         # --- Persist into applications.json ---
@@ -86,6 +175,17 @@ async def calculate_provider_risk(provider_id: str, internal: bool = False):
                 r["risk"]["aggregated_score"] = aggregated_score
                 r["risk"]["category_scores"] = categories
                 r["risk"]["updated_at"] = timestamp
+                # NEW → persist original explanations so future runs can reattach them
+                if "original_explanations" in model_resp:
+                    for cat, note in model_resp["original_explanations"].items():
+                        if cat in categories:
+                            categories[cat]["note"] = note
+
+                    # Persist permanently
+                    r["risk"]["original_explanations"] = model_resp["original_explanations"]
+
+
+
                 r["risk_score"] = aggregated_score
                 r["risk_level"] = (
                     "High" if aggregated_score and aggregated_score > 70 else
@@ -235,6 +335,7 @@ async def get_risk_status(provider_id: str):
     categories = risk.get("category_scores", {}) or {}
 
     # --- ✅ Normalize category_scores if still numeric-only ---
+
     if isinstance(categories, dict):
         normalized = {}
         for cat, val in categories.items():
@@ -254,6 +355,7 @@ async def get_risk_status(provider_id: str):
                     "note": "Invalid category value format."
                 }
         categories = normalized
+
 
     if score is not None:
         status = "Completed"

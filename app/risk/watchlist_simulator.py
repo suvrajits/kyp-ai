@@ -5,131 +5,141 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any
 
+from app.services.application_store import load_applications
+
+# -------------------------------------------------------------------------
+# Directory where all watchlist files are stored
+# -------------------------------------------------------------------------
 BASE = Path("app/mock_data/watchlists")
 BASE.mkdir(parents=True, exist_ok=True)
 
 CATEGORIES = [
     "cybersecurity",
     "data_privacy",
-    "operational",
     "financial",
+    "operational",
     "regulatory",
     "reputation",
     "supplychain",
 ]
 
+# =============================================================================
+# 🔧 Get provider_name + license_number
+# =============================================================================
+def get_provider_details(provider_id: str):
+    apps = load_applications()
+    rec = next(
+        (r for r in apps if r.get("id") == provider_id or r.get("application_id") == provider_id),
+        None
+    )
+    if not rec:
+        raise ValueError(f"❌ Provider not found: {provider_id}")
 
-def _sample_entry(provider_name: str, license_number: str, category: str, idx: int) -> Dict[str, Any]:
-    """Return a single watchlist entry object with realistic details."""
-    severity = random.choice([0.3, 0.5, 0.7, 0.9]) if random.random() < 0.25 else random.choice([0.1, 0.2, 0.4])
-    titles = {
-        "financial": [
-            "Delayed GST filing",
-            "Auditor remark on working capital",
-            "Minor discrepancy in annual report"
-        ],
-        "cybersecurity": [
-            "Endpoint vulnerability scan alert",
-            "Firewall misconfiguration found",
-            "Breach notification in vendor network"
-        ],
-        "data_privacy": [
-            "PII exposure alert",
-            "GDPR compliance gap report",
-            "Unauthorized access incident"
-        ],
-        "operational": [
-            "Operational delay in diagnostics unit",
-            "Service downtime detected",
-            "Vendor supply delay event"
-        ],
-        "regulatory": [
-            "Expired state license flag",
-            "Pending statutory renewal",
-            "Compliance documentation missing"
-        ],
-        "reputation": [
-            "Negative press mention detected",
-            "Public review anomaly found",
-            "Social sentiment dip"
-        ],
-        "supplychain": [
-            "Vendor reliability drop",
-            "Delivery backlog in supplies",
-            "Supplier compliance issue"
-        ]
-    }
-
-    title = random.choice(titles.get(category, [f"Simulated {category} hit"]))
-    return {
-        "id": f"{category[:3].upper()}-{idx}-{abs(hash(provider_name)) % 10000}",
-        "title": title,
-        "detail": f"Simulated event for {provider_name} ({license_number}).",
-        "severity": severity,
-        "source": f"simulated_{category}_watchlist",
-        "timestamp": datetime.utcnow().isoformat(),
-    }
+    p = rec.get("provider", {})
+    return p.get("provider_name", ""), p.get("license_number", "")
 
 
-async def simulate_watchlist_call(provider_name: str, license_number: str, category: str, delay_range=(0.05, 0.5)):
-    """Simulate an async API call to a watchlist."""
-    random.seed(hash(provider_name + license_number + category))  # ✅ Stable randomness per provider
-    await asyncio.sleep(random.uniform(*delay_range))
+# =============================================================================
+# 🔧 FULL SIMULATOR (writes JSON files to disk)
+# =============================================================================
+async def simulate_watchlist(provider_id: str, category: str) -> Dict[str, Any]:
+    """
+    Main simulator used by orchestrator.
+    Generates realistic watchlist entries and writes JSON files per category:
+    app/mock_data/watchlists/<provider_id>/<category>.json
+    """
 
-    hit_prob = 0.12  # 12% chance of hits
-    hits = []
-    if random.random() < hit_prob:
-        count = random.randint(1, 3)
-        for i in range(1, count + 1):
-            hits.append(_sample_entry(provider_name, license_number, category, i))
+    provider_name, license_number = get_provider_details(provider_id)
 
-    last_reported = hits[-1]["timestamp"] if hits else None
-    notes = {
-        "financial": "Financial discrepancies or delayed statutory filings noted in public or regulatory databases.",
-        "cybersecurity": "Potential vulnerabilities detected in external systems or breach notifications from security intelligence sources.",
-        "data_privacy": "Possible data privacy compliance gaps or exposure incidents identified through open datasets.",
-        "operational": "Operational continuity or service disruption reports identified through third-party audits.",
-        "regulatory": "Non-compliance alerts or expired certifications detected in state health registries.",
-        "reputation": "Negative public sentiment or adverse media coverage observed in recent monitoring cycles.",
-        "supplychain": "Vendor reliability issues or dependency risks found in procurement and logistics reports."
+    # Stable random seed so same provider → consistent results
+    random.seed(hash(provider_id + category))
+
+    await asyncio.sleep(random.uniform(0.05, 0.15))
+
+    # 10–15% chance of hits
+    entries = []
+    if random.random() < 0.15:
+        for _ in range(random.randint(1, 3)):
+            entries.append({
+                "severity": random.choice([0.1, 0.3, 0.5, 0.8]),
+                "detail": f"Simulated {category} issue for {provider_name}",
+                "timestamp": datetime.utcnow().isoformat(),
+                "source": f"simulated_{category}_watchlist"
+            })
+
+    note_map = {
+        "cybersecurity": "Possible vulnerabilities or threat alerts identified.",
+        "data_privacy": "Potential PII exposure or privacy gaps detected.",
+        "financial": "Financial irregularities or delays noted.",
+        "operational": "Operational disruptions or delays detected.",
+        "regulatory": "Compliance or certification issues found.",
+        "reputation": "Negative press or sentiment dips observed.",
+        "supplychain": "Vendor reliability or delivery issues detected."
     }
 
     result = {
+        "provider_id": provider_id,
         "category": category,
-        "hits": len(hits),
-        "entries": hits,
-        "last_reported": last_reported,
-        "raw_simulated": {"note": notes.get(category, "Simulated response")},
+        "hits": len(entries),
+        "entries": entries,
+        "last_reported": entries[-1]["timestamp"] if entries else None,
+        "raw_simulated": {
+            "note": note_map.get(category, f"Simulated {category} review.")
+        }
     }
 
-    provider_dir = BASE / f"{provider_name}___{license_number}".replace(" ", "_")
+    # Ensure directory exists
+    provider_dir = BASE / provider_id
     provider_dir.mkdir(parents=True, exist_ok=True)
+
+    # Write category JSON file
     file_path = provider_dir / f"{category}.json"
     file_path.write_text(json.dumps(result, indent=2))
+
+    print(f"📁 [Watchlist Saved] {file_path} — Hits: {len(entries)}")
     return result
 
 
-async def simulate_all_watchlists(provider_name: str, license_number: str):
-    """Load or simulate all 7 category watchlists for the given provider."""
-    provider_dir = BASE / f"{provider_name}___{license_number}".replace(" ", "_")
-    provider_dir.mkdir(parents=True, exist_ok=True)
-    results = []
+# =============================================================================
+# 🔧 LIGHTWEIGHT SIMULATOR (FOR PRE-RISK SNAPSHOT ONLY)
+# =============================================================================
+async def simulate_watchlist_light(provider_name: str, license_number: str, category: str):
+    """
+    Used only by application_review.py — does NOT write to disk.
+    Creates a quick preview risk score per category.
+    """
 
-    for category in CATEGORIES:
-        file_path = provider_dir / f"{category}.json"
+    severities = [0.1, 0.3, 0.5, 0.8]
+    entries = []
 
-        if file_path.exists():
-            try:
-                with open(file_path, "r") as f:
-                    data = json.load(f)
-                    print(f"📂 [Watchlist] {category}: {len(data.get('entries', []))} hit(s) loaded from existing file.")
-                    results.append(data)
-                    continue
-            except Exception as e:
-                print(f"⚠️ Failed to read {file_path}: {e}")
+    # ~30% chance of single simulated hit
+    if random.random() < 0.30:
+        entries.append({
+            "severity": random.choice(severities),
+            "detail": f"Simulated preview event in {category}."
+        })
 
-        simulated = await simulate_watchlist_call(provider_name, license_number, category)
-        print(f"📂 [Watchlist] {category}: {len(simulated.get('entries', []))} hit(s) generated via simulation.")
-        results.append(simulated)
+    return {
+        "category": category,
+        "entries": entries,
+        "raw_simulated": {
+            "note": f"Simulated preview of {category} category."
+        },
+        "last_reported": datetime.utcnow().isoformat()
+    }
 
-    return results
+
+# =============================================================================
+# 🔧 SIMULATE ALL CATEGORIES (FULL SIMULATOR)
+# =============================================================================
+async def simulate_all_watchlists(provider_id: str):
+    """
+    Runs full simulator across all categories.
+    Writes JSON files for each category.
+    """
+
+    tasks = [
+        simulate_watchlist(provider_id, category)
+        for category in CATEGORIES
+    ]
+    return await asyncio.gather(*tasks)
