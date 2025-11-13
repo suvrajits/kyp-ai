@@ -768,7 +768,43 @@
     "documents": [
       "provider_7.pdf"
     ],
-    "messages": [],
+    "messages": [
+      {
+        "id": "msg-1763055301958",
+        "from": "User",
+        "text": "provider name",
+        "use_for_risk": false
+      },
+      {
+        "id": "msg-1763056653166",
+        "from": "User",
+        "text": "name",
+        "use_for_risk": false
+      },
+      {
+        "id": "msg-1763058832022",
+        "from": "User",
+        "text": "name",
+        "use_for_risk": false
+      },
+      {
+        "id": "msg-ai-1763058832041",
+        "from": "AI",
+        "text": "The provider's name is Fortis Coimbatore Surgical Centre.[END]"
+      },
+      {
+        "id": "msg-1763058860628",
+        "from": "User",
+        "text": "risk scores and reasons",
+        "use_for_risk": false
+      },
+      {
+        "id": "msg-ai-1763058860645",
+        "from": "AI",
+        "text": "The overall risk score for Fortis Coimbatore Surgical Centre is 20.0%, categorized as low risk. Here is the breakdown of the risk scores by category:\n\n- **Data Privacy:** 20.0% \u2014 Potential PII exposure or privacy gaps detected.\n- **Supply Chain:** 20.0% \u2014 Vendor reliability or delivery issues detected.\n- **Operational:** 20.0% \u2014 Operational disruptions or delays detected.\n- **Cybersecurity:** 20.0% \u2014 Possible vulnerabilities or threat alerts identified.\n- **Financial:** 20.0% \u2014 Financial irregularities or delays noted.\n- **Reputation:** 20.0% \u2014 Negative press or sentiment dips observed.\n- **Regulatory:** 20.0% \u2014 Compliance or certification issues found.\n\nEach category reflects specific concerns that contribute to the overall risk assessment.[END]",
+        "use_for_risk": true
+      }
+    ],
     "history": [
       {
         "event": "Created",

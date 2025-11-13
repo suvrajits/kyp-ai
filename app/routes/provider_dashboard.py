@@ -1,31 +1,31 @@
 # app/routes/provider_dashboard.py
 
+# === top of provider_dashboard_bk.py ===
 from fastapi import APIRouter, Request, Form, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, JSONResponse
 from pathlib import Path
 from datetime import datetime
-import json, random, os
+import json, os
 
-# 🔹 Unified persistence & utilities
 from app.services.application_store import (
     load_applications,
     save_all,
     upsert_application,
     find_application,
     append_message,
-    update_status,   # ✅ NEW
+    update_status,
 )
-
 from app.routes.upload import generate_temp_id
 
-# 🔹 Optional RAG embedding (existing)
+# Optional RAG helpers
 from app.rag.ingest import embed_texts
 from app.rag.vector_store_faiss import save_faiss_index
 import faiss, numpy as np
 
+router = APIRouter(tags=["Dashboard"])
+# === end header ===
 
-router = APIRouter()
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
@@ -519,3 +519,33 @@ async def dashboard_status(provider_id: str):
             "categories": categories,
         }
     )
+
+@router.post("/append-message")
+async def append_message(payload: dict):
+    """
+    Appends a chat message to a provider's application record.
+    Required so toggles and risk resubmit work for newly sent messages.
+    """
+    app_id = payload.get("app_id")
+    message = payload.get("message")
+
+    if not app_id or not message:
+        raise HTTPException(status_code=400, detail="Missing app_id or message")
+
+    apps = load_applications()
+    record = next(
+        (r for r in apps if r.get("id") == app_id or r.get("application_id") == app_id),
+        None
+    )
+
+    if not record:
+        raise HTTPException(status_code=404, detail="Application not found")
+
+    # Ensure messages array
+    record.setdefault("messages", [])
+
+    # Append message (includes id, from, text, use_for_risk)
+    record["messages"].append(message)
+
+    save_all(apps)
+    return {"status": "ok", "saved": message}

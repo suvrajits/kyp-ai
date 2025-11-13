@@ -401,3 +401,156 @@ async def debug_faiss(provider_id: str, verbose: bool = False):
         raise HTTPException(status_code=404, detail="No FAISS index found for this provider")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================================
+# 4️⃣ RESUBMIT RISK WITH SELECTED CHAT MESSAGES
+# ============================================================
+@router.post("/resubmit/{provider_id}")
+async def resubmit_risk(provider_id: str):
+    """
+    Recalculate risk by injecting selected chat messages under doc_summary.
+    Does NOT regenerate watchlists. Lightweight recomputation.
+    """
+
+    from app.services.application_store import load_applications, save_all
+    from app.risk.payload_builder import build_model_payload
+    from app.risk.orchestrator import convert_payload_to_text_prompt
+    from app.risk.scoring import compute_scores_from_watchlists
+    from app.services.risk_model_client import call_risk_model
+    import json
+    from datetime import datetime
+
+    # ------------------------------------------------------------
+    # 1️⃣ Load provider + messages
+    # ------------------------------------------------------------
+    apps = load_applications()
+    record = next(
+        (r for r in apps 
+         if r.get("id") == provider_id or r.get("application_id") == provider_id),
+        None
+    )
+    if not record:
+        return JSONResponse({"error": "Provider not found"}, status_code=404)
+
+    messages = record.get("messages", [])
+    selected = [ (m["text"] if isinstance(m, dict) else str(m)) for m in messages if (m.get("use_for_risk") if isinstance(m, dict) else False) ]
+
+
+    # ------------------------------------------------------------
+    # 2️⃣ Build normal base payload (watchlist-driven)
+    # ------------------------------------------------------------
+    payload = build_model_payload(provider_id)
+
+    # ------------------------------------------------------------
+    # 3️⃣ Insert selected messages under doc_summary
+    # ------------------------------------------------------------
+    analyst_notes = ""
+    if selected:
+        analyst_notes += "\n\nAdditional Analyst Notes:\n"
+        for msg in selected:
+            safe_msg = msg.replace('"', "'")
+            analyst_notes += f"- {safe_msg}\n"
+
+    payload["doc_summary"] = (payload.get("doc_summary") or "") + analyst_notes
+
+    # ------------------------------------------------------------
+    # 4️⃣ Convert payload → YAML text → call fine-tuned model
+    # ------------------------------------------------------------
+    text_prompt = convert_payload_to_text_prompt(payload)
+
+    raw_model = await call_risk_model(
+        text_prompt,
+        model_name="gpt-4o-mini-2024-07-18-risk-eval-v2"
+    )
+
+    if isinstance(raw_model, str):
+        try:
+            model_output = json.loads(raw_model)
+        except:
+            model_output = {}
+    else:
+        model_output = raw_model or {}
+
+    # ------------------------------------------------------------
+    # 5️⃣ Compute deterministic backend scores (unchanged)
+    # ------------------------------------------------------------
+    det_scores = compute_scores_from_watchlists(payload["watchlist_categories"])
+
+    final_categories = {}
+    model_expl = model_output.get("category_explanations", {})
+    model_cat_scores = model_output.get("category_scores", {})
+
+    for cat, score in det_scores.items():
+        wl_note = next((c["note"] 
+                        for c in payload["watchlist_categories"] 
+                        if c["category"] == cat), "")
+
+        if cat in model_expl:
+            note = model_expl[cat]
+        elif cat in model_cat_scores:
+            mc = model_cat_scores[cat]
+            note = mc.get("note", wl_note) if isinstance(mc, dict) else wl_note
+        else:
+            note = wl_note or "No explanation available."
+
+        final_categories[cat] = {"score": score, "note": note}
+
+    aggregated_score = round(
+        sum(v["score"] for v in final_categories.values()) 
+        / len(final_categories), 
+        1
+    )
+
+    risk_level = (
+        "High" if aggregated_score > 70 else
+        "Moderate" if aggregated_score > 40 else
+        "Low"
+    )
+
+    timestamp = datetime.utcnow().isoformat()
+
+    # ------------------------------------------------------------
+    # 6️⃣ Persist updated risk results
+    # ------------------------------------------------------------
+    record.setdefault("risk", {})
+    record["risk"]["aggregated_score"] = aggregated_score
+    record["risk"]["risk_level"] = risk_level
+    record["risk"]["category_scores"] = final_categories
+    record["risk"]["updated_at"] = timestamp
+    record["risk_status"] = "Completed"
+
+    record.setdefault("history", []).append({
+        "event": "Risk Re-submitted with Analyst Notes",
+        "timestamp": timestamp,
+        "note": f"Risk updated after including {len(selected)} chat messages."
+    })
+
+    save_all(apps)
+
+    return JSONResponse({
+        "provider_id": provider_id,
+        "aggregated_score": aggregated_score,
+        "risk_level": risk_level,
+        "categories": final_categories,
+        "timestamp": timestamp,
+        "notes_used": selected
+    })
+
+
+@router.post("/chat/toggle/{provider_id}")
+async def toggle_message(provider_id: str, message_id: str, use_for_risk: bool):
+    apps = load_applications()
+    rec = next(
+        (r for r in apps if r.get("id") == provider_id or r.get("application_id") == provider_id),
+        None
+    )
+
+    if not rec:
+        return {"error": "Provider not found"}
+
+    for msg in rec.get("messages", []):
+        if msg["id"] == message_id:
+            msg["use_for_risk"] = use_for_risk
+
+    save_all(apps)
+    return {"status": "ok", "message_id": message_id, "use_for_risk": use_for_risk}

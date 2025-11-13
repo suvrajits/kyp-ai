@@ -224,6 +224,45 @@
       padding: 10px 14px;
       box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
     }
+
+    /* === RISK CHAT TOGGLE UI === */
+    .risk-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid #ddd;
+      background: white;
+      margin-left: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+    .risk-toggle.selected {
+      background: #ffecec;
+      border-color: #ffb3b3;
+      color: #b20000;
+    }
+    .message-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    #resubmit-risk-btn {
+      display: none;
+      margin-left: 10px;
+      background: #0766b3;
+      color: white;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
   </style>
 </head>
 
@@ -252,21 +291,39 @@
   <!-- Header -->
   <div class="header">
     <h2>Provider Dashboard</h2>
-    <div style="display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-top:4px;">
-      <p style="margin:0;">
+    <div style="
+        display:flex;
+        flex-direction:column;
+        align-items:flex-end;
+        justify-content:flex-end;
+        gap:6px;
+        margin-top:4px;
+        max-width: 350px;
+        white-space: normal;
+    ">
+      <p style="
+          margin:0;
+          white-space: normal;
+          word-break: break-word;
+          max-width: 350px;
+          text-align: right;
+      ">
         {{ provider.provider_name }} — {{ provider.license_number }}
       </p>
+
       <span id="risk-badge" style="
-        background:#e0f2ff;
-        color:#004c91;
-        border:1px solid #b3d9ff;
-        padding:4px 10px;
-        border-radius:8px;
-        font-size:13px;
-        font-weight:600;">
+          background:#e0f2ff;
+          color:#004c91;
+          border:1px solid #b3d9ff;
+          padding:4px 10px;
+          border-radius:8px;
+          font-size:13px;
+          font-weight:600;
+      ">
         🕒 Evaluating Risk...
       </span>
 
+      <button id="resubmit-risk-btn">🔄 Resubmit Risk</button>
 
       {% set status = status or 'Under Review' %}
       {% if 'Approved' in status %}
@@ -291,6 +348,7 @@
         </span>
       {% endif %}
     </div>
+
   </div>
 
 
@@ -467,42 +525,205 @@
       badge.style.display = "block";
     }
 
+    document.getElementById("resubmit-risk-btn").onclick = async () => {
+    const btn = document.getElementById("resubmit-risk-btn");
+    btn.disabled = true;
+    btn.innerText = "⏳ Recomputing...";
+
+    const res = await fetch(`/risk/resubmit/{{ app_id }}`, { method: "POST" });
+    const json = await res.json();
+
+    // Reload risk UI
+    await checkRiskStatus();
+    setTimeout(() => loadRiskChart(), 300);
+
+    btn.disabled = false;
+    btn.innerText = "🔄 Resubmit Risk";
+  };
+
+
+
+/* ========== CHAT MESSAGE RENDERING + RISK TOGGLE ========== */
+let selectedMsgId = null;
+
+// Render 1 message row
+async function renderMessage(msg) {
+
+  // ✅ 1. Assign a unique ID if missing (fixes non-clickable blocks)
+  if (!msg.id) {
+    msg.id = "msg-" + Date.now() + "-" + Math.floor(Math.random() * 10000);
+
+    // OPTIONAL: Persist the repaired message so it stays fixed next reload
+    await fetch(`/dashboard/append-message`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        app_id: "{{ app_id }}",
+        message: msg
+      })
+    });
+  }
+
+  // Create row container
+  const row = document.createElement("div");
+  row.className = "message-row";
+
+  // Bubble container
+  const bubble = document.createElement("div");
+  bubble.className = "message " + (msg.from === "User" ? "user-msg" : "ai-msg");
+  bubble.textContent = msg.text;
+
+  // Assign dataset for toggle logic
+  bubble.dataset.msgId = msg.id;
+
+  // Toggle button
+  const toggle = document.createElement("button");
+  toggle.className = "risk-toggle";
+  toggle.innerText = "🧩";  // your new icon
+
+  // Restore selected state
+  if (msg.use_for_risk) {
+    toggle.classList.add("selected");
+    selectedMsgId = msg.id;
+  }
+
+  // Toggle handler
+  toggle.onclick = async () => {
+    const turningOn = !toggle.classList.contains("selected");
+
+    // Clear other toggles for single-select mode
+    if (turningOn && selectedMsgId && selectedMsgId !== msg.id) {
+      const prevToggle = document.querySelector(".risk-toggle.selected");
+      if (prevToggle) prevToggle.classList.remove("selected");
+
+      // Turn off previous in backend
+      await fetch(`/risk/chat/toggle/{{ app_id }}?message_id=${selectedMsgId}&use_for_risk=false`, {
+        method: "POST"
+      });
+    }
+
+    // Apply toggle
+    toggle.classList.toggle("selected");
+    selectedMsgId = turningOn ? msg.id : null;
+
+    // Update backend with new toggle state
+    await fetch(`/risk/chat/toggle/{{ app_id }}?message_id=${msg.id}&use_for_risk=${turningOn}`, {
+      method: "POST"
+    });
+
+    // Show/hide "Resubmit Risk"
+    updateResubmitBtn();
+  };
+
+  // Add elements to row
+  row.appendChild(bubble);
+  row.appendChild(toggle);
+
+  // Append to chat window
+  chatWindow.appendChild(row);
+
+  return row;
+}
+
+
+// Show/hide resubmit button
+function updateResubmitBtn() {
+  const btn = document.getElementById("resubmit-risk-btn");
+  btn.style.display = selectedMsgId ? "inline-block" : "none";
+}
+
+/* ===== LOAD EXISTING MESSAGES FROM BACKEND ===== */
+const initialMessages = ({{ messages | tojson | safe }}) || [];
+
+
+
+initialMessages.forEach(m => renderMessage(m));
+
+    /* ===== OVERRIDE SEND MESSAGE TO INCLUDE IDs AND RENDER WITH TOGGLE ===== */
     async function sendMessage() {
-      const query = queryInput.value.trim();
-      if (!query) return;
-      const userMsg = document.createElement("div");
-      userMsg.className = "message user-msg";
-      userMsg.textContent = query;
-      chatWindow.appendChild(userMsg);
+      const text = queryInput.value.trim();
+      if (!text) return;
       queryInput.value = "";
 
-      const aiMsg = document.createElement("div");
-      aiMsg.className = "message ai-msg";
-      aiMsg.textContent = "Thinking...";
-      chatWindow.appendChild(aiMsg);
+      // Local message ID
+      const uuid = "msg-" + Date.now();
+
+      const userMsg = { id: uuid, from: "User", text: text, use_for_risk: false };
+      renderMessage(userMsg);
       chatWindow.scrollTop = chatWindow.scrollHeight;
 
-      try {
-        const response = await fetch("/rag/ask", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({ query, provider_id: "{{ app_id }}", top_k: 3 }),
-        });
+      // Save to backend (so toggles work)
+      await fetch(`/dashboard/append-message`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          app_id: "{{ app_id }}",
+          message: userMsg
+        })
+      });
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder("utf-8");
-        let fullText = "";
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          fullText += decoder.decode(value);
-          aiMsg.innerHTML = fullText.replace(/\n/g, "<br>");
-          chatWindow.scrollTop = chatWindow.scrollHeight;
-        }
+      // create AI placeholder and await its DOM element
+      const aiId = "msg-ai-" + Date.now();
+      const aiMsg = { id: aiId, from: "AI", text: "Thinking...", use_for_risk: false };
+
+      // IMPORTANT: renderMessage is async (it may auto-persist missing IDs) — await it
+      const aiElement = await renderMessage(aiMsg);
+
+      try {
+  const res = await fetch("/rag/ask", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: text, provider_id: "{{ app_id }}", top_k: 3 }),
+  });
+
+  // 🔍 Defensive: ensure server sent a streaming body
+  if (!res.body) {
+    console.error("❌ No streaming body returned by /rag/ask. Check router mapping.");
+    const bubble = aiElement.querySelector(".message");
+    bubble.textContent = "⚠️ Server did not return streaming response. Check backend.";
+    return;
+  }
+
+  // 🔍 Debug: print status + first bytes of the response (will help detect if wrong handler is hit)
+  try {
+        const tempClone = res.clone();
+        const previewText = await tempClone.text();
+        console.log("RAG ask status:", res.status, "Preview:", previewText.slice(0, 200));
       } catch (e) {
-        aiMsg.textContent = "❌ Error fetching response.";
+        console.warn("RAG debug clone failed:", e);
       }
+
+      const reader = res.body.getReader();
+      let final = "";
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        final += decoder.decode(value);
+        const bubble = aiElement.querySelector(".message");
+        bubble.innerHTML = final.replace(/\n/g, "<br>");
+      }
+
+      await fetch(`/dashboard/append-message`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          app_id: "{{ app_id }}",
+          message: { id: aiId, from: "AI", text: final }
+        })
+      });
+
+    } catch (e) {
+      const bubble = aiElement.querySelector(".message");
+      bubble.textContent = "❌ Error fetching response.";
     }
+
+    } // ⭐ THIS WAS MISSING — closes sendMessage()
+
+
+
+    
 
     document.getElementById("send-btn").addEventListener("click", sendMessage);
     queryInput.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
