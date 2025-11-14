@@ -144,13 +144,47 @@
       transition: width 0.4s ease, background 0.3s ease;
       border-radius: 8px;
     }
+    .header-bar {
+    display: flex;
+    align-items: center;
+    padding: 10px 0 20px 0;
+    }
+
+    .logo {
+        height: 48px;
+    }
+
 
 
     a.back-link:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
+
+
+
 <div class="container">
+<!-- GLOBAL HEADER -->
+    <div class="header-bar">
+        <img src="/static/images/logo.png" class="logo-img">
+    </div>
+    <style>
+      body {
+          padding-top: 20px !important;  /* ⬅ pushes page down below logo */
+      }
+      .header-bar {
+          width: 100%;
+          display: flex;
+          justify-content: center;   /* Center horizontally */
+          align-items: center;
+          margin-bottom: 20px;
+      }
+      .logo-img {
+          height: 48px;
+          width: auto;
+          transform: scale(3); /* ⬅️ increase logo size 2.5× */
+      }
+    </style>
   <h2>📝 Application Review</h2>
 
   <div class="status">Workflow Status: {{ application.status or 'New' }}</div>

@@ -107,7 +107,31 @@
   </style>
 </head>
 <body>
+
+   
+
 <div class="container">
+   <!-- GLOBAL HEADER -->
+    <div class="header-bar">
+        <img src="/static/images/logo.png" class="logo-img">
+    </div>
+    <style>
+      body {
+          padding-top: 20px !important;  /* ⬅ pushes page down below logo */
+      }
+      .header-bar {
+          width: 100%;
+          display: flex;
+          justify-content: center;   /* Center horizontally */
+          align-items: center;
+          margin-bottom: 20px;
+      }
+      .logo-img {
+          height: 48px;
+          width: auto;
+          transform: scale(3); /* ⬅️ increase logo size 2.5× */
+      }
+    </style>
   <h2>🧾 Provider License Workflow</h2>
   <p>Upload a scanned license (PDF, PNG, JPEG) and track its progress through the application lifecycle.</p>
 

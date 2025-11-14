@@ -456,8 +456,8 @@
     }
   },
   {
-    "id": "APP-20251113-00067",
-    "application_id": "APP-20251113-00067",
+    "id": "APP-20251114-00077",
+    "application_id": "APP-20251114-00077",
     "provider": {
       "provider_name": "Fortis Coimbatore Surgical Centre",
       "license_number": "TN-LIC-2022-01007",
@@ -784,7 +784,7 @@
       }
     },
     "match_recommendation": "Strong Match",
-    "created_at": "2025-11-13T13:33:16.204541",
+    "created_at": "2025-11-14T16:56:46.876457",
     "documents": [
       "provider_7.pdf"
     ],
@@ -822,7 +822,7 @@
         "id": "msg-ai-1763058860645",
         "from": "AI",
         "text": "The overall risk score for Fortis Coimbatore Surgical Centre is 20.0%, categorized as low risk. Here is the breakdown of the risk scores by category:\n\n- **Data Privacy:** 20.0% \u2014 Potential PII exposure or privacy gaps detected.\n- **Supply Chain:** 20.0% \u2014 Vendor reliability or delivery issues detected.\n- **Operational:** 20.0% \u2014 Operational disruptions or delays detected.\n- **Cybersecurity:** 20.0% \u2014 Possible vulnerabilities or threat alerts identified.\n- **Financial:** 20.0% \u2014 Financial irregularities or delays noted.\n- **Reputation:** 20.0% \u2014 Negative press or sentiment dips observed.\n- **Regulatory:** 20.0% \u2014 Compliance or certification issues found.\n\nEach category reflects specific concerns that contribute to the overall risk assessment.[END]",
-        "use_for_risk": true
+        "use_for_risk": false
       }
     ],
     "history": [
@@ -861,24 +861,44 @@
         "timestamp": "2025-11-13T13:33:40.307628",
         "score": 20.0,
         "note": "Final risk score updated and embedded."
+      },
+      {
+        "event": "Updated (New)",
+        "timestamp": "2025-11-14T16:56:46.887347"
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 24.3,
+        "timestamp": "2025-11-14T16:56:46.966333",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-14T16:56:46.966333",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Application Accepted & Promoted",
+        "timestamp": "2025-11-14T16:56:57.974322",
+        "note": "Promoted from TEMP-ID-128 \u2192 APP-20251114-00077 and FAISS built."
       }
     ],
     "pre_risk_snapshot": {
-      "score": 22.9,
+      "score": 24.3,
       "categories": {
-        "cybersecurity": 10.0,
+        "cybersecurity": 30.0,
         "data_privacy": 10.0,
-        "financial": 10.0,
-        "operational": 30.0,
-        "regulatory": 10.0,
-        "reputation": 80.0,
+        "financial": 50.0,
+        "operational": 10.0,
+        "regulatory": 30.0,
+        "reputation": 30.0,
         "supplychain": 10.0
       },
-      "timestamp": "2025-11-13T13:33:16.264745"
+      "timestamp": "2025-11-14T16:56:46.966333"
     },
-    "risk_status": "Completed",
-    "risk_score": 20.0,
-    "risk_level": "Low",
+    "risk_status": "Evaluating",
+    "risk_score": null,
+    "risk_level": null,
     "risk_triggered_at": "2025-11-13T13:33:30.707710",
     "risk": {
       "aggregated_score": 20.0,
@@ -2377,8 +2397,8 @@
     }
   },
   {
-    "id": "APP-20251113-00072",
-    "application_id": "APP-20251113-00072",
+    "id": "APP-20251114-00078",
+    "application_id": "APP-20251114-00078",
     "provider": {
       "provider_name": "Nova Old Delhi General Hospital",
       "license_number": "DL-HOSP-2023-1005",
@@ -2705,7 +2725,7 @@
       }
     },
     "match_recommendation": "Strong Match",
-    "created_at": "2025-11-13T19:30:28.893594",
+    "created_at": "2025-11-14T17:04:45.762642",
     "documents": [
       "provider_5.pdf"
     ],
@@ -2731,6 +2751,28 @@
         "id": "msg-ai-1763062289665",
         "from": "AI",
         "text": "The context does not provide any information regarding the provider being found unfit for a program due to bad patient reputation. It only mentions a negative press or sentiment dips observed under the reputation category, which contributes to the overall risk score.[END]"
+      },
+      {
+        "id": "msg-1763141498437",
+        "from": "User",
+        "text": "hi",
+        "use_for_risk": false
+      },
+      {
+        "id": "msg-ai-1763141498473",
+        "from": "AI",
+        "text": "Hello! How can I assist you today?[END]"
+      },
+      {
+        "id": "msg-1763141509970",
+        "from": "User",
+        "text": "name",
+        "use_for_risk": false
+      },
+      {
+        "id": "msg-ai-1763141509999",
+        "from": "AI",
+        "text": "Nova Old Delhi General Hospital[END]"
       }
     ],
     "history": [
@@ -2779,24 +2821,44 @@
         "event": "Risk Re-submitted with Analyst Notes",
         "timestamp": "2025-11-13T19:32:54.974923",
         "note": "Risk updated after including 1 chat messages."
+      },
+      {
+        "event": "Updated (New)",
+        "timestamp": "2025-11-14T17:04:45.777439"
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 22.9,
+        "timestamp": "2025-11-14T17:04:45.928278",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-14T17:04:45.928278",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Application Accepted & Promoted",
+        "timestamp": "2025-11-14T17:04:54.061394",
+        "note": "Promoted from TEMP-ID-129 \u2192 APP-20251114-00078 and FAISS built."
       }
     ],
     "pre_risk_snapshot": {
-      "score": 10.0,
+      "score": 22.9,
       "categories": {
-        "cybersecurity": 10.0,
+        "cybersecurity": 80.0,
         "data_privacy": 10.0,
-        "financial": 10.0,
+        "financial": 30.0,
         "operational": 10.0,
         "regulatory": 10.0,
         "reputation": 10.0,
         "supplychain": 10.0
       },
-      "timestamp": "2025-11-13T19:30:28.961835"
+      "timestamp": "2025-11-14T17:04:45.928278"
     },
-    "risk_status": "Completed",
-    "risk_score": 24.6,
-    "risk_level": "Low",
+    "risk_status": "Evaluating",
+    "risk_score": null,
+    "risk_level": null,
     "risk_triggered_at": "2025-11-13T19:30:34.569473",
     "risk": {
       "aggregated_score": 24.6,
@@ -4269,6 +4331,492 @@
         "reputation": "Negative press or sentiment dips observed.",
         "supplychain": "Vendor reliability or delivery issues detected."
       }
+    }
+  },
+  {
+    "id": "TEMP-ID-130",
+    "application_id": "TEMP-ID-130",
+    "provider": {
+      "provider_name": "Nova Faridabad Medical Centre",
+      "license_number": "HRMED20251003",
+      "type_of_institution": "Primary Care Hospital",
+      "address": "391 Main Bazaar, Faridabad, Haryana - 768087",
+      "ownership_details": "Sri Venkateswara Trust",
+      "license_issue_date": "2020-05-25",
+      "license_expiry_date": "2025-05-25",
+      "details_of_services_offered": "Diagnostic, Radiology, Laboratory",
+      "number_of_beds": "500",
+      "qualification_and_number_of_medical_staff": "70 Doctors, 87 Nurses, 2 Technicians",
+      "licensing_authority_name": "District Health Authority",
+      "infrastructure_standards_compliance": "Building Safety Certificate: Yes; Fire Safety: Pending",
+      "biomedical_waste_management_authorization": "Yes",
+      "pollution_control_board_clearance": "No",
+      "consent_to_operate_certificate": "No",
+      "drug_license": "Yes",
+      "radiology_radiation_safety_license": "Not Applicable",
+      "registration_under_any_special_acts": "Yesne",
+      "display_of_hospital_charges_and_facilities": "No",
+      "compliance_with_minimum_standards": "Yes",
+      "details_of_support_services": "Pharmacy",
+      "list_of_equipment_and_medical_devices_used": "131 devices",
+      "fire_and_lift_inspection_certificates": "Not Applicable",
+      "accreditation_status": "JCI"
+    },
+    "status": "New",
+    "confidence": 1.0,
+    "match_percent": 100.0,
+    "match_result": {
+      "match_percent": 100.0,
+      "per_field": {
+        "provider_name": {
+          "incoming": "Nova Faridabad Medical Centre",
+          "registry": "Nova Faridabad Medical Centre",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "license_number": {
+          "incoming": "HRMED20251003",
+          "registry": "HRMED20251003",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "type_of_institution": {
+          "incoming": "Primary Care Hospital",
+          "registry": "Primary Care Hospital",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "address": {
+          "incoming": "391 Main Bazaar, Faridabad, Haryana - 768087",
+          "registry": "391 Main Bazaar, Faridabad, Haryana - 768087",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "ownership_details": {
+          "incoming": "Sri Venkateswara Trust",
+          "registry": "Sri Venkateswara Trust",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "licensing_authority_name": {
+          "incoming": "District Health Authority",
+          "registry": "District Health Authority",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "license_issue_date": {
+          "incoming": "2020-05-25",
+          "registry": "2020-05-25",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "license_expiry_date": {
+          "incoming": "2025-05-25",
+          "registry": "2025-05-25",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "details_of_services_offered": {
+          "incoming": "Diagnostic, Radiology, Laboratory",
+          "registry": "Diagnostic, Radiology, Laboratory",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "number_of_beds": {
+          "incoming": "500",
+          "registry": "500",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "qualification_and_number_of_medical_staff": {
+          "incoming": "70 Doctors, 87 Nurses, 2 Technicians",
+          "registry": "70 Doctors, 87 Nurses, 2 Technicians",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "infrastructure_standards_compliance": {
+          "incoming": "Building Safety Certificate: Yes; Fire Safety: Pending",
+          "registry": "Building Safety Certificate: Yes; Fire Safety: Pending",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "biomedical_waste_management_authorization": {
+          "incoming": "Yes",
+          "registry": "Yes",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "pollution_control_board_clearance": {
+          "incoming": "No",
+          "registry": "No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "consent_to_operate_certificate": {
+          "incoming": "No",
+          "registry": "No",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "drug_license": {
+          "incoming": "Yes",
+          "registry": "Yes",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "radiology_radiation_safety_license": {
+          "incoming": "Not Applicable",
+          "registry": "Not Applicable",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "registration_under_any_special_acts": {
+          "incoming": "Yesne",
+          "registry": "None",
+          "score": 0.44,
+          "method": "string_similarity"
+        },
+        "display_of_hospital_charges_and_facilities": {
+          "incoming": "No",
+          "registry": "Not Displayed",
+          "score": 0.27,
+          "method": "string_similarity"
+        },
+        "compliance_with_minimum_standards": {
+          "incoming": "Yes",
+          "registry": "Yes",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "details_of_support_services": {
+          "incoming": "Pharmacy",
+          "registry": "Ambulance, Pharmacy",
+          "score": 0.59,
+          "method": "string_similarity"
+        },
+        "list_of_equipment_and_medical_devices_used": {
+          "incoming": "131 devices",
+          "registry": "131 devices (list available on request)",
+          "score": 0.44,
+          "method": "string_similarity"
+        },
+        "fire_and_lift_inspection_certificates": {
+          "incoming": "Not Applicable",
+          "registry": "Not Applicable",
+          "score": 1.0,
+          "method": "string_similarity"
+        },
+        "accreditation_status": {
+          "incoming": "JCI",
+          "registry": "JCI",
+          "score": 1.0,
+          "method": "string_similarity"
+        }
+      },
+      "recommendation": "Strong Match"
+    },
+    "match_explanation": {
+      "provider_name": {
+        "incoming": "Nova Faridabad Medical Centre",
+        "registry": "Nova Faridabad Medical Centre",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "license_number": {
+        "incoming": "HRMED20251003",
+        "registry": "HRMED20251003",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "type_of_institution": {
+        "incoming": "Primary Care Hospital",
+        "registry": "Primary Care Hospital",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "address": {
+        "incoming": "391 Main Bazaar, Faridabad, Haryana - 768087",
+        "registry": "391 Main Bazaar, Faridabad, Haryana - 768087",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "ownership_details": {
+        "incoming": "Sri Venkateswara Trust",
+        "registry": "Sri Venkateswara Trust",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "licensing_authority_name": {
+        "incoming": "District Health Authority",
+        "registry": "District Health Authority",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "license_issue_date": {
+        "incoming": "2020-05-25",
+        "registry": "2020-05-25",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "license_expiry_date": {
+        "incoming": "2025-05-25",
+        "registry": "2025-05-25",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "details_of_services_offered": {
+        "incoming": "Diagnostic, Radiology, Laboratory",
+        "registry": "Diagnostic, Radiology, Laboratory",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "number_of_beds": {
+        "incoming": "500",
+        "registry": "500",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "qualification_and_number_of_medical_staff": {
+        "incoming": "70 Doctors, 87 Nurses, 2 Technicians",
+        "registry": "70 Doctors, 87 Nurses, 2 Technicians",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "infrastructure_standards_compliance": {
+        "incoming": "Building Safety Certificate: Yes; Fire Safety: Pending",
+        "registry": "Building Safety Certificate: Yes; Fire Safety: Pending",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "biomedical_waste_management_authorization": {
+        "incoming": "Yes",
+        "registry": "Yes",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "pollution_control_board_clearance": {
+        "incoming": "No",
+        "registry": "No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "consent_to_operate_certificate": {
+        "incoming": "No",
+        "registry": "No",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "drug_license": {
+        "incoming": "Yes",
+        "registry": "Yes",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "radiology_radiation_safety_license": {
+        "incoming": "Not Applicable",
+        "registry": "Not Applicable",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "registration_under_any_special_acts": {
+        "incoming": "Yesne",
+        "registry": "None",
+        "score": 0.44,
+        "method": "string_similarity"
+      },
+      "display_of_hospital_charges_and_facilities": {
+        "incoming": "No",
+        "registry": "Not Displayed",
+        "score": 0.27,
+        "method": "string_similarity"
+      },
+      "compliance_with_minimum_standards": {
+        "incoming": "Yes",
+        "registry": "Yes",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "details_of_support_services": {
+        "incoming": "Pharmacy",
+        "registry": "Ambulance, Pharmacy",
+        "score": 0.59,
+        "method": "string_similarity"
+      },
+      "list_of_equipment_and_medical_devices_used": {
+        "incoming": "131 devices",
+        "registry": "131 devices (list available on request)",
+        "score": 0.44,
+        "method": "string_similarity"
+      },
+      "fire_and_lift_inspection_certificates": {
+        "incoming": "Not Applicable",
+        "registry": "Not Applicable",
+        "score": 1.0,
+        "method": "string_similarity"
+      },
+      "accreditation_status": {
+        "incoming": "JCI",
+        "registry": "JCI",
+        "score": 1.0,
+        "method": "string_similarity"
+      }
+    },
+    "match_recommendation": "Strong Match",
+    "created_at": "2025-11-14T17:09:48.473619",
+    "documents": [
+      "provider_3.pdf"
+    ],
+    "messages": [],
+    "history": [
+      {
+        "event": "Created",
+        "timestamp": "2025-11-14T17:09:48.491470"
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 20.0,
+        "timestamp": "2025-11-14T17:09:48.559895",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-14T17:09:48.559895",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 30.0,
+        "timestamp": "2025-11-14T17:22:46.090417",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-14T17:22:46.090417",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 24.3,
+        "timestamp": "2025-11-14T17:23:13.272736",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-14T17:23:13.272736",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 30.0,
+        "timestamp": "2025-11-14T17:23:33.019202",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-14T17:23:33.019202",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 12.9,
+        "timestamp": "2025-11-14T17:24:05.839718",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-14T17:24:05.839718",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 30.0,
+        "timestamp": "2025-11-14T17:24:24.872596",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-14T17:24:24.872596",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 15.7,
+        "timestamp": "2025-11-14T17:28:13.084630",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-14T17:28:13.084630",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 35.7,
+        "timestamp": "2025-11-14T17:28:50.358656",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-14T17:28:50.358656",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 15.7,
+        "timestamp": "2025-11-14T17:35:25.434506",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-14T17:35:25.434506",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 20.0,
+        "timestamp": "2025-11-14T17:36:13.220915",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-14T17:36:13.220915",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 20.0,
+        "timestamp": "2025-11-14T17:40:30.011777",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-14T17:40:30.011777",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      },
+      {
+        "event": "Pre-Risk Snapshot Preserved",
+        "score": 10.0,
+        "timestamp": "2025-11-14T17:40:53.323087",
+        "note": "Stored for comparison against post-acceptance risk evaluation."
+      },
+      {
+        "event": "Pre-Risk Snapshot Linked",
+        "timestamp": "2025-11-14T17:40:53.323087",
+        "note": "Preliminary risk snapshot linked to provider record for drift comparison."
+      }
+    ],
+    "pre_risk_snapshot": {
+      "score": 10.0,
+      "categories": {
+        "cybersecurity": 10.0,
+        "data_privacy": 10.0,
+        "financial": 10.0,
+        "operational": 10.0,
+        "regulatory": 10.0,
+        "reputation": 10.0,
+        "supplychain": 10.0
+      },
+      "timestamp": "2025-11-14T17:40:53.323087"
     }
   }
 ]

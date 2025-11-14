@@ -267,6 +267,26 @@
 </head>
 
 <body>
+  <!-- Global Header with Logo -->
+  <div class="global-header">
+    <img src="/static/images/logo.png" class="logo-img" alt="ProviderGPT Logo">
+  </div>
+
+  <style>
+    .global-header {
+      position: fixed;
+      top: 10px;
+      left: 100px; /* so it does not overlap with sidebar */
+      z-index: 2;
+    }
+    .logo-img {
+      height: 45px;
+      width: auto;
+      transform: scale(2.5); /* ⬅️ increase logo size 2.5× */
+      transform-origin: top left; /* keeps the logo aligned */
+    }
+  </style>
+
   <!-- Sidebar -->
   <div class="sidebar">
     <div class="sidebar-item" onclick="togglePanel('risk')">
