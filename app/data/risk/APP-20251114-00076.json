@@ -1,41 +1,41 @@
 {
   "model_response": {
-    "provider_name": "CurePoint Bengaluru General Hospital",
-    "license_number": "KA/MC/2022/01016",
-    "aggregated_score": 23.4,
+    "provider_name": "Saraswati Surat Diagnostic Centre",
+    "license_number": "GJ/MC/2018/01043",
+    "aggregated_score": 20.2,
     "risk_level": "Low",
     "category_scores": {
+      "reputation": {
+        "score": 20.0,
+        "note": "Negative press or sentiment dips observed."
+      },
       "regulatory": {
         "score": 20.0,
         "note": "Compliance or certification issues found."
+      },
+      "financial": {
+        "score": 20.0,
+        "note": "Financial irregularities or delays noted."
       },
       "operational": {
         "score": 20.0,
         "note": "Operational disruptions or delays detected."
       },
       "cybersecurity": {
-        "score": 44.0,
+        "score": 20.0,
         "note": "Possible vulnerabilities or threat alerts identified."
       },
       "supplychain": {
-        "score": 20.0,
+        "score": 24.0,
         "note": "Vendor reliability or delivery issues detected."
-      },
-      "financial": {
-        "score": 20.0,
-        "note": "Financial irregularities or delays noted."
       },
       "data_privacy": {
         "score": 20.0,
         "note": "Potential PII exposure or privacy gaps detected."
-      },
-      "reputation": {
-        "score": 20.0,
-        "note": "Negative press or sentiment dips observed."
       }
     },
     "confidence": 0.0,
-    "timestamp": "2025-11-13T18:47:05.277878",
+    "timestamp": "2025-11-14T05:00:54.988411",
     "original_explanations": {
       "cybersecurity": "Possible vulnerabilities or threat alerts identified.",
       "data_privacy": "Potential PII exposure or privacy gaps detected.",

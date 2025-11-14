@@ -1,33 +1,33 @@
 {
   "model_response": {
-    "provider_name": "CurePoint Bengaluru General Hospital",
-    "license_number": "KA/MC/2022/01016",
-    "aggregated_score": 23.4,
+    "provider_name": "Nova Old Delhi General Hospital",
+    "license_number": "DL-HOSP-2023-1005",
+    "aggregated_score": 24.6,
     "risk_level": "Low",
     "category_scores": {
-      "regulatory": {
+      "data_privacy": {
         "score": 20.0,
-        "note": "Compliance or certification issues found."
-      },
-      "operational": {
-        "score": 20.0,
-        "note": "Operational disruptions or delays detected."
-      },
-      "cybersecurity": {
-        "score": 44.0,
-        "note": "Possible vulnerabilities or threat alerts identified."
-      },
-      "supplychain": {
-        "score": 20.0,
-        "note": "Vendor reliability or delivery issues detected."
+        "note": "Potential PII exposure or privacy gaps detected."
       },
       "financial": {
         "score": 20.0,
         "note": "Financial irregularities or delays noted."
       },
-      "data_privacy": {
+      "supplychain": {
         "score": 20.0,
-        "note": "Potential PII exposure or privacy gaps detected."
+        "note": "Vendor reliability or delivery issues detected."
+      },
+      "regulatory": {
+        "score": 20.0,
+        "note": "Compliance or certification issues found."
+      },
+      "cybersecurity": {
+        "score": 20.0,
+        "note": "Possible vulnerabilities or threat alerts identified."
+      },
+      "operational": {
+        "score": 52.0,
+        "note": "Operational disruptions or delays detected."
       },
       "reputation": {
         "score": 20.0,
@@ -35,7 +35,7 @@
       }
     },
     "confidence": 0.0,
-    "timestamp": "2025-11-13T18:47:05.277878",
+    "timestamp": "2025-11-13T19:30:40.065453",
     "original_explanations": {
       "cybersecurity": "Possible vulnerabilities or threat alerts identified.",
       "data_privacy": "Potential PII exposure or privacy gaps detected.",

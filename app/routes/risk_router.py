@@ -48,10 +48,16 @@ async def calculate_provider_risk(provider_id: str, internal: bool = False):
 
         # --- Extract model response ---
         model_resp = result.get("model_response", {})
-        aggregated_score = model_resp.get("aggregated_score")
+        # aggregated_score = model_resp.get("aggregated_score")
+        
+
+
+
+
         categories = model_resp.get("category_scores", {})
+        aggregated_score = model_resp.get("aggregated_score", 0)
         print("\n\n==================== RISK ROUTER RECEIVED ====================")
-        print("Aggregated:", aggregated_score)
+        print("Aggregated (model-provided, before override):", model_resp.get("aggregated_score"))
         print("Categories:", json.dumps(categories, indent=2))
         print("Original_explanations:", model_resp.get("original_explanations"))
         print("==============================================================\n")
@@ -159,6 +165,33 @@ async def calculate_provider_risk(provider_id: str, internal: bool = False):
                     }
             categories = normalized
             model_resp["category_scores"] = normalized
+            
+            WEIGHTS = {
+                "reputation": 0.25,
+                "regulatory": 0.20,
+                "operational": 0.15,
+                "financial": 0.15,
+                "cybersecurity": 0.10,
+                "data_privacy": 0.10,
+                "supplychain": 0.05,
+            }
+
+            weighted_sum = 0.0
+            total_weight = 0.0
+
+            for cat, data in categories.items():
+                score = data.get("score", 0)
+                weight = WEIGHTS.get(cat, 0)
+                weighted_sum += score * weight
+                total_weight += weight
+
+            if total_weight > 0:
+                aggregated_score = round(weighted_sum / total_weight, 1)
+            else:
+                aggregated_score = 0
+
+            model_resp["aggregated_score"] = aggregated_score
+
             print("\n\n==================== RISK ROUTER POST-MERGE ====================")
             print(json.dumps(model_resp["category_scores"], indent=2))
             print("================================================================\n")
@@ -188,8 +221,8 @@ async def calculate_provider_risk(provider_id: str, internal: bool = False):
 
                 r["risk_score"] = aggregated_score
                 r["risk_level"] = (
-                    "High" if aggregated_score and aggregated_score > 70 else
-                    "Moderate" if aggregated_score and aggregated_score > 40 else
+                    "High" if aggregated_score and aggregated_score > 60 else
+                    "Moderate" if aggregated_score and aggregated_score > 30 else
                     "Low"
                 )
                 r["risk_status"] = "Completed"
@@ -330,7 +363,7 @@ async def get_risk_status(provider_id: str):
 
     risk = rec.get("risk", {})
     status = rec.get("risk_status", "Pending")
-    score = rec.get("risk_score") or risk.get("aggregated_score")
+    score = risk.get("aggregated_score") or rec.get("risk_score")
     level = rec.get("risk_level") or "Unknown"
     categories = risk.get("category_scores", {}) or {}
 
@@ -433,8 +466,11 @@ async def resubmit_risk(provider_id: str):
         return JSONResponse({"error": "Provider not found"}, status_code=404)
 
     messages = record.get("messages", [])
-    selected = [ (m["text"] if isinstance(m, dict) else str(m)) for m in messages if (m.get("use_for_risk") if isinstance(m, dict) else False) ]
-
+    selected = [
+        (m["text"] if isinstance(m, dict) else str(m))
+        for m in messages
+        if (m.get("use_for_risk") if isinstance(m, dict) else False)
+    ]
 
     # ------------------------------------------------------------
     # 2️⃣ Build normal base payload (watchlist-driven)
@@ -442,23 +478,34 @@ async def resubmit_risk(provider_id: str):
     payload = build_model_payload(provider_id)
 
     # ------------------------------------------------------------
-    # 3️⃣ Insert selected messages under doc_summary
+    # 3️⃣ Insert selected messages into doc_summary
     # ------------------------------------------------------------
-    analyst_notes = ""
-    if selected:
-        analyst_notes += "\n\nAdditional Analyst Notes:\n"
-        for msg in selected:
-            safe_msg = msg.replace('"', "'")
-            analyst_notes += f"- {safe_msg}\n"
+    existing_summary = payload.get("doc_summary") or ""
 
-    payload["doc_summary"] = (payload.get("doc_summary") or "") + analyst_notes
+    if selected:
+        analyst_notes = "\n\nAdditional Analyst Notes:\n"
+        for msg in selected:
+            cleaned = msg.replace('"', "'")
+            analyst_notes += f"- {cleaned}\n"
+    else:
+        analyst_notes = ""
+
+    full_doc_summary = existing_summary + analyst_notes
+    payload["doc_summary"] = full_doc_summary
+
+    print("\n==== DOC SUMMARY AFTER RESUBMIT ====")
+    print(full_doc_summary)
+    print("====================================\n")
 
     # ------------------------------------------------------------
     # 4️⃣ Convert payload → YAML text → call fine-tuned model
     # ------------------------------------------------------------
     text_prompt = convert_payload_to_text_prompt(payload)
 
-    raw_model = await call_risk_model(
+    print("[RESUBMIT] Calling risk model with prompt length:", len(text_prompt))
+
+    # ⭐ FIX: call model synchronously
+    raw_model = call_risk_model(
         text_prompt,
         model_name="gpt-4o-mini-2024-07-18-risk-eval-v2"
     )
@@ -481,9 +528,10 @@ async def resubmit_risk(provider_id: str):
     model_cat_scores = model_output.get("category_scores", {})
 
     for cat, score in det_scores.items():
-        wl_note = next((c["note"] 
-                        for c in payload["watchlist_categories"] 
-                        if c["category"] == cat), "")
+        wl_note = next(
+            (c["note"] for c in payload["watchlist_categories"] if c["category"] == cat),
+            ""
+        )
 
         if cat in model_expl:
             note = model_expl[cat]
@@ -495,22 +543,81 @@ async def resubmit_risk(provider_id: str):
 
         final_categories[cat] = {"score": score, "note": note}
 
-    aggregated_score = round(
-        sum(v["score"] for v in final_categories.values()) 
-        / len(final_categories), 
-        1
-    )
+    # ------------------------------------------------------------
+    # ⭐ 6️⃣ Deterministic adjustments based on analyst notes
+    # ------------------------------------------------------------
+    lower_notes = full_doc_summary.lower()
 
-    risk_level = (
-        "High" if aggregated_score > 70 else
-        "Moderate" if aggregated_score > 40 else
-        "Low"
-    )
+    # 🔥 Boost reputation score for serious misconduct keywords
+    REPUTATION_KEYWORDS = [
+        "misconduct", "fraud", "scam", "abuse",
+        "harassment", "illegal", "criminal",
+        "patient harm", "negligence", "safety violation"
+    ]
+
+    if any(k in lower_notes for k in REPUTATION_KEYWORDS):
+        print("🔥 Reputation keyword detected — boosting reputation +25")
+        final_categories["reputation"]["score"] = min(
+            final_categories["reputation"]["score"] + 25,
+            100
+        )
+        final_categories["reputation"]["note"] += " (Analyst flagged serious reputation concerns.)"
+
+    # optional operational bump
+    if any(k in lower_notes for k in ["negligence", "mismanagement", "unsafe"]):
+        print("🔥 Operational keyword detected — boosting operational +15")
+        final_categories["operational"]["score"] = min(
+            final_categories["operational"]["score"] + 15,
+            100
+        )
+        final_categories["operational"]["note"] += " (Analyst identified operational concerns.)"
+
+    # ------------------------------------------------------------
+    # 7️⃣ Final aggregated score + risk level
+    # ------------------------------------------------------------
+    #aggregated_score = round(
+    #    sum(v["score"] for v in final_categories.values()) / len(final_categories),
+    #    1
+    #)
+    # ============================================================
+    # ⭐ APPLY WEIGHTED SCORE IN RESUBMIT
+    # ============================================================
+    WEIGHTS = {
+        "reputation": 0.25,
+        "regulatory": 0.20,
+        "operational": 0.15,
+        "financial": 0.15,
+        "cybersecurity": 0.10,
+        "data_privacy": 0.10,
+        "supplychain": 0.05,
+    }
+
+    weighted_sum = 0.0
+    total_weight = 0.0
+
+    for cat, data in final_categories.items():
+        score = data.get("score", 0)
+        weight = WEIGHTS.get(cat, 0)
+        weighted_sum += score * weight
+        total_weight += weight
+
+    if total_weight > 0:
+        aggregated_score = round(weighted_sum / total_weight, 1)
+    else:
+        aggregated_score = 0
+
+
+    if aggregated_score >= 60:
+        risk_level = "High"
+    elif aggregated_score >= 30:
+        risk_level = "Moderate"
+    else:
+        risk_level = "Low"
 
     timestamp = datetime.utcnow().isoformat()
 
     # ------------------------------------------------------------
-    # 6️⃣ Persist updated risk results
+    # 8️⃣ Save updated record
     # ------------------------------------------------------------
     record.setdefault("risk", {})
     record["risk"]["aggregated_score"] = aggregated_score
@@ -527,14 +634,20 @@ async def resubmit_risk(provider_id: str):
 
     save_all(apps)
 
+    # ------------------------------------------------------------
+    # 9️⃣ Return updated snapshot
+    # ------------------------------------------------------------
     return JSONResponse({
         "provider_id": provider_id,
         "aggregated_score": aggregated_score,
         "risk_level": risk_level,
         "categories": final_categories,
         "timestamp": timestamp,
-        "notes_used": selected
+        "notes_used": selected,
+        "doc_summary": full_doc_summary,
     })
+
+
 
 
 @router.post("/chat/toggle/{provider_id}")

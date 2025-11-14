@@ -1,33 +1,33 @@
 {
   "model_response": {
-    "provider_name": "CurePoint Bengaluru General Hospital",
-    "license_number": "KA/MC/2022/01016",
+    "provider_name": "Kiran Nagpur Medical Centre",
+    "license_number": "MH-LIC-2019-01025",
     "aggregated_score": 23.4,
     "risk_level": "Low",
     "category_scores": {
-      "regulatory": {
-        "score": 20.0,
-        "note": "Compliance or certification issues found."
+      "data_privacy": {
+        "score": 24.0,
+        "note": "Potential PII exposure or privacy gaps detected."
       },
-      "operational": {
-        "score": 20.0,
-        "note": "Operational disruptions or delays detected."
-      },
-      "cybersecurity": {
-        "score": 44.0,
-        "note": "Possible vulnerabilities or threat alerts identified."
+      "financial": {
+        "score": 40.0,
+        "note": "Financial irregularities or delays noted."
       },
       "supplychain": {
         "score": 20.0,
         "note": "Vendor reliability or delivery issues detected."
       },
-      "financial": {
+      "regulatory": {
         "score": 20.0,
-        "note": "Financial irregularities or delays noted."
+        "note": "Compliance or certification issues found."
       },
-      "data_privacy": {
+      "cybersecurity": {
         "score": 20.0,
-        "note": "Potential PII exposure or privacy gaps detected."
+        "note": "Possible vulnerabilities or threat alerts identified."
+      },
+      "operational": {
+        "score": 20.0,
+        "note": "Operational disruptions or delays detected."
       },
       "reputation": {
         "score": 20.0,
@@ -35,7 +35,7 @@
       }
     },
     "confidence": 0.0,
-    "timestamp": "2025-11-13T18:47:05.277878",
+    "timestamp": "2025-11-13T19:34:44.996232",
     "original_explanations": {
       "cybersecurity": "Possible vulnerabilities or threat alerts identified.",
       "data_privacy": "Potential PII exposure or privacy gaps detected.",

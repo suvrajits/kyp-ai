@@ -1,0 +1,17 @@
+{
+  "provider_id": "APP-20251113-00071",
+  "category": "cybersecurity",
+  "hits": 1,
+  "entries": [
+    {
+      "severity": 0.1,
+      "detail": "Simulated cybersecurity issue for Aarogya Old Delhi Medical Centre",
+      "timestamp": "2025-11-13T18:59:46.545650",
+      "source": "simulated_cybersecurity_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-13T18:59:46.545650",
+  "raw_simulated": {
+    "note": "Possible vulnerabilities or threat alerts identified."
+  }
+}

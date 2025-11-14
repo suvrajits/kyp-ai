@@ -1,33 +1,33 @@
 {
   "model_response": {
-    "provider_name": "CurePoint Bengaluru General Hospital",
-    "license_number": "KA/MC/2022/01016",
-    "aggregated_score": 23.4,
+    "provider_name": "Prathama Mangalore Health Centre",
+    "license_number": "KA-HOSP-2020-1009",
+    "aggregated_score": 39.2,
     "risk_level": "Low",
     "category_scores": {
-      "regulatory": {
+      "supplychain": {
         "score": 20.0,
-        "note": "Compliance or certification issues found."
+        "note": "Vendor reliability or delivery issues detected."
       },
       "operational": {
         "score": 20.0,
         "note": "Operational disruptions or delays detected."
       },
-      "cybersecurity": {
-        "score": 44.0,
-        "note": "Possible vulnerabilities or threat alerts identified."
-      },
-      "supplychain": {
-        "score": 20.0,
-        "note": "Vendor reliability or delivery issues detected."
+      "data_privacy": {
+        "score": 84.0,
+        "note": "Potential PII exposure or privacy gaps detected."
       },
       "financial": {
         "score": 20.0,
         "note": "Financial irregularities or delays noted."
       },
-      "data_privacy": {
+      "cybersecurity": {
         "score": 20.0,
-        "note": "Potential PII exposure or privacy gaps detected."
+        "note": "Possible vulnerabilities or threat alerts identified."
+      },
+      "regulatory": {
+        "score": 84.0,
+        "note": "Compliance or certification issues found."
       },
       "reputation": {
         "score": 20.0,
@@ -35,7 +35,7 @@
       }
     },
     "confidence": 0.0,
-    "timestamp": "2025-11-13T18:47:05.277878",
+    "timestamp": "2025-11-14T04:52:21.167972",
     "original_explanations": {
       "cybersecurity": "Possible vulnerabilities or threat alerts identified.",
       "data_privacy": "Potential PII exposure or privacy gaps detected.",

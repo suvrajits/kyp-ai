@@ -1,0 +1,17 @@
+{
+  "provider_id": "APP-20251114-00076",
+  "category": "supplychain",
+  "hits": 1,
+  "entries": [
+    {
+      "severity": 0.1,
+      "detail": "Simulated supplychain issue for Saraswati Surat Diagnostic Centre",
+      "timestamp": "2025-11-14T05:00:46.523980",
+      "source": "simulated_supplychain_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-14T05:00:46.523980",
+  "raw_simulated": {
+    "note": "Vendor reliability or delivery issues detected."
+  }
+}

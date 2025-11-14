@@ -1,0 +1,17 @@
+{
+  "provider_id": "APP-20251113-00072",
+  "category": "operational",
+  "hits": 1,
+  "entries": [
+    {
+      "severity": 0.8,
+      "detail": "Simulated operational issue for Nova Old Delhi General Hospital",
+      "timestamp": "2025-11-13T19:30:34.766046",
+      "source": "simulated_operational_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-13T19:30:34.766046",
+  "raw_simulated": {
+    "note": "Operational disruptions or delays detected."
+  }
+}
