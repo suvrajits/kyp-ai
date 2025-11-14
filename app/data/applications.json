@@ -4126,6 +4126,17 @@
         "id": "msg-ai-1763096598201",
         "from": "AI",
         "text": "The risk assessment for Saraswati Surat Diagnostic Centre indicates a financial risk score of 20.0%, which reflects noted financial irregularities or delays. This suggests that there may be concerns regarding the provider's financial practices, aligning with the reported suspicious activities and potential financial crimes.[END]"
+      },
+      {
+        "id": "msg-1763097282409",
+        "from": "User",
+        "text": "what increased the risk score?",
+        "use_for_risk": false
+      },
+      {
+        "id": "msg-ai-1763097282444",
+        "from": "AI",
+        "text": "The risk score increased from 10.0% to 20.2%, reflecting a rise in exposure across various domains. Specifically, negative press or sentiment dips, compliance or certification issues, financial irregularities or delays, operational disruptions or delays, possible vulnerabilities or threat alerts, vendor reliability or delivery issues, and potential PII exposure or privacy gaps were all factors contributing to the increased risk score.[END]"
       }
     ],
     "history": [
@@ -4184,6 +4195,16 @@
         "event": "Risk Re-submitted with Analyst Notes",
         "timestamp": "2025-11-14T05:04:08.316402",
         "note": "Risk updated after including 1 chat messages."
+      },
+      {
+        "event": "Risk Re-submitted with Analyst Notes",
+        "timestamp": "2025-11-14T05:13:56.922586",
+        "note": "Risk updated after including 1 chat messages."
+      },
+      {
+        "event": "Risk Re-submitted with Analyst Notes",
+        "timestamp": "2025-11-14T05:14:22.520855",
+        "note": "Risk updated after including 1 chat messages."
       }
     ],
     "pre_risk_snapshot": {
@@ -4209,36 +4230,36 @@
       "category_scores": {
         "cybersecurity": {
           "score": 20.0,
-          "note": "No explanation available."
+          "note": "Possible vulnerabilities or threat alerts identified."
         },
         "data_privacy": {
           "score": 20.0,
-          "note": "No explanation available."
+          "note": "Potential PII exposure or privacy gaps detected."
         },
         "financial": {
           "score": 20.0,
-          "note": "No explanation available."
+          "note": "Financial irregularities or delays noted."
         },
         "operational": {
           "score": 20.0,
-          "note": "No explanation available."
+          "note": "Operational disruptions or delays detected."
         },
         "regulatory": {
           "score": 20.0,
-          "note": "No explanation available."
+          "note": "Compliance or certification issues found."
         },
         "reputation": {
           "score": 45.0,
-          "note": "No explanation available. (Analyst flagged serious reputation concerns.)"
+          "note": "Negative press or sentiment dips observed."
         },
         "supplychain": {
           "score": 24.0,
-          "note": "No explanation available."
+          "note": "Vendor reliability or delivery issues detected."
         }
       },
       "confidence": 0.0,
       "timestamp": "2025-11-14T05:00:54.988411",
-      "updated_at": "2025-11-14T05:04:08.316402",
+      "updated_at": "2025-11-14T05:14:22.520855",
       "original_explanations": {
         "cybersecurity": "Possible vulnerabilities or threat alerts identified.",
         "data_privacy": "Potential PII exposure or privacy gaps detected.",

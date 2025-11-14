@@ -620,6 +620,14 @@ async def resubmit_risk(provider_id: str):
     # 8️⃣ Save updated record
     # ------------------------------------------------------------
     record.setdefault("risk", {})
+
+    # ⭐ FIX: Reattach original explanations during resubmit
+    original = record["risk"].get("original_explanations")
+    if original:
+        for cat, note in original.items():
+            if cat in final_categories:
+                final_categories[cat]["note"] = note
+
     record["risk"]["aggregated_score"] = aggregated_score
     record["risk"]["risk_level"] = risk_level
     record["risk"]["category_scores"] = final_categories
