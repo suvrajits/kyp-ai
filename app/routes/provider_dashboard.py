@@ -456,12 +456,13 @@ async def calculate_risk(provider_id: str):
             score += 40
 
     risk_score = min(100, score)
-    if risk_score < 30:
-        level = "Low"
-    elif risk_score < 60:
+    if risk_score >= 60:
+        level = "High"
+    elif risk_score >= 30:
         level = "Moderate"
     else:
-        level = "High"
+        level = "Low"
+
 
     return {"risk_score": risk_score, "level": level}
 
@@ -478,38 +479,44 @@ async def list_provider_docs(app_id: str):
 
 @router.get("/status/{provider_id}")
 async def dashboard_status(provider_id: str):
-    """
-    Returns the latest stored risk evaluation for a provider,
-    without re-triggering evaluation.
-    Used by provider_dashboard.html for live polling.
-    """
     apps = load_applications()
     rec = next(
         (r for r in apps if r.get("id") == provider_id or r.get("application_id") == provider_id),
         None,
     )
 
-
     if not rec:
         return JSONResponse({"error": "Provider not found"}, status_code=404)
 
-    # Extract risk data safely
+    # Extract
     risk = rec.get("risk", {})
-    status = rec.get("risk_status", "Unknown")
     score = rec.get("risk_score") or risk.get("aggregated_score")
     categories = risk.get("category_scores", {}) or {}
 
-    # Normalize level (derive if not explicitly stored)
+    # Determine risk level (backend is authoritative)
     level = rec.get("risk_level")
     if not level:
         if score is None:
             level = "Unknown"
-        elif score > 66:
+        elif score >= 60:
             level = "High"
-        elif score > 33:
+        elif score >= 30:
             level = "Moderate"
         else:
             level = "Low"
+
+    status = rec.get("risk_status") or "Completed"
+
+    # Persist unified representation (prevents UI inconsistencies)
+    rec["risk"] = {
+        "aggregated_score": score,
+        "category_scores": categories
+    }
+    rec["risk_score"] = score
+    rec["risk_level"] = level
+    rec["risk_status"] = status
+
+    save_all(apps)
 
     return JSONResponse(
         {
@@ -520,8 +527,9 @@ async def dashboard_status(provider_id: str):
         }
     )
 
+
 @router.post("/append-message")
-async def append_message(payload: dict):
+async def append_message_api(payload: dict):
     """
     Appends a chat message to a provider's application record.
     Required so toggles and risk resubmit work for newly sent messages.

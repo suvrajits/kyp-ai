@@ -182,7 +182,7 @@
       .logo-img {
           height: 48px;
           width: auto;
-          transform: scale(3); /* ⬅️ increase logo size 2.5× */
+          transform: scale(3); 
       }
     </style>
   <h2>📝 Application Review</h2>
@@ -216,6 +216,7 @@
   {% endif %}
   <hr>
   <hr>
+{% if false %}
 <h3>🧠 Preliminary Risk Assessment</h3>
 <div>
   {% if pre_risk_score is defined %}
@@ -259,7 +260,7 @@
     </div>
   {% endif %}
 </div>
-
+{% endif %}
 
   <div class="legend">
     <span style="background:#e8f8ed;">✅ Match (≥90%)</span>

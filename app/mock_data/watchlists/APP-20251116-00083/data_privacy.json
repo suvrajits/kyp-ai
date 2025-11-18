@@ -1,0 +1,23 @@
+{
+  "provider_id": "APP-20251116-00083",
+  "category": "data_privacy",
+  "hits": 2,
+  "entries": [
+    {
+      "severity": 0.8,
+      "detail": "Simulated data_privacy issue for Greenline Old Delhi Medical Centre Centre",
+      "timestamp": "2025-11-16T14:38:54.113461",
+      "source": "simulated_data_privacy_watchlist"
+    },
+    {
+      "severity": 0.1,
+      "detail": "Simulated data_privacy issue for Greenline Old Delhi Medical Centre Centre",
+      "timestamp": "2025-11-16T14:38:54.113461",
+      "source": "simulated_data_privacy_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-16T14:38:54.113461",
+  "raw_simulated": {
+    "note": "Potential PII exposure or privacy gaps detected."
+  }
+}

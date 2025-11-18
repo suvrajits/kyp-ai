@@ -1,0 +1,23 @@
+{
+  "provider_id": "APP-20251116-00082",
+  "category": "regulatory",
+  "hits": 2,
+  "entries": [
+    {
+      "severity": 0.5,
+      "detail": "Simulated regulatory issue for Saraswati Kolkata General Hospital",
+      "timestamp": "2025-11-16T14:26:31.974885",
+      "source": "simulated_regulatory_watchlist"
+    },
+    {
+      "severity": 0.8,
+      "detail": "Simulated regulatory issue for Saraswati Kolkata General Hospital",
+      "timestamp": "2025-11-16T14:26:31.974885",
+      "source": "simulated_regulatory_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-16T14:26:31.974885",
+  "raw_simulated": {
+    "note": "Compliance or certification issues found."
+  }
+}

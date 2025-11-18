@@ -1,0 +1,49 @@
+{
+  "model_response": {
+    "provider_name": "Prathama New Delhi Surgical Centre",
+    "license_number": "DL-HOSP-2025-1015",
+    "aggregated_score": 26.0,
+    "risk_level": "Low",
+    "category_scores": {
+      "regulatory": {
+        "score": 20.0,
+        "note": "Compliance or certification issues found."
+      },
+      "reputation": {
+        "score": 20.0,
+        "note": "Negative press or sentiment dips observed."
+      },
+      "financial": {
+        "score": 20.0,
+        "note": "Financial irregularities or delays noted."
+      },
+      "supplychain": {
+        "score": 20.0,
+        "note": "Vendor reliability or delivery issues detected."
+      },
+      "data_privacy": {
+        "score": 44.0,
+        "note": "Potential PII exposure or privacy gaps detected."
+      },
+      "operational": {
+        "score": 44.0,
+        "note": "Operational disruptions or delays detected."
+      },
+      "cybersecurity": {
+        "score": 20.0,
+        "note": "Possible vulnerabilities or threat alerts identified."
+      }
+    },
+    "confidence": 0.0,
+    "timestamp": "2025-11-16T10:17:24.051362",
+    "original_explanations": {
+      "cybersecurity": "Possible vulnerabilities or threat alerts identified.",
+      "data_privacy": "Potential PII exposure or privacy gaps detected.",
+      "financial": "Financial irregularities or delays noted.",
+      "operational": "Operational disruptions or delays detected.",
+      "regulatory": "Compliance or certification issues found.",
+      "reputation": "Negative press or sentiment dips observed.",
+      "supplychain": "Vendor reliability or delivery issues detected."
+    }
+  }
+}
