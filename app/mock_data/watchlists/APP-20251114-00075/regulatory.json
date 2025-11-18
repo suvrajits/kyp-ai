@@ -1,0 +1,29 @@
+{
+  "provider_id": "APP-20251114-00075",
+  "category": "regulatory",
+  "hits": 3,
+  "entries": [
+    {
+      "severity": 0.5,
+      "detail": "Simulated regulatory issue for Prathama Mangalore Health Centre",
+      "timestamp": "2025-11-14T04:52:18.950380",
+      "source": "simulated_regulatory_watchlist"
+    },
+    {
+      "severity": 0.8,
+      "detail": "Simulated regulatory issue for Prathama Mangalore Health Centre",
+      "timestamp": "2025-11-14T04:52:18.950380",
+      "source": "simulated_regulatory_watchlist"
+    },
+    {
+      "severity": 0.3,
+      "detail": "Simulated regulatory issue for Prathama Mangalore Health Centre",
+      "timestamp": "2025-11-14T04:52:18.950380",
+      "source": "simulated_regulatory_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-14T04:52:18.950380",
+  "raw_simulated": {
+    "note": "Compliance or certification issues found."
+  }
+}

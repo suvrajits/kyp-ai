@@ -1,0 +1,10 @@
+{
+  "provider_id": "APP-20251116-00083",
+  "category": "operational",
+  "hits": 0,
+  "entries": [],
+  "last_reported": null,
+  "raw_simulated": {
+    "note": "Operational disruptions or delays detected."
+  }
+}

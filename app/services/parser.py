@@ -1,222 +1,177 @@
 # app/services/parser.py
-from __future__ import annotations
-import re
-from typing import Dict, Any
+"""
+Azure Document Intelligence–based Provider License Parser.
 
-# ---------- canonical keys we want ----------
+This version directly invokes Azure Document Intelligence using the custom
+trained model stored in your Key Vault at:
+    https://providergpt-kv.vault.azure.net/
+
+It extracts key-value fields and maps them into the canonical schema.
+"""
+
+import os
+import logging
+from datetime import datetime
+from typing import Dict
+from dateutil import parser as dateutil_parser
+from app.services.azure_docai_extractor import AzureDocumentExtractor
+
+# -------------------------------------------------------
+# 📍 Fixed Vault URL (no .env dependency)
+# -------------------------------------------------------
+VAULT_URL = "https://providergpt-kv.vault.azure.net/"
+
+# -------------------------------------------------------
+# 🧭 Canonical Provider License Fields
+# -------------------------------------------------------
 CANON_KEYS = [
-    "provider_name", "license_number", "specialty", "state",
-    "issuing_authority", "issue_date", "expiry_date", "registration_id"
+    "provider_name",
+    "license_number",
+    "type_of_institution",
+    "address",
+    "ownership_details",
+    "license_issue_date",
+    "license_expiry_date",
+    "details_of_services_offered",
+    "number_of_beds",
+    "qualification_and_number_of_medical_staff",
+    "licensing_authority_name",
+    "infrastructure_standards_compliance",
+    "biomedical_waste_management_authorization",
+    "pollution_control_board_clearance",
+    "consent_to_operate_certificate",
+    "drug_license",
+    "radiology_radiation_safety_license",
+    "registration_under_any_special_acts",
+    "display_of_hospital_charges_and_facilities",
+    "compliance_with_minimum_standards",
+    "details_of_support_services",
+    "list_of_equipment_and_medical_devices_used",
+    "fire_and_lift_inspection_certificates",
+    "accreditation_status",
 ]
 
-# ---------- label synonyms → canonical ----------
-_SYNONYM_MAP = {
-    "provider_name": {
-        "providername", "name", "doctorname", "drname",
-        "practitioner", "practitionername", "doctor", "doctor name"
-    },
-    "license_number": {
-        "licensenumber", "licencenumber", "licenceno", "licenseno",
-        "registrationno", "registrationnumber", "regno", "regnno",
-        "regnnumber", "licence", "license"
-    },
-    "specialty": {"specialty", "speciality", "department", "field", "practicearea"},
-    "issuing_authority": {"issuingauthority", "authority", "council", "board",
-                          "medicalcouncil", "statecouncil", "verificationbody"},
-    "issue_date": {"issuedate", "dateofissue", "dateissued"},
-    "expiry_date": {"expirydate", "expirationdate", "validtill", "validupto", "validuntil"},
-    "registration_id": {"registrationid", "regid", "registration", "certificateid", "certid"},
-    "state": {"state", "state/ut", "province", "jurisdiction", "registeredjurisdiction"},
-}
+# -------------------------------------------------------
+# 🧮 Helper: Date Normalization
+# -------------------------------------------------------
+COMMON_DATE_FORMATS = [
+    "%d-%m-%Y", "%Y-%m-%d", "%d/%m/%Y", "%m/%d/%Y",
+    "%d %b %Y", "%d %B %Y", "%b %d, %Y"
+]
 
-# ---------- common Indian license prefixes → state inference ----------
-_PREFIX_TO_STATE = {
-    "MH": "Maharashtra", "DL": "Delhi", "GJ": "Gujarat", "KA": "Karnataka",
-    "TN": "Tamil Nadu", "WB": "West Bengal", "RJ": "Rajasthan", "UP": "Uttar Pradesh",
-    "PB": "Punjab", "HR": "Haryana", "BR": "Bihar", "MP": "Madhya Pradesh",
-    "KL": "Kerala", "TS": "Telangana", "AP": "Andhra Pradesh",
-    "UK": "Uttarakhand", "UA": "Uttarakhand", "CG": "Chhattisgarh",
-    "OR": "Odisha", "OD": "Odisha", "JK": "Jammu & Kashmir", "JH": "Jharkhand",
-    "AS": "Assam"
-}
+def parse_date_to_iso(s: str) -> str:
+    """Convert various date formats to ISO (YYYY-MM-DD)."""
+    if not s:
+        return ""
+    s = s.strip().replace("O", "0").replace("o", "0")
+    for fmt in COMMON_DATE_FORMATS:
+        try:
+            return datetime.strptime(s, fmt).date().isoformat()
+        except Exception:
+            pass
+    try:
+        return dateutil_parser.parse(s, dayfirst=True, fuzzy=True).date().isoformat()
+    except Exception:
+        return ""
 
-# ---------- Indian states for authority-based detection ----------
-_STATES = {v.lower() for v in _PREFIX_TO_STATE.values()} | {
-    "andaman and nicobar", "arunachal pradesh", "goa", "himachal pradesh",
-    "meghalaya", "manipur", "mizoram", "nagaland", "sikkim", "tripura",
-    "ladakh", "lakshadweep", "puducherry", "chandigarh",
-    "dadra and nagar haveli", "daman and diu"
-}
 
-# ============================================================
-# 🔧 Helper Utilities
-# ============================================================
-
-def _norm(s: str) -> str:
-    """Normalize label text for matching."""
-    s = (s or "").lower()
-    s = re.sub(r"[^a-z0-9]+", "", s)
-    return s
-
-def _map_label_to_canon(label: str) -> str | None:
-    """Map a raw OCR label to a canonical key."""
-    n = _norm(label)
-    for canon, synonyms in _SYNONYM_MAP.items():
-        if n in synonyms:
-            return canon
-    return None
-
-def _flatten_extraction(extracted: Any) -> str:
+# -------------------------------------------------------
+# 🧠 Main Parser Function
+# -------------------------------------------------------
+def parse_provider_license(pdf_path: str, debug: bool = False) -> Dict[str, str]:
     """
-    Turn DI output into a line-wise text blob:
-    - include "Key: Value" from key_value_pairs
-    - include raw paragraphs
+    Parse a provider license PDF using Azure Document Intelligence.
+    Extracts and normalizes canonical fields.
     """
-    if isinstance(extracted, str):
-        return extracted
 
-    lines = []
-    if isinstance(extracted, dict):
-        for kv in (extracted.get("key_value_pairs") or []):
-            k = (kv.get("key") or "").strip()
-            v = (kv.get("value") or "").strip()
-            if k or v:
-                lines.append(f"{k}: {v}")
-        for p in (extracted.get("paragraphs") or []):
-            if p:
-                lines.append(p.strip())
+    if not os.path.exists(pdf_path):
+        raise FileNotFoundError(f"❌ File not found: {pdf_path}")
 
-    blob = "\n".join(lines)
-    blob = re.sub(r"[ \t]+", " ", blob)  # keep newlines for ^ anchors
-    return blob
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
 
-def _strip_leading_punct(val: str) -> str:
-    """Removes leading ':', '-', '.', etc."""
-    return re.sub(r"^[\s:\-–•.]+", "", (val or "").strip())
+    logger.info(f"📄 Parsing provider license using Azure Document Intelligence (Vault: {VAULT_URL})")
 
-def _cut_at_next_label(val: str) -> str:
-    """Cuts off trailing glued labels like 'NephrologyExpiryDate:...' etc."""
-    return re.split(
-        r"(?i)\b("
-        r"provider|practitioner|specialit?y|field\s*of\s*practice|licen[cs]e|registration|"
-        r"issuing|issue|expiry|valid\s*till|state|council|authority"
-        r")\b", val
-    )[0].strip()
+    # Initialize Azure Document Extractor (using fixed Vault URL)
+    extractor = AzureDocumentExtractor(vault_url=VAULT_URL)
+    result = extractor.extract_from_pdf(pdf_path)
 
-def _clean(val: str) -> str:
-    """Standard cleanup pipeline for parsed values."""
-    val = _strip_leading_punct(val)
-    val = re.sub(r"\s{2,}", " ", val)
-    val = _cut_at_next_label(val)
-    val = re.sub(r"(?i)\s+specialt?y$", "", val).strip()
-    val = re.sub(r"(?i)\bof\s+practice\b", "", val).strip()
-    return val
+    if not result:
+        raise ValueError("⚠️ No fields were extracted from the document.")
 
-def _infer_state(value_dict: Dict[str, str]) -> str:
-    """Infer state based on authority text or license prefix."""
-    # 1) From issuing authority text
-    auth = (value_dict.get("issuing_authority") or "").lower()
-    for st in _STATES:
-        if st in auth:
-            return st.title()
-
-    # 2) From license prefix
-    lic = (value_dict.get("license_number") or "").strip()
-    m = re.match(r"([A-Z]{2})", lic)
-    if m:
-        return _PREFIX_TO_STATE.get(m.group(1), "")
-
-    return ""
-
-# ============================================================
-# 🧠 Main Parsing Logic
-# ============================================================
-
-def parse_provider_license(extracted: Any) -> Dict[str, str]:
-    """
-    Robustly parse provider fields from DI output (paragraphs + KV pairs)
-    with fuzzy label mapping, regex fallback, and smart contextual heuristics.
-    """
-    out: Dict[str, str] = {k: "" for k in CANON_KEYS}
-
-    # ---- 1) Use key_value_pairs with fuzzy label mapping ----
-    if isinstance(extracted, dict):
-        for kv in (extracted.get("key_value_pairs") or []):
-            canon = _map_label_to_canon(kv.get("key", ""))
-            if not canon:
-                continue
-            val = _clean(kv.get("value", ""))
-            if val and not out.get(canon):
-                out[canon] = val
-
-    # ---- 2) Fallback via regex on flattened text ----
-    text = _flatten_extraction(extracted)
-
-    patterns = {
-        "provider_name": (
-            r"(?im)^\s*(?:provider\s*name|practitioner\s*name|doctor\s*name|name)\s*[:\-]?\s*(.+)$"
-        ),
-        "license_number": (
-            r"(?im)^\s*(?:licen[cs]e\s*(?:no\.?|number)|registration\s*(?:no\.?|number))\s*[:\-]?\s*([A-Z0-9\-\/]+)"
-        ),
-        "specialty": (
-            r"(?im)^\s*(?:"  # field variations
-            r"field\s*of\s*practice|"
-            r"area\s*of\s*practice|"
-            r"practice\s*area|"
-            r"medical\s*specialit?y|"
-            r"specialit?y|"
-            r"department|"
-            r"field"
-            r")\s*[:\-]?\s*(.+)$"
-        ),
-        "issuing_authority": (
-            r"(?im)^\s*(?:issuing\s*authorit(?:y|ies)|authority|council|board|verification\s*body)\s*[:\-]?\s*(.+)$"
-        ),
-        "issue_date": (
-            r"(?im)^\s*(?:issue\s*date|date\s*of\s*issue|date\s*issued)\s*[:\-]?\s*(.+)$"
-        ),
-        "expiry_date": (
-            r"(?im)^\s*(?:expir(?:y|ation)\s*date|valid\s*(?:till|upto|until))\s*[:\-]?\s*(.+)$"
-        ),
-        "registration_id": (
-            r"(?im)^\s*(?:registration(?:\s*(?:id|number))?|cert(?:ificate)?\s*id)\s*[:\-]?\s*([A-Z0-9\-\/]+)"
-        ),
-        "state": (
-            r"(?im)^\s*(?:state|state/ut|province|jurisdiction|registered\s*jurisdiction)\s*[:\-]?\s*(.+)$"
-        ),
+    # ---------------------------------------------------
+    # 🔖 Azure → Canonical Key Mapping
+    # ---------------------------------------------------
+    key_map = {
+        "Provider Name": "provider_name",
+        "License Number": "license_number",
+        "Type of Institution": "type_of_institution",
+        "Address": "address",
+        "Ownership Details": "ownership_details",
+        "License Issue Date": "license_issue_date",
+        "License Expiry Date": "license_expiry_date",
+        "Details of Services Offered": "details_of_services_offered",
+        "Number of Beds": "number_of_beds",
+        "Qualification and Number of Medical Staff": "qualification_and_number_of_medical_staff",
+        "Licensing Authority Name": "licensing_authority_name",
+        "Infrastructure Standards Compliance": "infrastructure_standards_compliance",
+        "Biomedical Waste Management Authorization": "biomedical_waste_management_authorization",
+        "Pollution Control Board Clearance": "pollution_control_board_clearance",
+        "Consent to Operate Certificate": "consent_to_operate_certificate",
+        "Drug License": "drug_license",
+        "Radiology-Radiation Safety License": "radiology_radiation_safety_license",
+        "Registration under any Special Acts": "registration_under_any_special_acts",
+        "Display of Hospital Charges and Facilities": "display_of_hospital_charges_and_facilities",
+        "Compliance with Minimum Standards": "compliance_with_minimum_standards",
+        "Details of Support Services": "details_of_support_services",
+        "List of Equipment and Medical Devices Used": "list_of_equipment_and_medical_devices_used",
+        "Fire and Lift Inspection Certificates": "fire_and_lift_inspection_certificates",
+        "Accreditation Status": "accreditation_status",
     }
 
-    for k, pat in patterns.items():
-        if out.get(k):
-            continue
-        m = re.search(pat, text)
-        if m:
-            out[k] = _clean(m.group(1))
+    # ---------------------------------------------------
+    # 🧹 Normalize and Clean Results
+    # ---------------------------------------------------
+    normalized: Dict[str, str] = {}
 
-    # ---- 2.5) Secondary fallback: detect "Dr. <Name>" if still empty ----
-    if not out.get("provider_name"):
-        m = re.search(r"(?i)\bdr\.?\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*", text)
-        if m:
-            out["provider_name"] = _clean(m.group(0))
+    for azure_key, canon_key in key_map.items():
+        val = result.get(azure_key, "") or result.get(canon_key, "")
+        if isinstance(val, str):
+            normalized[canon_key] = val.strip()
+        elif val is not None:
+            normalized[canon_key] = str(val).strip()
 
-    # ---- 2.6) Context fallback: line above "Reg. No" / "License" ----
-    if not out.get("provider_name"):
-        lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
-        for i, line in enumerate(lines):
-            if re.search(r"(?i)(licen[cs]e|reg\.?\s*no|registration)", line):
-                if i > 0 and not re.search(r"(?i)(license|reg|council|authority)", lines[i - 1]):
-                    candidate = lines[i - 1]
-                    if len(candidate.split()) <= 6 and re.search(r"[A-Z][a-z]+", candidate):
-                        out["provider_name"] = _clean(candidate)
-                        break
+    # Convert date fields
+    for key in ("license_issue_date", "license_expiry_date"):
+        if normalized.get(key):
+            normalized[key] = parse_date_to_iso(normalized[key])
 
-    # ---- 3) Cleanup pass ----
-    for k in out:
-        out[k] = _strip_leading_punct(out[k])
+    # Boolean-like normalization
+    for k, v in list(normalized.items()):
+        val = v.lower().strip()
+        if val in {"yes", "true", "available", "displayed", "implemented"}:
+            normalized[k] = "Yes"
+        elif val in {"no", "false", "not available", "not displayed"}:
+            normalized[k] = "No"
+        elif val in {"na", "n/a", "not applicable"}:
+            normalized[k] = "Not Applicable"
 
-    # ---- 4) Infer state if missing ----
-    if not out.get("state"):
-        out["state"] = _infer_state(out)
+    # Remove empties
+    normalized = {k: v for k, v in normalized.items() if v}
 
-    return out
+    if debug:
+        print(f"🧩 Extracted {len(normalized)} fields:")
+        for k, v in normalized.items():
+            print(f"{k:45}: {v}")
+
+    logger.info(f"✅ Extraction complete ({len(normalized)} fields).")
+    return normalized
+
+
+# -------------------------------------------------------
+# 🧪 CLI Test
+# -------------------------------------------------------
+if __name__ == "__main__":
+    PDF_PATH = r"C:\Users\suvra\OneDrive\Desktop\Resume\Portfolio\Healthcare\New_provider_pdfs\provider_59.pdf"
+    data = parse_provider_license(PDF_PATH, debug=True)
+    print("\nNormalized Output:\n", data)

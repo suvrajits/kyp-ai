@@ -1,0 +1,49 @@
+{
+  "model_response": {
+    "provider_name": "Samarth Vadodara General Hospital",
+    "license_number": "GJ/MC/2021/01011",
+    "aggregated_score": 38.8,
+    "risk_level": "Low",
+    "category_scores": {
+      "operational": {
+        "score": 20.0,
+        "note": "Operational disruptions or delays detected."
+      },
+      "supplychain": {
+        "score": 20.0,
+        "note": "Vendor reliability or delivery issues detected."
+      },
+      "reputation": {
+        "score": 20.0,
+        "note": "Negative press or sentiment dips observed."
+      },
+      "cybersecurity": {
+        "score": 20.0,
+        "note": "Possible vulnerabilities or threat alerts identified."
+      },
+      "regulatory": {
+        "score": 96.0,
+        "note": "Compliance or certification issues found."
+      },
+      "financial": {
+        "score": 20.0,
+        "note": "Financial irregularities or delays noted."
+      },
+      "data_privacy": {
+        "score": 56.0,
+        "note": "Potential PII exposure or privacy gaps detected."
+      }
+    },
+    "confidence": 0.0,
+    "timestamp": "2025-11-16T14:49:43.620656",
+    "original_explanations": {
+      "cybersecurity": "Possible vulnerabilities or threat alerts identified.",
+      "data_privacy": "Potential PII exposure or privacy gaps detected.",
+      "financial": "Financial irregularities or delays noted.",
+      "operational": "Operational disruptions or delays detected.",
+      "regulatory": "Compliance or certification issues found.",
+      "reputation": "Negative press or sentiment dips observed.",
+      "supplychain": "Vendor reliability or delivery issues detected."
+    }
+  }
+}

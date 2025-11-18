@@ -1,0 +1,49 @@
+{
+  "model_response": {
+    "provider_name": "Nova Old Delhi General Hospital",
+    "license_number": "DL-HOSP-2023-1005",
+    "aggregated_score": 24.6,
+    "risk_level": "Low",
+    "category_scores": {
+      "data_privacy": {
+        "score": 20.0,
+        "note": "Potential PII exposure or privacy gaps detected."
+      },
+      "financial": {
+        "score": 20.0,
+        "note": "Financial irregularities or delays noted."
+      },
+      "supplychain": {
+        "score": 20.0,
+        "note": "Vendor reliability or delivery issues detected."
+      },
+      "regulatory": {
+        "score": 20.0,
+        "note": "Compliance or certification issues found."
+      },
+      "cybersecurity": {
+        "score": 20.0,
+        "note": "Possible vulnerabilities or threat alerts identified."
+      },
+      "operational": {
+        "score": 52.0,
+        "note": "Operational disruptions or delays detected."
+      },
+      "reputation": {
+        "score": 20.0,
+        "note": "Negative press or sentiment dips observed."
+      }
+    },
+    "confidence": 0.0,
+    "timestamp": "2025-11-13T19:30:40.065453",
+    "original_explanations": {
+      "cybersecurity": "Possible vulnerabilities or threat alerts identified.",
+      "data_privacy": "Potential PII exposure or privacy gaps detected.",
+      "financial": "Financial irregularities or delays noted.",
+      "operational": "Operational disruptions or delays detected.",
+      "regulatory": "Compliance or certification issues found.",
+      "reputation": "Negative press or sentiment dips observed.",
+      "supplychain": "Vendor reliability or delivery issues detected."
+    }
+  }
+}

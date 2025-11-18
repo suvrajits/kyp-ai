@@ -1,0 +1,17 @@
+{
+  "provider_id": "APP-20251116-00081",
+  "category": "reputation",
+  "hits": 1,
+  "entries": [
+    {
+      "severity": 0.8,
+      "detail": "Simulated reputation issue for Lifeline Kolkata Medical Centre",
+      "timestamp": "2025-11-16T14:10:24.444205",
+      "source": "simulated_reputation_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-16T14:10:24.444205",
+  "raw_simulated": {
+    "note": "Negative press or sentiment dips observed."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "provider_id": "APP-20251113-00071",
+  "category": "reputation",
+  "hits": 1,
+  "entries": [
+    {
+      "severity": 0.8,
+      "detail": "Simulated reputation issue for Aarogya Old Delhi Medical Centre",
+      "timestamp": "2025-11-13T18:59:46.623470",
+      "source": "simulated_reputation_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-13T18:59:46.623470",
+  "raw_simulated": {
+    "note": "Negative press or sentiment dips observed."
+  }
+}

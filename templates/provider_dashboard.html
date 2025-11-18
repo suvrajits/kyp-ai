@@ -3,230 +3,956 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Provider Dashboard</title>
+  <title>ProviderGPT Dashboard</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #eef2f5;
-      padding: 40px;
-    }
-    .container {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      max-width: 900px;
-      margin: auto;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    }
-    h2 { color: #333; margin-top: 0; }
-
-    /* 🩵 Status styles */
-    .status {
-      font-size: 18px;
-      padding: 10px 16px;
-      border-radius: 8px;
-      display: inline-block;
-      margin-bottom: 10px;
-      font-weight: 600;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      border: 1px solid transparent;
-    }
-
-    .accepted {
-      background: #d6ecff;
-      color: #004c91;
-      border-color: #b3d9ff;
-    }
-    .approved {
-      background: #d1f2d1;
-      color: #146314;
-    }
-    .rejected {
-      background: #f8d7da;
-      color: #8a0000;
-    }
-
-    .box {
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 10px;
-    }
-    .label { font-weight: bold; color: #555; }
-    .actions { margin-top: 30px; text-align: center; }
-    button {
-      background-color: #0077cc;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 15px;
-      cursor: pointer;
-      margin: 10px;
-      transition: background 0.2s ease;
-    }
-    button:hover {
-      background-color: #005fa3;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    }
-    input[type="file"] {
-      padding: 10px;
-      background: #f9f9f9;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      width: 100%;
-    }
-
-    /* 🧠 Search section */
-    .search-section {
-      margin: 25px 0;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
+      margin: 0;
       background: #f9fafc;
+      color: #222;
+      font-family: "Inter", sans-serif;
+      overflow: hidden;
     }
-    .search-box { display: flex; gap: 10px; }
-    #query {
+    canvas {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    #riskChart, #riskDriftChart, #driftLabel {
+      background: #fff0f0;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .chart-visible {
+      opacity: 1;
+    }
+    #riskNotesContainer {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    #riskNotesContainer.visible {
+      opacity: 1;
+    }
+
+
+    
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 80px;
+      height: 100%;
+      background: #fff;
+      border-right: 1px solid #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+      gap: 20px;
+      box-shadow: 2px 0 6px rgba(0,0,0,0.05);
+      z-index: 20;
+    }
+    .sidebar-item {
+      position: relative;
+      text-align: center;
+      color: #555;
+      cursor: pointer;
+      transition: 0.25s;
+      font-size: 20px;
+    }
+    .sidebar-item:hover { color: #0077cc; transform: scale(1.1); }
+    .sidebar-label {
+      font-size: 11px;
+      margin-top: 4px;
+      color: #888;
+    }
+    .badge {
+      position: absolute;
+      top: -6px;
+      right: 10px;
+      background: #0077cc;
+      color: white;
+      font-size: 10px;
+      font-weight: bold;
+      border-radius: 10px;
+      padding: 2px 6px;
+      display: none;
+    }
+
+    /* Header */
+    .header {
+      position: fixed;
+      top: 15px;
+      right: 30px;
+      text-align: right;
+      z-index: 25;
+    }
+    .header h2 { margin: 0; font-size: 22px; color: #222; }
+    .header p { margin: 2px 0 0; font-size: 14px; color: #666; }
+
+    /* Main chat */
+    .main {
+      margin-left: 100px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    /* Chat window */
+    .chat-window {
       flex: 1;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #bbb;
+      width: 65%;
+      max-width: 900px;
+      overflow-y: auto;
+      padding: 40px;
+      box-sizing: border-box;
+    }
+
+    /* Messages */
+    .message {
+      margin-bottom: 15px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      line-height: 1.5;
+      max-width: 80%;
       font-size: 15px;
     }
-    #search-btn {
-      background-color: #0077cc;
-      color: white;
-      padding: 10px 20px;
+    .user-msg { background: #0077cc; color: #fff; align-self: flex-end; }
+    .ai-msg { background: #f1f3f5; color: #222; align-self: flex-start; }
+
+    /* Chat input bar */
+    .chat-bar {
+      position: fixed;
+      bottom: 0;
+      left: 100px;
+      right: 0;
+      background: #fff;
+      border-top: 1px solid #e0e0e0;
+      padding: 15px 25px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    .chat-input-container {
+      display: flex;
+      align-items: center;
+      background: #f4f6f8;
+      border-radius: 12px;
+      padding: 10px 15px;
+      width: 65%;
+      max-width: 900px;
+      border: 1px solid #ddd;
+    }
+    .chat-input {
+      flex: 1;
+      background: transparent;
       border: none;
+      color: #222;
+      font-size: 15px;
+      outline: none;
+    }
+    .upload-btn, .send-btn {
+      background: #0077cc;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      padding: 8px 14px;
+      margin-left: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .upload-btn:hover, .send-btn:hover {
+      background: #005fa3;
+      transform: translateY(-1px);
+    }
+    #file-input { display: none; }
+
+    /* Slide panels */
+    .side-panel {
+      position: fixed;
+      top: 0;
+      left: -400px;
+      width: 380px;
+      height: 100%;
+      background: #fff;
+      color: #222;
+      overflow-y: auto;
+      padding: 20px;
+      border-right: 1px solid #e0e0e0;
+      transition: left 0.3s ease;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      z-index: 15;
+      scroll-padding-bottom: 80px;
+    }
+    .side-panel.active { left: 80px; }
+
+    .close-panel {
+      text-align: right;
+      font-size: 18px;
+      cursor: pointer;
+      color: #0077cc;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .doc-list {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0;
+    }
+    .doc-list li {
+      padding: 8px 10px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      background: #fafafa;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .doc-list li span {
+      font-size: 14px;
+      color: #444;
+    }
+    #riskDriftContainer {
+      background: #f8faff;
+      border: 1px solid #e0ecff;
+      border-radius: 8px;
+      padding: 10px 14px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    /* === RISK CHAT TOGGLE UI === */
+    .risk-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid #ddd;
+      background: white;
+      margin-left: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+    .risk-toggle.selected {
+      background: #ffecec;
+      border-color: #ffb3b3;
+      color: #b20000;
+    }
+    .message-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    #resubmit-risk-btn {
+      display: none;
+      margin-left: 10px;
+      background: #0766b3;
+      color: white;
+      border: none;
+      padding: 5px 12px;
       border-radius: 6px;
       cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
     }
-    #search-btn:hover { background-color: #005fa3; }
-    #answer {
-      margin-top: 15px;
-      background: #fff;
-      border-radius: 6px;
-      padding: 12px;
-      line-height: 1.5;
-      color: #333;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      min-height: 40px;
-    }
+
   </style>
 </head>
+
 <body>
-<div class="container">
-  <h2>Provider Application Dashboard</h2>
-
-  <!-- Dynamic Status Badge -->
-  <div class="status
-    {% if 'Accepted' in status %}
-        accepted
-    {% elif 'Approved' in status %}
-        approved
-    {% else %}
-        rejected
-    {% endif %}
-  ">
-    {{ status }}
+  <!-- Global Header with Logo -->
+  <div class="global-header">
+    <img src="/static/images/logo.png" class="logo-img" alt="ProviderGPT Logo">
   </div>
 
-  <p><strong>Application ID:</strong> {{ app_id }}</p>
-  <p><strong>Message:</strong> {{ message }}</p>
+  <style>
+    .global-header {
+      position: fixed;
+      top: 10px;
+      left: 100px; /* so it does not overlap with sidebar */
+      z-index: 2;
+    }
+    .logo-img {
+      height: 45px;
+      width: auto;
+      transform: scale(2.5); /* ⬅️ increase logo size 2.5× */
+      transform-origin: top left; /* keeps the logo aligned */
+    }
+  </style>
 
-  <!-- Ask Section -->
-  <div class="search-section">
-    <h3>🔍 Ask Provider Knowledgebase</h3>
-    <div class="search-box">
-      <input type="text" id="query" placeholder="Ask about this provider’s documents or license…" />
-      <button id="search-btn">Ask</button>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-item" onclick="togglePanel('risk')">
+      📊
+      <div class="sidebar-label">Risk</div>
     </div>
-    <div id="answer"></div>
+    <div class="sidebar-item" onclick="togglePanel('details')">
+      🏥
+      <div class="sidebar-label">Details</div>
+    </div>
+    <div class="sidebar-item" onclick="togglePanel('upload')">
+      📁
+      <div class="badge" id="upload-badge">0</div>
+      <div class="sidebar-label">Upload</div>
+    </div>
+    <div class="sidebar-item" onclick="togglePanel('actions')">
+      ⚙️
+      <div class="sidebar-label">Actions</div>
+    </div>
   </div>
 
-  <h3>📜 Provider Details</h3>
-  {% if provider %}
-    {% for key, value in provider.items() %}
-      <div class="box">
-        <div class="label">{{ key.replace('_',' ')|title }}</div>
-        <div>{{ value }}</div>
-      </div>
-    {% endfor %}
-  {% else %}
-    <p>No provider data available.</p>
-  {% endif %}
-  <hr>
+  <!-- Header -->
+  <div class="header">
+    <h2>Provider Dashboard</h2>
+    <div style="
+        display:flex;
+        flex-direction:column;
+        align-items:flex-end;
+        justify-content:flex-end;
+        gap:6px;
+        margin-top:4px;
+        max-width: 350px;
+        white-space: normal;
+    ">
+      <p style="
+          margin:0;
+          white-space: normal;
+          word-break: break-word;
+          max-width: 350px;
+          text-align: right;
+      ">
+        {{ provider.provider_name }} — {{ provider.license_number }}
+      </p>
 
-  <h3>📁 Upload Additional Documents</h3>
-  <form action="/rag/{{ app_id }}/ingest" method="post" enctype="multipart/form-data">
-    <input type="file" name="files" multiple required>
-    <button type="submit">📤 Upload & Ingest Selected</button>
+      <span id="risk-badge" style="
+          background:#e0f2ff;
+          color:#004c91;
+          border:1px solid #b3d9ff;
+          padding:4px 10px;
+          border-radius:8px;
+          font-size:13px;
+          font-weight:600;
+      ">
+        🕒 Evaluating Risk...
+      </span>
+
+      <button id="resubmit-risk-btn">🔄 Resubmit Risk</button>
+
+      {% set status = status or 'Under Review' %}
+      {% if 'Approved' in status %}
+        <span style="background:#d4f5d4; color:#126612; border:1px solid #a8e3a8; padding:4px 10px; border-radius:8px; font-size:13px; font-weight:600;">
+          ✅ {{ status }}
+        </span>
+      {% elif 'Reject' in status %}
+        <span style="background:#fde2e4; color:#861010; border:1px solid #f5c4c4; padding:4px 10px; border-radius:8px; font-size:13px; font-weight:600;">
+          ❌ {{ status }}
+        </span>
+      {% elif 'Info' in status or 'Review' in status or 'Pending' in status %}
+        <span style="background:#fff8e6; color:#7a6200; border:1px solid #f0e1a0; padding:4px 10px; border-radius:8px; font-size:13px; font-weight:600;">
+          🟡 {{ status }}
+        </span>
+      {% elif 'Accepted' in status %}
+        <span style="background:#e0f2ff; color:#004c91; border:1px solid #b3d9ff; padding:4px 10px; border-radius:8px; font-size:13px; font-weight:600;">
+          🔵 {{ status }}
+        </span>
+      {% else %}
+        <span style="background:#e8e8e8; color:#555; border:1px solid #ccc; padding:4px 10px; border-radius:8px; font-size:13px; font-weight:600;">
+          {{ status }}
+        </span>
+      {% endif %}
+    </div>
+
+  </div>
+
+
+  <!-- Chat Section -->
+  <div class="main">
+    <div id="chat-window" class="chat-window"></div>
+    <div class="chat-bar">
+      <div class="chat-input-container">
+        <input id="query" class="chat-input" placeholder="Ask about provider compliance, license, or risk..." />
+        <button class="upload-btn" onclick="document.getElementById('file-input').click()">📎</button>
+        <input type="file" id="file-input" multiple />
+        <button id="send-btn" class="send-btn">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panels -->
+  <!-- Risk Side Panel -->
+  <div id="risk-panel" class="side-panel">
+    <div class="close-panel" onclick="togglePanel('risk')">⬅ Close</div>
+    <h3>📊 Provider Risk Insights</h3>
+    <!-- 🧩 Category Explanations -->
+    <div id="riskNotesContainer" style="
+          background:#ffffff;
+          border:1px solid #e0ecff;
+          border-radius:8px;
+          padding:12px 14px 60px 14px; /* added bottom padding */
+          margin-top:14px;
+          margin-bottom:40px; /* avoid clipping */
+          box-shadow:inset 0 1px 3px rgba(0,0,0,0.05);">
+      <h4 style="margin:0 0 8px 0;">🧠 Category Explanations</h4>
+      <div id="riskNotesList" style="font-size:14px; color:#333;">
+        <em>Loading reasoning details...</em>
+      </div>
+    </div>
+    <!-- 🧠 Primary Category-Level Risk Chart -->
+    <div id="riskCategoryContainer" style="
+          background:#f8faff;
+          border:1px solid #e0ecff;
+          border-radius:8px;
+          padding:12px 14px;
+          box-shadow:inset 0 1px 3px rgba(0,0,0,0.05);
+          margin-bottom:18px;">
+      <h4 style="margin:0 0 8px 0;">📈 Category-Level Risk Profile</h4>
+      <canvas id="riskChart" style="margin-top:4px; height:220px; width:100%;"></canvas>
+    </div>
+
+    <!-- ⚖️ Risk Drift Comparison -->
+    <div id="riskDriftContainer" style="
+          background:#f8faff;
+          border:1px solid #e0ecff;
+          border-radius:8px;
+          padding:12px 14px;
+          box-shadow:inset 0 1px 3px rgba(0,0,0,0.05);">
+      <h4 style="margin:0 0 8px 0;">⚖️ Risk Drift Comparison</h4>
+      <canvas id="riskDriftChart" style="margin-top:4px; height:220px; width:100%;"></canvas>
+      <p id="driftLabel" style="font-size:13px; color:#555; margin-top:8px;"></p>
+    </div>
+
+
+  </div>
+
+
+
+
+
+  <div id="details-panel" class="side-panel">
+    <div class="close-panel" onclick="togglePanel('details')">⬅ Close</div>
+    <h3>🏥 Provider Details</h3>
+    {% for key, value in provider.items() %}
+      <div style="margin-bottom:10px;"><strong>{{ key.replace('_',' ')|title }}</strong>: {{ value }}</div>
+    {% endfor %}
+  </div>
+
+  <div id="upload-panel" class="side-panel">
+    <div class="close-panel" onclick="togglePanel('upload')">⬅ Close</div>
+    <h3>📁 Upload Documents</h3>
+    <form id="upload-form" enctype="multipart/form-data">
+      <input type="file" name="files" multiple required />
+      <button type="submit" class="send-btn">Upload</button>
+    </form>
+
+    <h4 style="margin-top:15px;">📄 Uploaded Files</h4>
+    <ul id="doc-list" class="doc-list">
+      <li><span>Loading documents...</span></li>
+    </ul>
+  </div>
+
+<div id="actions-panel" class="side-panel">
+  <div class="close-panel" onclick="togglePanel('actions')">⬅ Close</div>
+  <h3>⚙️ Provider Actions</h3>
+
+  <!-- ✅ Approve Provider -->
+  <form action="/dashboard/approve/{{ app_id }}" method="post" style="margin-bottom: 15px;">
+    <button type="submit" class="send-btn" style="width:100%;">✅ Approve Provider</button>
   </form>
 
-  {% if documents %}
-    <h5>📄 Uploaded Documents</h5>
-    <ul>
-    {% for doc in documents %}
-      <li>
-        <span>{{ doc.filename }}</span>
-        <form method="post" action="/dashboard/delete-document" style="display:inline;">
-          <input type="hidden" name="app_id" value="{{ app_id }}">
-          <input type="hidden" name="filename" value="{{ doc.filename }}">
-          <button type="submit">🗑️ Delete</button>
-        </form>
-      </li>
-    {% endfor %}
-    </ul>
-  {% endif %}
+  <!-- ❌ Reject Provider (reason required) -->
+  <form action="/dashboard/reject/{{ app_id }}" method="post" style="margin-bottom: 15px;">
+    <label style="font-size:13px; color:#444;">Rejection Reason:</label>
+    <input
+      type="text"
+      name="reason"
+      placeholder="Enter reason for rejection"
+      required
+      style="padding:8px 10px; border:1px solid #ccc; border-radius:6px; width:100%; margin-top:6px; margin-bottom:8px;"
+    />
+    <button type="submit" class="send-btn" style="background:#d93b3b; width:100%;">❌ Reject Application</button>
+  </form>
 
-  <div class="actions">
-    <a href="/analyze-html/"><button>⬅ Back to Analysis</button></a>
-    <a href="/trust-card/generate_trust_card"><button>🧾 Generate Trust Card</button></a>
-  </div>
+  <!-- 🟡 Request Info -->
+  <form action="/dashboard/request-info/{{ app_id }}" method="post">
+    <label style="font-size:13px; color:#444;">Request Additional Info:</label>
+    <input
+      type="text"
+      name="note"
+      placeholder="What clarification do you need?"
+      required
+      style="padding:8px 10px; border:1px solid #ccc; border-radius:6px; width:100%; margin-top:6px; margin-bottom:8px;"
+    />
+    <button type="submit" class="send-btn" style="background:#f5b041; width:100%;">📨 Request Info</button>
+  </form>
 </div>
 
-<!-- JS for streaming RAG Ask -->
-<script>
-document.getElementById("search-btn").addEventListener("click", async (e) => {
-  e.preventDefault();
-  const query = document.getElementById("query").value.trim();
-  const answerDiv = document.getElementById("answer");
 
-  if (!query) {
-    answerDiv.innerHTML = "<em>Please enter a question.</em>";
-    return;
-  }
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const chatWindow = document.getElementById("chat-window");
+    const queryInput = document.getElementById("query");
+    const badge = document.getElementById("upload-badge");
+    const docList = document.getElementById("doc-list");
+    let lastRiskData = null;
+    function togglePanel(name) {
+      ["risk", "details", "upload", "actions"].forEach(id => {
+        const el = document.getElementById(`${id}-panel`);
+        if (name === id && !el.classList.contains("active")) {
+          el.classList.add("active");
+        } else {
+          el.classList.remove("active");
+        }
+      });
 
-  answerDiv.innerHTML = "⏳ Thinking...";
-  try {
-    const response = await fetch("/rag/ask", {
+      // 🧠 Add slight delay to allow Risk panel to render before drawing charts
+      if (name === "risk") {
+        console.log("📊 Risk panel opened — rendering charts after delay...");
+        setTimeout(() => loadRiskChart(), 200);
+      }
+
+      if (name === "upload") refreshDocumentList();
+    }
+
+
+    async function refreshDocumentList() {
+      const res = await fetch(`/dashboard/docs/{{ app_id }}`);
+      if (!res.ok) return;
+      const docs = await res.json();
+      docList.innerHTML = "";
+
+      if (!docs.length) {
+        docList.innerHTML = "<li><span>No documents uploaded yet.</span></li>";
+        badge.style.display = "none";
+        return;
+      }
+
+      docs.forEach(d => {
+        const li = document.createElement("li");
+        const icon = d.type === "license" ? "📜" : "📄";
+        li.innerHTML = `<span>${icon} ${d.filename}</span>`;
+        docList.appendChild(li);
+      });
+
+      badge.textContent = docs.length;
+      badge.style.display = "block";
+    }
+
+    document.getElementById("resubmit-risk-btn").onclick = async () => {
+    const btn = document.getElementById("resubmit-risk-btn");
+    btn.disabled = true;
+    btn.innerText = "⏳ Recomputing...";
+
+    const res = await fetch(`/risk/resubmit/{{ app_id }}`, { method: "POST" });
+    const json = await res.json();
+
+    // Reload risk UI
+    await checkRiskStatus();
+    setTimeout(() => loadRiskChart(), 300);
+
+    btn.disabled = false;
+    btn.innerText = "🔄 Resubmit Risk";
+  };
+
+
+
+/* ========== CHAT MESSAGE RENDERING + RISK TOGGLE ========== */
+let selectedMsgId = null;
+
+// Render 1 message row
+async function renderMessage(msg) {
+
+  // ✅ 1. Assign a unique ID if missing (fixes non-clickable blocks)
+  if (!msg.id) {
+    msg.id = "msg-" + Date.now() + "-" + Math.floor(Math.random() * 10000);
+
+    // OPTIONAL: Persist the repaired message so it stays fixed next reload
+    await fetch(`/dashboard/append-message`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        query: query,
-        provider_id: "{{ app_id }}",
-        top_k: 3
-      }),
+        app_id: "{{ app_id }}",
+        message: msg
+      })
+    });
+  }
+
+  // Create row container
+  const row = document.createElement("div");
+  row.className = "message-row";
+
+  // Bubble container
+  const bubble = document.createElement("div");
+  bubble.className = "message " + (msg.from === "User" ? "user-msg" : "ai-msg");
+  bubble.textContent = msg.text;
+
+  // Assign dataset for toggle logic
+  bubble.dataset.msgId = msg.id;
+
+  // Toggle button
+  const toggle = document.createElement("button");
+  toggle.className = "risk-toggle";
+  toggle.innerText = "🧩";  // your new icon
+
+  // Restore selected state
+  if (msg.use_for_risk) {
+    toggle.classList.add("selected");
+    selectedMsgId = msg.id;
+  }
+
+  // Toggle handler
+  toggle.onclick = async () => {
+    const turningOn = !toggle.classList.contains("selected");
+
+    // Clear other toggles for single-select mode
+    if (turningOn && selectedMsgId && selectedMsgId !== msg.id) {
+      const prevToggle = document.querySelector(".risk-toggle.selected");
+      if (prevToggle) prevToggle.classList.remove("selected");
+
+      // Turn off previous in backend
+      await fetch(`/risk/chat/toggle/{{ app_id }}?message_id=${selectedMsgId}&use_for_risk=false`, {
+        method: "POST"
+      });
+    }
+
+    // Apply toggle
+    toggle.classList.toggle("selected");
+    selectedMsgId = turningOn ? msg.id : null;
+
+    // Update backend with new toggle state
+    await fetch(`/risk/chat/toggle/{{ app_id }}?message_id=${msg.id}&use_for_risk=${turningOn}`, {
+      method: "POST"
     });
 
-    if (!response.ok) throw new Error("Network error");
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder("utf-8");
-    answerDiv.innerHTML = "";
-    let fullText = "";
+    // Show/hide "Resubmit Risk"
+    updateResubmitBtn();
+  };
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      const chunk = decoder.decode(value, { stream: true });
-      fullText += chunk;
-      answerDiv.innerHTML = fullText.replace(/\n/g, "<br>").replace("[END]", "");
-    }
-  } catch (err) {
-    console.error("❌ Error fetching stream:", err);
-    answerDiv.innerHTML = "❌ Error fetching answer.";
+  // Add elements to row
+  row.appendChild(bubble);
+  row.appendChild(toggle);
+
+  // Append to chat window
+  chatWindow.appendChild(row);
+
+  return row;
+}
+
+
+// Show/hide resubmit button
+function updateResubmitBtn() {
+  const btn = document.getElementById("resubmit-risk-btn");
+  btn.style.display = selectedMsgId ? "inline-block" : "none";
+}
+
+/* ===== LOAD EXISTING MESSAGES FROM BACKEND ===== */
+const initialMessages = ({{ messages | tojson | safe }}) || [];
+
+
+
+initialMessages.forEach(m => renderMessage(m));
+
+    /* ===== OVERRIDE SEND MESSAGE TO INCLUDE IDs AND RENDER WITH TOGGLE ===== */
+    async function sendMessage() {
+      const text = queryInput.value.trim();
+      if (!text) return;
+      queryInput.value = "";
+
+      // Local message ID
+      const uuid = "msg-" + Date.now();
+
+      const userMsg = { id: uuid, from: "User", text: text, use_for_risk: false };
+      renderMessage(userMsg);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+
+      // Save to backend (so toggles work)
+      await fetch(`/dashboard/append-message`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          app_id: "{{ app_id }}",
+          message: userMsg
+        })
+      });
+
+      // create AI placeholder and await its DOM element
+      const aiId = "msg-ai-" + Date.now();
+      const aiMsg = { id: aiId, from: "AI", text: "Thinking...", use_for_risk: false };
+
+      // IMPORTANT: renderMessage is async (it may auto-persist missing IDs) — await it
+      const aiElement = await renderMessage(aiMsg);
+
+      try {
+  const res = await fetch("/rag/ask", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: text, provider_id: "{{ app_id }}", top_k: 3 }),
+  });
+
+  // 🔍 Defensive: ensure server sent a streaming body
+  if (!res.body) {
+    console.error("❌ No streaming body returned by /rag/ask. Check router mapping.");
+    const bubble = aiElement.querySelector(".message");
+    bubble.textContent = "⚠️ Server did not return streaming response. Check backend.";
+    return;
   }
-});
-</script>
+
+  // 🔍 Debug: print status + first bytes of the response (will help detect if wrong handler is hit)
+  try {
+        const tempClone = res.clone();
+        const previewText = await tempClone.text();
+        console.log("RAG ask status:", res.status, "Preview:", previewText.slice(0, 200));
+      } catch (e) {
+        console.warn("RAG debug clone failed:", e);
+      }
+
+      const reader = res.body.getReader();
+      let final = "";
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        final += decoder.decode(value);
+        const bubble = aiElement.querySelector(".message");
+        bubble.innerHTML = final.replace(/\n/g, "<br>");
+      }
+
+      await fetch(`/dashboard/append-message`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          app_id: "{{ app_id }}",
+          message: { id: aiId, from: "AI", text: final }
+        })
+      });
+
+    } catch (e) {
+      const bubble = aiElement.querySelector(".message");
+      bubble.textContent = "❌ Error fetching response.";
+    }
+
+    } // ⭐ THIS WAS MISSING — closes sendMessage()
+
+
+
+    
+
+    document.getElementById("send-btn").addEventListener("click", sendMessage);
+    queryInput.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
+
+    let riskChartInstance = null;
+    let driftChartInstance = null;
+
+    async function loadRiskChart() {
+      
+      const ctx = document.getElementById("riskChart");
+      const driftCtx = document.getElementById("riskDriftChart");
+      const driftLabel = document.getElementById("driftLabel");
+
+      // 🧠 Show loading indicator before fetch
+      driftLabel.textContent = "🔄 Loading risk insights...";
+      driftLabel.style.color = "#555";
+
+      try {
+        const res = await fetch(`/risk/status/{{ app_id }}`);
+        const data = await res.json();
+
+        if (riskChartInstance) riskChartInstance.destroy();
+        if (driftChartInstance) driftChartInstance.destroy();
+
+
+        // === 1️⃣ Draw Category-Level Risk Chart ===
+        // 🧮 Extract category scores (handle object format)
+        const categoryLabels = Object.keys(data.categories || {});
+        const categoryScores = categoryLabels.map(cat =>
+          typeof data.categories[cat] === "object"
+            ? data.categories[cat].score
+            : data.categories[cat]
+        );
+
+        riskChartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: categoryLabels,
+            datasets: [{
+              label: 'Category Risk %',
+              data: categoryScores,
+              backgroundColor: categoryScores.map(v =>
+                v < 30 ? '#28a745' : v < 60 ? '#ffc107' : '#dc3545'
+              ),
+              borderRadius: 6,
+              borderSkipped: false
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true, max: 100 } },
+            plugins: {
+              legend: { display: false },
+              title: { display: true, text: '🧠 Category-Level Risk Profile', color: '#333' }
+            }
+          }
+        });
+
+
+        // === 2️⃣ Drift Visualization (if pre-snapshot available) ===
+        if (data.risk_score) {
+          const pre = (data.pre_snapshot && data.pre_snapshot.score) || data.risk_score || 0;
+          const post = data.risk_score || 0;
+          const drift = (post - pre).toFixed(1);
+          const driftAbs = Math.abs(drift);
+
+          // 🟢 Color-coded drift
+          const improved = drift < -3;
+          const worsened = drift > 3;
+
+          const driftText =
+            worsened
+              ? `⚠️ Risk increased by ${driftAbs}% since preliminary assessment`
+              : improved
+                ? `✅ Risk decreased by ${driftAbs}% since preliminary assessment`
+                : `➖ Minimal change (${driftAbs}% drift)`;
+
+          driftLabel.textContent = driftText;
+          driftLabel.style.color = worsened ? "#b22222" : improved ? "#1b5e20" : "#555";
+
+          driftChartInstance = new Chart(driftCtx, {
+            type: 'bar',
+            data: {
+              labels: ['Preliminary', 'Final'],
+              datasets: [{
+                label: 'Overall Risk %',
+                data: [pre, post],
+                backgroundColor: [improved ? '#28a745' : '#ffc107', worsened ? '#dc3545' : '#0077cc'],
+                borderRadius: 8,
+                borderSkipped: false
+              }]
+            },
+            options: {
+              responsive: true,
+              scales: { y: { beginAtZero: true, max: 100 } },
+              plugins: {
+                legend: { display: false },
+                title: { display: true, text: '📈 Pre vs Final Risk Comparison', color: '#333' }
+              }
+            }
+          });
+        } else {
+          driftLabel.textContent = "ℹ️ Waiting for final risk evaluation...";
+          driftLabel.style.color = "#777";
+        }
+        // === 3️⃣ Render Category Reasoning Notes ===
+        const notesContainer = document.getElementById("riskNotesList");
+        if (data.categories) {
+          let html = "";
+          for (const [cat, val] of Object.entries(data.categories)) {
+            const score = typeof val === "object" ? val.score : val;
+            const note = typeof val === "object" ? val.note : "No reasoning available";
+            const icon = score < 30 ? "🟢" : score < 60 ? "🟡" : "🔴";
+            html += `<div style="margin-bottom:12px; line-height:1.5;">
+                      <strong>${icon} ${cat}</strong> — ${score}%<br>
+                      <span style="font-size:13px; color:#555;">${note}</span>
+                    </div>`;
+
+          }
+          notesContainer.innerHTML = html;
+          document.getElementById("riskNotesContainer").classList.add("visible");
+
+        } else {
+          notesContainer.innerHTML = "<em>No category explanations available.</em>";
+        }
+        // ✅ Fade in charts and text smoothly after load
+        ctx.classList.add("chart-visible");
+        driftCtx.classList.add("chart-visible");
+        driftLabel.classList.add("chart-visible");
+        document.getElementById("riskNotesContainer").classList.add("visible");
+
+      } catch (err) {
+        console.warn("⚠️ Risk chart load failed:", err);
+      }
+    }
+
+
+
+    // Upload handler
+    document.getElementById("file-input").addEventListener("change", async (e) => {
+      const files = e.target.files;
+      if (!files.length) return;
+      const formData = new FormData();
+      for (const file of files) formData.append("files", file);
+
+      const res = await fetch(`/rag/{{ app_id }}/ingest`, { method: "POST", body: formData });
+      const data = await res.json();
+      if (res.ok && data.status === "success") {
+        alert("✅ Document uploaded and embedded successfully!");
+        refreshDocumentList();
+
+        // 🧠 Immediately recheck risk after new upload
+        checkRiskStatus();   // 🔥 This ensures the badge refreshes right away
+
+      } else {
+        alert("❌ Upload failed");
+      }
+    });
+
+    // === 🧠 Live Risk Status Polling ===
+    const riskBadge = document.getElementById("risk-badge");
+    const appId = "{{ app_id }}";
+    let lastRiskScore = null;
+
+    async function checkRiskStatus() {
+      try {
+        const res = await fetch(`/risk/status/${appId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (data.status === "Evaluating") {
+          riskBadge.textContent = "🕒 Evaluating Risk...";
+          riskBadge.style.background = "#e0f2ff";
+          riskBadge.style.color = "#004c91";
+          riskBadge.style.borderColor = "#b3d9ff";
+        } else {
+          const level = data.level || "Unknown";
+          const score = data.score || "N/A";
+          riskBadge.textContent = `⚖️ ${level} (${score}%)`;
+
+          if (level === "High") {
+            riskBadge.style.background = "#fde2e4";
+            riskBadge.style.color = "#861010";
+            riskBadge.style.borderColor = "#f5c4c4";
+          } else if (level === "Moderate") {
+            riskBadge.style.background = "#fff8e6";
+            riskBadge.style.color = "#7a6200";
+            riskBadge.style.borderColor = "#f0e1a0";
+          } else {
+            riskBadge.style.background = "#d4f5d4";
+            riskBadge.style.color = "#126612";
+            riskBadge.style.borderColor = "#a8e3a8";
+          }
+
+          // Reload chart only if risk score changed
+          if (score !== lastRiskScore && data.categories) {
+            lastRiskScore = score;
+            loadRiskChart();
+          }
+        }
+      } catch (err) {
+        console.warn("⚠️ Risk status fetch failed:", err);
+      }
+    }
+
+    // Poll every 5 seconds
+    setInterval(checkRiskStatus, 5000);
+    checkRiskStatus();
+
+  </script>
 </body>
 </html>

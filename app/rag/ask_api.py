@@ -3,98 +3,110 @@
 import os
 import numpy as np
 import faiss
-from fastapi import APIRouter
+from pathlib import Path
+from fastapi import APIRouter, Request
 from openai import AzureOpenAI
 from app.config import settings
+import glob
 
-# ------------------------------------------------------------
-# Router setup
-# ------------------------------------------------------------
 router = APIRouter(tags=["RAG - Ask"], prefix="")  # No /rag prefix here
 
 # ------------------------------------------------------------
 # FAISS Index Directory
 # ------------------------------------------------------------
-INDEX_DIR = "app/data/faiss_store"
+INDEX_DIR = Path("app/data/faiss_store")
+INDEX_DIR.mkdir(parents=True, exist_ok=True)
 
 # ------------------------------------------------------------
-# Helper: Load FAISS index and associated chunks
+# Helper: Load FAISS index and chunks
 # ------------------------------------------------------------
+import glob
+
 def load_faiss_index(doc_id: str):
-    """
-    Loads a FAISS index and its corresponding chunk metadata.
-    Returns (index, chunks) or (None, None) if not found.
-    """
     index_path = os.path.join(INDEX_DIR, f"{doc_id}.index")
     chunk_path = os.path.join(INDEX_DIR, f"{doc_id}_chunks.npy")
 
+    # 🔍 Search recursively if not found
     if not os.path.exists(index_path) or not os.path.exists(chunk_path):
-        print(f"⚠️ No FAISS index found for {doc_id}")
-        return None, None
+        matches = glob.glob(os.path.join(INDEX_DIR, "**", f"{doc_id}.index"), recursive=True)
+        if matches:
+            index_path = matches[0]
+            chunk_path = index_path.replace(".index", "_chunks.npy")
+            print(f"✅ Found FAISS index for {doc_id} at {index_path}")
+        else:
+            print(f"⚠️ No FAISS index found for {doc_id}")
+            return None, None
 
     index = faiss.read_index(index_path)
     chunks = np.load(chunk_path, allow_pickle=True)
     return index, chunks
 
 
-# ------------------------------------------------------------
-# Helper: Search across all FAISS indices
-# ------------------------------------------------------------
-def search_faiss(query_vec, top_k=3):
-    """
-    Searches across all indexed documents in FAISS storage and
-    returns the top K most relevant chunks with similarity scores.
-    """
-    all_results = []
 
+
+# ------------------------------------------------------------
+# Helper: Search within one FAISS store
+# ------------------------------------------------------------
+def search_index(index, chunks, query_vec, doc_id, top_k=3):
+    D, I = index.search(np.array([query_vec], dtype="float32"), top_k)
+    results = []
+    for score, idx in zip(D[0], I[0]):
+        if 0 <= idx < len(chunks):
+            results.append({
+                "doc_id": doc_id,
+                "chunk_id": f"{doc_id}#{idx}",
+                "score": float(1 - score / 2),  # distance → similarity
+                "text": chunks[idx],
+            })
+    return results
+
+
+# ------------------------------------------------------------
+# Helper: Search across all FAISS indices (fallback)
+# ------------------------------------------------------------
+def global_search(query_vec, top_k=3):
+    all_results = []
     for fname in os.listdir(INDEX_DIR):
         if not fname.endswith(".index"):
             continue
-
         doc_id = fname.replace(".index", "")
-        index, chunks = load_faiss_index(doc_id)
-        if index is None:
+        index_path = INDEX_DIR / fname
+        chunk_path = INDEX_DIR / f"{doc_id}_chunks.npy"
+        index, chunks = load_faiss_index(index_path, chunk_path)
+        if not index:
             continue
-
-        D, I = index.search(np.array([query_vec], dtype="float32"), top_k)
-        for score, idx in zip(D[0], I[0]):
-            if 0 <= idx < len(chunks):
-                all_results.append({
-                    "doc_id": doc_id,
-                    "chunk_id": f"{doc_id}#{idx}",
-                    "score": float(1 - score / 2),  # Convert distance to similarity
-                    "text": chunks[idx]
-                })
-
+        all_results.extend(search_index(index, chunks, query_vec, doc_id, top_k))
     all_results.sort(key=lambda x: x["score"], reverse=True)
     return all_results[:top_k]
 
 
 # ------------------------------------------------------------
-# Endpoint: Ask Documents (RAG Retrieval + GPT Answering)
+# Endpoint: Ask (RAG + GPT)
 # ------------------------------------------------------------
-@router.post("/ask", summary="Ask Docs (RAG + GPT)", response_model=None)
-def ask_docs(query: dict):
+@router.post("/ask", summary="Ask Documents (RAG + GPT)")
+async def ask_docs(query: dict, request: Request = None):
     """
-    Endpoint to perform document-grounded Q&A using:
-    1. FAISS vector search for relevant document chunks
-    2. GPT-4o-mini for grounded natural language answers
+    Document-grounded Q&A using:
+      1. Risk-aware FAISS retrieval (if query mentions risk)
+      2. GPT-4o-mini for grounded, explainable answers
     """
     question = query.get("query", "").strip()
+    provider_id = query.get("provider_id", "").strip()
     top_k = int(query.get("top_k", 3))
 
     if not question:
         return {"error": "❌ Missing query text."}
 
-    # Initialize Azure OpenAI client
+    print(f"🔍 Received query: '{question}' (provider={provider_id or 'global'})")
+
+    # Initialize OpenAI client
     client = AzureOpenAI(
         api_key=settings.OPENAI_KEY,
         api_version=settings.OPENAI_API_VERSION,
         azure_endpoint=settings.OPENAI_ENDPOINT,
     )
 
-    # Step 1: Embed user query
-    print(f"🔍 Embedding user query: '{question}'")
+    # Step 1️⃣ Embed query
     try:
         query_emb = client.embeddings.create(
             input=question,
@@ -103,37 +115,70 @@ def ask_docs(query: dict):
     except Exception as e:
         return {"error": f"❌ Failed to embed query: {str(e)}"}
 
-    # Step 2: Search FAISS index
-    results = search_faiss(query_emb, top_k=top_k)
-    if not results:
-        return {"answer": "No documents indexed yet.", "sources": [], "context_preview": []}
+    query_lower = question.lower()
+    results = []
 
-    # Step 3: Build GPT context
-    context_text = "\n".join([r["text"] for r in results])
+    # Step 2️⃣ Try risk-specific FAISS index first (if applicable)
+    if provider_id:
+        provider_dir = INDEX_DIR / provider_id
+        risk_index = provider_dir / "index.faiss"
+        chunk_path = provider_dir / "chunks.npy"
+
+        if any(k in query_lower for k in ["risk", "score", "breakdown", "category", "compliance", "explain"]):
+            if risk_index.exists() and chunk_path.exists():
+                print(f"🧠 Searching risk FAISS for provider {provider_id}...")
+                index, chunks = load_faiss_index(risk_index, chunk_path)
+                if index:
+                    results = search_index(index, chunks, query_emb, provider_id, top_k)
+                    print(f"✅ Retrieved {len(results)} risk chunks from provider {provider_id}")
+            else:
+                print(f"⚠️ No dedicated risk FAISS found for {provider_id}, falling back to global search.")
+
+    # Step 3️⃣ Fallback to global search if risk index empty or not found
+    if not results:
+        print("🌐 Performing global FAISS search...")
+        results = global_search(query_emb, top_k=top_k)
+
+    if not results:
+        return {"answer": "⚠️ No relevant context found.", "sources": [], "context_preview": []}
+
+    # Step 4️⃣ Build GPT context
+    context_text = "\n\n---\n\n".join([r["text"] for r in results])
     context_preview = [
         {"chunk_id": r["chunk_id"], "score": r["score"], "preview": r["text"][:200]}
         for r in results
     ]
 
-    # Step 4: Ask GPT model
-    print(f"💬 Sending {len(results)} context chunks to GPT-4o-mini...")
+    # Step 5️⃣ Ask GPT with grounded context
+    print(f"💬 Sending {len(results)} context chunks to GPT...")
     try:
         completion = client.chat.completions.create(
             model=settings.OPENAI_CHAT_DEPLOYMENT,
-            messages=[
-                {"role": "system", "content": "You are an AI assistant that answers strictly based on uploaded documents."},
-                {"role": "user", "content": f"Context:\n{context_text}\n\nQuestion: {question}"}
-            ],
             temperature=0.2,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a specialized AI risk analyst. "
+                        "Answer **only** using the provided context from risk intelligence data and documents. "
+                        "If the context does not include relevant data, clearly state that."
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": f"Context:\n{context_text}\n\nQuestion: {question}"
+                }
+            ],
         )
         answer = completion.choices[0].message.content.strip()
         print("✅ Answer generated successfully.")
     except Exception as e:
-        return {"error": f"❌ GPT-4o-mini request failed: {str(e)}"}
+        return {"error": f"❌ GPT request failed: {str(e)}"}
 
-    # Step 5: Return structured response
+    # Step 6️⃣ Return structured response
     return {
         "answer": answer,
         "sources": [{"chunk_id": r["chunk_id"], "score": r["score"]} for r in results],
         "context_preview": context_preview
     }
+

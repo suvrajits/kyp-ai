@@ -1,0 +1,23 @@
+{
+  "provider_id": "APP-20251116-00079",
+  "category": "operational",
+  "hits": 2,
+  "entries": [
+    {
+      "severity": 0.3,
+      "detail": "Simulated operational issue for Prathama New Delhi Surgical Centre",
+      "timestamp": "2025-11-16T10:17:21.806798",
+      "source": "simulated_operational_watchlist"
+    },
+    {
+      "severity": 0.3,
+      "detail": "Simulated operational issue for Prathama New Delhi Surgical Centre",
+      "timestamp": "2025-11-16T10:17:21.806798",
+      "source": "simulated_operational_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-16T10:17:21.806798",
+  "raw_simulated": {
+    "note": "Operational disruptions or delays detected."
+  }
+}

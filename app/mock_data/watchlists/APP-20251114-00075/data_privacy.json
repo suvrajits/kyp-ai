@@ -1,0 +1,29 @@
+{
+  "provider_id": "APP-20251114-00075",
+  "category": "data_privacy",
+  "hits": 3,
+  "entries": [
+    {
+      "severity": 0.3,
+      "detail": "Simulated data_privacy issue for Prathama Mangalore Health Centre",
+      "timestamp": "2025-11-14T04:52:18.880568",
+      "source": "simulated_data_privacy_watchlist"
+    },
+    {
+      "severity": 0.5,
+      "detail": "Simulated data_privacy issue for Prathama Mangalore Health Centre",
+      "timestamp": "2025-11-14T04:52:18.880568",
+      "source": "simulated_data_privacy_watchlist"
+    },
+    {
+      "severity": 0.8,
+      "detail": "Simulated data_privacy issue for Prathama Mangalore Health Centre",
+      "timestamp": "2025-11-14T04:52:18.880568",
+      "source": "simulated_data_privacy_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-14T04:52:18.880568",
+  "raw_simulated": {
+    "note": "Potential PII exposure or privacy gaps detected."
+  }
+}

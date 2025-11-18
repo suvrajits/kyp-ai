@@ -1,0 +1,23 @@
+{
+  "provider_id": "APP-20251116-00082",
+  "category": "operational",
+  "hits": 2,
+  "entries": [
+    {
+      "severity": 0.8,
+      "detail": "Simulated operational issue for Saraswati Kolkata General Hospital",
+      "timestamp": "2025-11-16T14:26:31.914906",
+      "source": "simulated_operational_watchlist"
+    },
+    {
+      "severity": 0.8,
+      "detail": "Simulated operational issue for Saraswati Kolkata General Hospital",
+      "timestamp": "2025-11-16T14:26:31.914906",
+      "source": "simulated_operational_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-16T14:26:31.914906",
+  "raw_simulated": {
+    "note": "Operational disruptions or delays detected."
+  }
+}

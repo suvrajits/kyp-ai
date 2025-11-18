@@ -1,0 +1,23 @@
+{
+  "provider_id": "APP-20251113-00070",
+  "category": "cybersecurity",
+  "hits": 2,
+  "entries": [
+    {
+      "severity": 0.1,
+      "detail": "Simulated cybersecurity issue for CurePoint Bengaluru General Hospital",
+      "timestamp": "2025-11-13T18:46:56.063900",
+      "source": "simulated_cybersecurity_watchlist"
+    },
+    {
+      "severity": 0.5,
+      "detail": "Simulated cybersecurity issue for CurePoint Bengaluru General Hospital",
+      "timestamp": "2025-11-13T18:46:56.063900",
+      "source": "simulated_cybersecurity_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-13T18:46:56.063900",
+  "raw_simulated": {
+    "note": "Possible vulnerabilities or threat alerts identified."
+  }
+}

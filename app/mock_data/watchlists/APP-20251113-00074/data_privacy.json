@@ -1,0 +1,17 @@
+{
+  "provider_id": "APP-20251113-00074",
+  "category": "data_privacy",
+  "hits": 1,
+  "entries": [
+    {
+      "severity": 0.1,
+      "detail": "Simulated data_privacy issue for Kiran Nagpur Medical Centre",
+      "timestamp": "2025-11-13T19:34:40.067246",
+      "source": "simulated_data_privacy_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-13T19:34:40.067246",
+  "raw_simulated": {
+    "note": "Potential PII exposure or privacy gaps detected."
+  }
+}

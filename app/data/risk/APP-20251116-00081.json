@@ -1,0 +1,49 @@
+{
+  "model_response": {
+    "provider_name": "Lifeline Kolkata Medical Centre",
+    "license_number": "WB/MC/2022/01006",
+    "aggregated_score": 28.0,
+    "risk_level": "Low",
+    "category_scores": {
+      "operational": {
+        "score": 20.0,
+        "note": "Operational disruptions or delays detected."
+      },
+      "supplychain": {
+        "score": 20.0,
+        "note": "Vendor reliability or delivery issues detected."
+      },
+      "regulatory": {
+        "score": 20.0,
+        "note": "Compliance or certification issues found."
+      },
+      "data_privacy": {
+        "score": 20.0,
+        "note": "Potential PII exposure or privacy gaps detected."
+      },
+      "reputation": {
+        "score": 52.0,
+        "note": "Negative press or sentiment dips observed."
+      },
+      "financial": {
+        "score": 20.0,
+        "note": "Financial irregularities or delays noted."
+      },
+      "cybersecurity": {
+        "score": 20.0,
+        "note": "Possible vulnerabilities or threat alerts identified."
+      }
+    },
+    "confidence": 0.0,
+    "timestamp": "2025-11-16T14:10:30.729993",
+    "original_explanations": {
+      "cybersecurity": "Possible vulnerabilities or threat alerts identified.",
+      "data_privacy": "Potential PII exposure or privacy gaps detected.",
+      "financial": "Financial irregularities or delays noted.",
+      "operational": "Operational disruptions or delays detected.",
+      "regulatory": "Compliance or certification issues found.",
+      "reputation": "Negative press or sentiment dips observed.",
+      "supplychain": "Vendor reliability or delivery issues detected."
+    }
+  }
+}

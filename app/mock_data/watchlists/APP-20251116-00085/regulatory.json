@@ -1,0 +1,29 @@
+{
+  "provider_id": "APP-20251116-00085",
+  "category": "regulatory",
+  "hits": 3,
+  "entries": [
+    {
+      "severity": 0.8,
+      "detail": "Simulated regulatory issue for Samarth Vadodara General Hospital",
+      "timestamp": "2025-11-16T14:49:29.818297",
+      "source": "simulated_regulatory_watchlist"
+    },
+    {
+      "severity": 0.8,
+      "detail": "Simulated regulatory issue for Samarth Vadodara General Hospital",
+      "timestamp": "2025-11-16T14:49:29.818297",
+      "source": "simulated_regulatory_watchlist"
+    },
+    {
+      "severity": 0.3,
+      "detail": "Simulated regulatory issue for Samarth Vadodara General Hospital",
+      "timestamp": "2025-11-16T14:49:29.818297",
+      "source": "simulated_regulatory_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-16T14:49:29.818297",
+  "raw_simulated": {
+    "note": "Compliance or certification issues found."
+  }
+}

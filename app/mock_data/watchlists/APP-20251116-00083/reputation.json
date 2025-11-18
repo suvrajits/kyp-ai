@@ -1,0 +1,23 @@
+{
+  "provider_id": "APP-20251116-00083",
+  "category": "reputation",
+  "hits": 2,
+  "entries": [
+    {
+      "severity": 0.5,
+      "detail": "Simulated reputation issue for Greenline Old Delhi Medical Centre Centre",
+      "timestamp": "2025-11-16T14:38:54.132996",
+      "source": "simulated_reputation_watchlist"
+    },
+    {
+      "severity": 0.5,
+      "detail": "Simulated reputation issue for Greenline Old Delhi Medical Centre Centre",
+      "timestamp": "2025-11-16T14:38:54.132996",
+      "source": "simulated_reputation_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-16T14:38:54.132996",
+  "raw_simulated": {
+    "note": "Negative press or sentiment dips observed."
+  }
+}

@@ -24,50 +24,105 @@ async def upload_and_ingest_for_dashboard(
     files: list[UploadFile] = File(...),
 ):
     """
-    Upload and embed multiple PDFs for a provider.
-    Also records filenames in applications.json and builds FAISS indexes.
+    Upload and embed multiple PDFs for a specific provider.
+    Keeps all documents (license + supplementary) tied to that provider's record
+    and merges embeddings into the same FAISS store.
     """
     try:
+        # --------------------------------------------------------
+        # Ensure provider FAISS directory exists
+        # --------------------------------------------------------
         provider_dir = Path("app/data/faiss_store") / provider_id
         provider_dir.mkdir(parents=True, exist_ok=True)
 
+        # --------------------------------------------------------
+        # Load applications.json and find provider record
+        # --------------------------------------------------------
         apps_file = Path("app/data/applications.json")
         apps = json.loads(apps_file.read_text()) if apps_file.exists() else []
 
-        record = next((r for r in apps if r["id"] == provider_id), None)
+        record = next(
+            (r for r in apps if r.get("id") == provider_id or r.get("application_id") == provider_id),
+            None,
+        )
         if not record:
-            return JSONResponse(status_code=404, content={"error": f"Provider {provider_id} not found."})
+            return JSONResponse(
+                status_code=404,
+                content={"error": f"Provider {provider_id} not found in applications.json"},
+            )
 
         record.setdefault("documents", [])
+        new_docs = []
 
+        # --------------------------------------------------------
+        # Process and embed each uploaded file
+        # --------------------------------------------------------
         for file in files:
             file_path = provider_dir / file.filename
             with open(file_path, "wb") as f:
                 f.write(await file.read())
-            print(f"📥 Saved {file.filename} to {file_path}")
+            print(f"📥 Saved {file.filename} → {file_path}")
 
-            # Run embedding + FAISS in background thread
-            await asyncio.to_thread(
-                ingest_pdf,
-                str(file_path),
-                provider_id=provider_id,
-                doc_name=file.filename,
-            )
+            # Detect document type (license vs supplementary)
+            doc_type = "license" if "license" in file.filename.lower() else "supplementary"
 
-            # Record metadata
-            record["documents"].append({
+            # ✅ Run ingestion (append to existing FAISS)
+            try:
+                await asyncio.to_thread(
+                    ingest_pdf,
+                    str(file_path),
+                    provider_id=provider_id,
+                    doc_name=file.filename,
+                    append=True,  # 🔁 merge embeddings into the same vector store
+                )
+                print(f"🧠 Embedded {file.filename} into FAISS store for {provider_id}")
+            except Exception as embed_err:
+                print(f"⚠️ Embedding failed for {file.filename}: {embed_err}")
+
+            # ✅ Record metadata
+            meta = {
                 "filename": file.filename,
                 "uploaded_at": datetime.now().isoformat(),
-            })
+                "type": doc_type,
+                "path": str(file_path),
+            }
+            record["documents"].append(meta)
+            # Risk relevance heuristic and re-evaluation trigger
+            from app.risk.orchestrator import evaluate_provider
 
+            risk_keywords = ["audit", "compliance", "incident", "breach", "financial", "legal", "risk"]
+            doc_marked_risk_relevant = any(k in file.filename.lower() for k in risk_keywords)
+
+            if doc_marked_risk_relevant:
+                print(f"⚠️ Risk-relevant document detected: {file.filename}")
+                loop = asyncio.get_event_loop()
+                loop.create_task(evaluate_provider(provider_id))
+            else:
+                print(f"ℹ️ Non-risk document uploaded: {file.filename}")
+
+            new_docs.append(meta)
+
+        # --------------------------------------------------------
+        # Save back to applications.json
+        # --------------------------------------------------------
         apps_file.write_text(json.dumps(apps, indent=2))
-        print(f"✅ Ingested {len(files)} file(s) for provider {provider_id}")
+        print(f"✅ {len(new_docs)} document(s) ingested for provider {provider_id}")
 
-        return RedirectResponse(url=f"/dashboard/view/{provider_id}", status_code=303)
+        # --------------------------------------------------------
+        # Return JSON response (for frontend updates)
+        # --------------------------------------------------------
+        return JSONResponse(
+            {
+                "status": "success",
+                "message": f"{len(new_docs)} document(s) uploaded and embedded successfully.",
+                "documents": record["documents"],
+            }
+        )
 
     except Exception as e:
-        print(f"❌ Error during ingestion: {e}")
+        print(f"❌ Error during ingestion for {provider_id}: {e}")
         return JSONResponse(status_code=500, content={"error": str(e)})
+
 
 
 # ============================================================
@@ -92,6 +147,7 @@ async def ingest_for_provider(file: UploadFile = File(...), provider_id: str = N
             tmp_path,
             provider_id=provider_id,
             doc_name=file.filename,
+            append=True,
         )
         return {"status": f"✅ File {file.filename} ingested for provider {provider_id}"}
     finally:
@@ -105,6 +161,7 @@ async def ingest_for_provider(file: UploadFile = File(...), provider_id: str = N
 async def ask_provider_docs(req: dict):
     """
     Stream AI answers for a provider using Azure OpenAI and FAISS context.
+    Supports fallback for TEMP-ID → APP-ID.
     """
     question = req.get("query", "")
     provider_id = req.get("provider_id", "")
@@ -114,7 +171,7 @@ async def ask_provider_docs(req: dict):
         return JSONResponse(status_code=400, content={"error": "Missing query or provider_id."})
 
     # --------------------------------------------------------
-    # Step 1: Initialize client + embed query
+    # Step 1️⃣ Initialize Azure client + embed query
     # --------------------------------------------------------
     client = AzureOpenAI(
         api_key=settings.OPENAI_KEY,
@@ -127,12 +184,26 @@ async def ask_provider_docs(req: dict):
         model=settings.OPENAI_EMBEDDING_DEPLOYMENT,
     ).data[0].embedding
 
+    # --------------------------------------------------------
+    # Step 2️⃣ Resolve FAISS directory (with TEMP-ID fallback)
+    # --------------------------------------------------------
     provider_dir = Path("app/data/faiss_store") / provider_id
     if not provider_dir.exists():
-        return JSONResponse(status_code=404, content={"error": "❌ No FAISS data found for this provider."})
+        alt_dir = None
+        if provider_id.startswith("APP-"):
+            temp_id = provider_id.replace("APP-", "TEMP-ID-")
+            alt_dir = Path("app/data/faiss_store") / temp_id
+            if alt_dir.exists():
+                provider_dir = alt_dir
+                print(f"🔄 Using fallback TEMP-ID FAISS store for {provider_id}")
+        if not provider_dir.exists():
+            return JSONResponse(
+                status_code=404,
+                content={"error": f"❌ No FAISS data found for {provider_id} or fallback."},
+            )
 
     # --------------------------------------------------------
-    # Step 2: Retrieve FAISS context
+    # Step 3️⃣ Query FAISS for context
     # --------------------------------------------------------
     results = await asyncio.to_thread(
         query_faiss_index,
@@ -144,23 +215,34 @@ async def ask_provider_docs(req: dict):
     context_text = "\n".join([r["text"] for r in results]) if results else "No relevant FAISS matches found."
 
     # --------------------------------------------------------
-    # Step 3: Add metadata for uploaded files
+    # Step 4️⃣ Append uploaded file metadata
     # --------------------------------------------------------
     apps_file = Path("app/data/applications.json")
     meta_text = ""
     if apps_file.exists():
         apps = json.loads(apps_file.read_text())
         rec = next((r for r in apps if r["id"] == provider_id), None)
+        if not rec and provider_id.startswith("APP-"):
+            rec = next((r for r in apps if r["id"] == provider_id.replace("APP-", "TEMP-ID-")), None)
         if rec and rec.get("documents"):
-            filenames = [d["filename"] for d in rec["documents"]]
-            meta_text = "\n\nProvider has uploaded these documents:\n" + "\n".join(f"- {f}" for f in filenames)
+            filenames = []
+            for d in rec["documents"]:
+                if isinstance(d, dict):
+                    filenames.append(d.get("filename"))
+                elif isinstance(d, str):
+                    filenames.append(d)
+            if filenames:
+                meta_text = "\n\n📂 Provider uploaded documents:\n" + "\n".join(f"- {f}" for f in filenames)
+            else:
+                meta_text = "\n\nℹ️ No additional uploaded documents found."
         elif rec:
-            meta_text = "\n\nProvider has not uploaded any additional documents yet."
+            meta_text = "\n\nℹ️ No additional uploaded documents found."
+
 
     full_context = f"{context_text}\n{meta_text}"
 
     # --------------------------------------------------------
-    # Step 4: Streaming generator (safe and resilient)
+    # Step 5️⃣ Stream AI completion from Azure OpenAI
     # --------------------------------------------------------
     def generate():
         try:
@@ -171,7 +253,7 @@ async def ask_provider_docs(req: dict):
                         "role": "system",
                         "content": (
                             "You are an expert assistant that answers strictly from the given context. "
-                            "If the question is about uploaded or attached files, list the files from metadata."
+                            "Never hallucinate or fabricate data."
                         ),
                     },
                     {
@@ -183,26 +265,18 @@ async def ask_provider_docs(req: dict):
                 temperature=0.2,
             )
 
-            # ✅ Robust loop with guards
             for chunk in stream:
-                # Some chunks may not have choices yet
                 if not hasattr(chunk, "choices") or not chunk.choices:
                     continue
-
                 choice = chunk.choices[0]
                 if hasattr(choice, "delta") and getattr(choice.delta, "content", None):
                     yield choice.delta.content
 
-            # End marker
             yield "[END]"
-
         except Exception as e:
             print(f"❌ Error during streaming: {e}")
             yield f"\n\n❌ Error during streaming: {e}"
 
-    # --------------------------------------------------------
-    # Step 5: Return the stream
-    # --------------------------------------------------------
     return StreamingResponse(generate(), media_type="text/plain")
 
 
@@ -211,9 +285,7 @@ async def ask_provider_docs(req: dict):
 # ============================================================
 @router.get("/providers")
 async def list_providers():
-    """
-    Lists all providers in FAISS with their document counts.
-    """
+    """Lists all providers in FAISS with their document counts."""
     base_dir = Path("app/data/faiss_store")
     if not base_dir.exists():
         return []
@@ -225,4 +297,5 @@ async def list_providers():
             continue
         docs = [f for f in os.listdir(pdir) if f.endswith(".index")]
         providers.append({"provider_id": pid, "documents": len(docs)})
+
     return providers

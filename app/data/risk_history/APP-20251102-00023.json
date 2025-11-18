@@ -1,0 +1,3217 @@
+[
+  {
+    "timestamp": "2025-11-02T18:28:27.152124",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762088307",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 1,
+            "entries": [
+              {
+                "id": "REG-1-1659",
+                "title": "Simulated regulatory hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.1,
+                "source": "simulated_regulatory_watchlist",
+                "timestamp": "2025-11-02T18:28:27.019004"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762088307",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 10,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:28:27.152124"
+      },
+      "timestamp": "2025-11-02T18:28:27.152124"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:33:23.990073",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762088603",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 3,
+            "entries": [
+              {
+                "id": "SUP-1-3038",
+                "title": "Simulated supplychain hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.5,
+                "source": "simulated_supplychain_watchlist",
+                "timestamp": "2025-11-02T18:33:23.960857"
+              },
+              {
+                "id": "SUP-2-3038",
+                "title": "Simulated supplychain hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.3,
+                "source": "simulated_supplychain_watchlist",
+                "timestamp": "2025-11-02T18:33:23.960857"
+              },
+              {
+                "id": "SUP-3-3038",
+                "title": "Simulated supplychain hit #3",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.2,
+                "source": "simulated_supplychain_watchlist",
+                "timestamp": "2025-11-02T18:33:23.960857"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762088603",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 33
+        },
+        "aggregated_score": 13,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:33:23.987540"
+      },
+      "timestamp": "2025-11-02T18:33:23.987540"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:33:37.924271",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762088617",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 2,
+            "entries": [
+              {
+                "id": "CYB-1-3038",
+                "title": "Simulated cybersecurity hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.7,
+                "source": "simulated_cybersecurity_watchlist",
+                "timestamp": "2025-11-02T18:33:37.594082"
+              },
+              {
+                "id": "CYB-2-3038",
+                "title": "Simulated cybersecurity hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.2,
+                "source": "simulated_cybersecurity_watchlist",
+                "timestamp": "2025-11-02T18:33:37.594082"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762088617",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 44,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 14,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:33:37.923270"
+      },
+      "timestamp": "2025-11-02T18:33:37.923270"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:33:40.524592",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762088620",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762088620",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 10,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:33:40.522428"
+      },
+      "timestamp": "2025-11-02T18:33:40.522428"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:33:43.534917",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762088623",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762088623",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 10,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:33:43.533451"
+      },
+      "timestamp": "2025-11-02T18:33:43.533451"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:33:57.609587",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762088637",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 2,
+            "entries": [
+              {
+                "id": "OPE-1-3038",
+                "title": "Simulated operational hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.2,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:33:57.603178"
+              },
+              {
+                "id": "OPE-2-3038",
+                "title": "Simulated operational hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.4,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:33:57.603178"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 3,
+            "entries": [
+              {
+                "id": "REP-1-3038",
+                "title": "Simulated reputation hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.1,
+                "source": "simulated_reputation_watchlist",
+                "timestamp": "2025-11-02T18:33:57.556794"
+              },
+              {
+                "id": "REP-2-3038",
+                "title": "Simulated reputation hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.4,
+                "source": "simulated_reputation_watchlist",
+                "timestamp": "2025-11-02T18:33:57.556794"
+              },
+              {
+                "id": "REP-3-3038",
+                "title": "Simulated reputation hit #3",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.4,
+                "source": "simulated_reputation_watchlist",
+                "timestamp": "2025-11-02T18:33:57.556794"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762088637",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 30,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 30,
+          "supplychain": 10
+        },
+        "aggregated_score": 15,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:33:57.606586"
+      },
+      "timestamp": "2025-11-02T18:33:57.606586"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:46:59.144610",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089419",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 1,
+            "entries": [
+              {
+                "id": "OPE-1-7492",
+                "title": "Simulated operational hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.1,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:46:59.089811"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089419",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 10,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:46:59.142599"
+      },
+      "timestamp": "2025-11-02T18:46:59.142599"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:47:00.458842",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089420",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 2,
+            "entries": [
+              {
+                "id": "OPE-1-7492",
+                "title": "Simulated operational hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.1,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:47:00.081185"
+              },
+              {
+                "id": "OPE-2-7492",
+                "title": "Simulated operational hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.3,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:47:00.081185"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 1,
+            "entries": [
+              {
+                "id": "SUP-1-7492",
+                "title": "Simulated supplychain hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.4,
+                "source": "simulated_supplychain_watchlist",
+                "timestamp": "2025-11-02T18:47:00.300880"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089420",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 20,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 40
+        },
+        "aggregated_score": 15,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:47:00.457588"
+      },
+      "timestamp": "2025-11-02T18:47:00.457588"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:47:03.253055",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089423",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 3,
+            "entries": [
+              {
+                "id": "OPE-1-7492",
+                "title": "Simulated operational hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.4,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:47:03.099480"
+              },
+              {
+                "id": "OPE-2-7492",
+                "title": "Simulated operational hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.4,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:47:03.099480"
+              },
+              {
+                "id": "OPE-3-7492",
+                "title": "Simulated operational hit #3",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.1,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:47:03.099480"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089423",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 30,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 12,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:47:03.253055"
+      },
+      "timestamp": "2025-11-02T18:47:03.253055"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:47:05.600986",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089425",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 2,
+            "entries": [
+              {
+                "id": "DAT-1-7492",
+                "title": "Simulated data_privacy hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.4,
+                "source": "simulated_data_privacy_watchlist",
+                "timestamp": "2025-11-02T18:47:05.515558"
+              },
+              {
+                "id": "DAT-2-7492",
+                "title": "Simulated data_privacy hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.1,
+                "source": "simulated_data_privacy_watchlist",
+                "timestamp": "2025-11-02T18:47:05.515558"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 1,
+            "entries": [
+              {
+                "id": "REG-1-7492",
+                "title": "Simulated regulatory hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.3,
+                "source": "simulated_regulatory_watchlist",
+                "timestamp": "2025-11-02T18:47:05.233566"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089425",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 25,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 30,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 15,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:47:05.600986"
+      },
+      "timestamp": "2025-11-02T18:47:05.600986"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:47:16.325432",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089436",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089436",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 10,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:47:16.321339"
+      },
+      "timestamp": "2025-11-02T18:47:16.321339"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:47:18.173912",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089438",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089438",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 10,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:47:18.172555"
+      },
+      "timestamp": "2025-11-02T18:47:18.172555"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:55:22.883139",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089922",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089922",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 10,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:55:22.879225"
+      },
+      "timestamp": "2025-11-02T18:55:22.879225"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:55:24.445646",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089924",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 2,
+            "entries": [
+              {
+                "id": "DAT-1-2558",
+                "title": "Simulated data_privacy hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.9,
+                "source": "simulated_data_privacy_watchlist",
+                "timestamp": "2025-11-02T18:55:24.288084"
+              },
+              {
+                "id": "DAT-2-2558",
+                "title": "Simulated data_privacy hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.1,
+                "source": "simulated_data_privacy_watchlist",
+                "timestamp": "2025-11-02T18:55:24.288084"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 2,
+            "entries": [
+              {
+                "id": "REP-1-2558",
+                "title": "Simulated reputation hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.1,
+                "source": "simulated_reputation_watchlist",
+                "timestamp": "2025-11-02T18:55:24.097692"
+              },
+              {
+                "id": "REP-2-2558",
+                "title": "Simulated reputation hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.9,
+                "source": "simulated_reputation_watchlist",
+                "timestamp": "2025-11-02T18:55:24.097692"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089924",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 50,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 50,
+          "supplychain": 10
+        },
+        "aggregated_score": 21,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:55:24.442548"
+      },
+      "timestamp": "2025-11-02T18:55:24.442548"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:55:27.704278",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089927",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 2,
+            "entries": [
+              {
+                "id": "OPE-1-2558",
+                "title": "Simulated operational hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.4,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:55:27.385785"
+              },
+              {
+                "id": "OPE-2-2558",
+                "title": "Simulated operational hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.1,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:55:27.385785"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089927",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 25,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 12,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:55:27.701233"
+      },
+      "timestamp": "2025-11-02T18:55:27.701233"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:55:31.976337",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089931",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 2,
+            "entries": [
+              {
+                "id": "DAT-1-2558",
+                "title": "Simulated data_privacy hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.7,
+                "source": "simulated_data_privacy_watchlist",
+                "timestamp": "2025-11-02T18:55:31.677823"
+              },
+              {
+                "id": "DAT-2-2558",
+                "title": "Simulated data_privacy hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.9,
+                "source": "simulated_data_privacy_watchlist",
+                "timestamp": "2025-11-02T18:55:31.677823"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 3,
+            "entries": [
+              {
+                "id": "OPE-1-2558",
+                "title": "Simulated operational hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.1,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:55:31.927451"
+              },
+              {
+                "id": "OPE-2-2558",
+                "title": "Simulated operational hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.2,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:55:31.927451"
+              },
+              {
+                "id": "OPE-3-2558",
+                "title": "Simulated operational hit #3",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.1,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:55:31.927451"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089931",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 80,
+          "operational": 13,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 20,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:55:31.973343"
+      },
+      "timestamp": "2025-11-02T18:55:31.973343"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:55:32.727787",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089932",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 1,
+            "entries": [
+              {
+                "id": "SUP-1-2558",
+                "title": "Simulated supplychain hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.4,
+                "source": "simulated_supplychain_watchlist",
+                "timestamp": "2025-11-02T18:55:32.726361"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089932",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 40
+        },
+        "aggregated_score": 14,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:55:32.727787"
+      },
+      "timestamp": "2025-11-02T18:55:32.727787"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:55:37.752847",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089937",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 1,
+            "entries": [
+              {
+                "id": "REG-1-2558",
+                "title": "Simulated regulatory hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.2,
+                "source": "simulated_regulatory_watchlist",
+                "timestamp": "2025-11-02T18:55:37.747330"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089937",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 20,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 11,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:55:37.749673"
+      },
+      "timestamp": "2025-11-02T18:55:37.749673"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:55:42.665142",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089942",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 2,
+            "entries": [
+              {
+                "id": "SUP-1-2558",
+                "title": "Simulated supplychain hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.2,
+                "source": "simulated_supplychain_watchlist",
+                "timestamp": "2025-11-02T18:55:42.316397"
+              },
+              {
+                "id": "SUP-2-2558",
+                "title": "Simulated supplychain hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.9,
+                "source": "simulated_supplychain_watchlist",
+                "timestamp": "2025-11-02T18:55:42.316397"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089942",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 55
+        },
+        "aggregated_score": 16,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:55:42.663770"
+      },
+      "timestamp": "2025-11-02T18:55:42.663770"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:55:47.961884",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089947",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089947",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 10,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:55:47.959728"
+      },
+      "timestamp": "2025-11-02T18:55:47.959728"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:55:52.946792",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089952",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 2,
+            "entries": [
+              {
+                "id": "OPE-1-2558",
+                "title": "Simulated operational hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.2,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:55:52.628869"
+              },
+              {
+                "id": "OPE-2-2558",
+                "title": "Simulated operational hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.4,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:55:52.628869"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089952",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 30,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 12,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:55:52.944629"
+      },
+      "timestamp": "2025-11-02T18:55:52.944629"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:55:57.961322",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089957",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089957",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 10,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:55:57.960316"
+      },
+      "timestamp": "2025-11-02T18:55:57.960316"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:56:02.880758",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089962",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 2,
+            "entries": [
+              {
+                "id": "CYB-1-2558",
+                "title": "Simulated cybersecurity hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.9,
+                "source": "simulated_cybersecurity_watchlist",
+                "timestamp": "2025-11-02T18:56:02.635473"
+              },
+              {
+                "id": "CYB-2-2558",
+                "title": "Simulated cybersecurity hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.4,
+                "source": "simulated_cybersecurity_watchlist",
+                "timestamp": "2025-11-02T18:56:02.635473"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089962",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 65,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 17,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:56:02.878708"
+      },
+      "timestamp": "2025-11-02T18:56:02.878708"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:56:07.964098",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089967",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089967",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 10,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:56:07.959390"
+      },
+      "timestamp": "2025-11-02T18:56:07.959390"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:56:12.874588",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089972",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 3,
+            "entries": [
+              {
+                "id": "CYB-1-2558",
+                "title": "Simulated cybersecurity hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.2,
+                "source": "simulated_cybersecurity_watchlist",
+                "timestamp": "2025-11-02T18:56:12.499552"
+              },
+              {
+                "id": "CYB-2-2558",
+                "title": "Simulated cybersecurity hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.1,
+                "source": "simulated_cybersecurity_watchlist",
+                "timestamp": "2025-11-02T18:56:12.499552"
+              },
+              {
+                "id": "CYB-3-2558",
+                "title": "Simulated cybersecurity hit #3",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.4,
+                "source": "simulated_cybersecurity_watchlist",
+                "timestamp": "2025-11-02T18:56:12.499552"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 3,
+            "entries": [
+              {
+                "id": "FIN-1-2558",
+                "title": "Simulated financial hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.1,
+                "source": "simulated_financial_watchlist",
+                "timestamp": "2025-11-02T18:56:12.561076"
+              },
+              {
+                "id": "FIN-2-2558",
+                "title": "Simulated financial hit #2",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.1,
+                "source": "simulated_financial_watchlist",
+                "timestamp": "2025-11-02T18:56:12.561076"
+              },
+              {
+                "id": "FIN-3-2558",
+                "title": "Simulated financial hit #3",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.4,
+                "source": "simulated_financial_watchlist",
+                "timestamp": "2025-11-02T18:56:12.561076"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089972",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 23,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 20,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 13,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:56:12.872171"
+      },
+      "timestamp": "2025-11-02T18:56:12.872171"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:56:17.911436",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089977",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089977",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 10,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:56:17.908108"
+      },
+      "timestamp": "2025-11-02T18:56:17.908108"
+    }
+  },
+  {
+    "timestamp": "2025-11-02T18:56:22.645261",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762089982",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 1,
+            "entries": [
+              {
+                "id": "OPE-1-2558",
+                "title": "Simulated operational hit #1",
+                "detail": "Auto-generated simulated watchlist entry for MetroCare Hospital (LIC-45321).",
+                "severity": 0.1,
+                "source": "simulated_operational_watchlist",
+                "timestamp": "2025-11-02T18:56:22.576832"
+              }
+            ],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762089982",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 10,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-02T18:56:22.642116"
+      },
+      "timestamp": "2025-11-02T18:56:22.642116"
+    }
+  },
+  {
+    "timestamp": "2025-11-03T09:13:19.438760",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762141399",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": [],
+          "watchlist_embeddings": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762141399",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 10,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-03T09:13:19.438760"
+      },
+      "timestamp": "2025-11-03T09:13:19.438760"
+    }
+  },
+  {
+    "timestamp": "2025-11-03T09:13:26.672513",
+    "result": {
+      "payload": {
+        "request_id": "risk-APP-20251102-00023-1762141406",
+        "provider": {
+          "provider_id": "APP-20251102-00023",
+          "provider_name": "MetroCare Hospital",
+          "license_number": "LIC-45321"
+        },
+        "watchlists": {
+          "cybersecurity": {
+            "category": "cybersecurity",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "data_privacy": {
+            "category": "data_privacy",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "operational": {
+            "category": "operational",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "financial": {
+            "category": "financial",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "regulatory": {
+            "category": "regulatory",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "reputation": {
+            "category": "reputation",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          },
+          "supplychain": {
+            "category": "supplychain",
+            "hits": 0,
+            "entries": [],
+            "raw_simulated": {
+              "note": "simulated response"
+            }
+          }
+        },
+        "embedded_context": {
+          "faiss_snippets": [],
+          "contextual_documents": [],
+          "watchlist_embeddings": []
+        },
+        "config": {
+          "model_version": "sim-1"
+        }
+      },
+      "model_response": {
+        "request_id": "risk-APP-20251102-00023-1762141406",
+        "provider_id": "APP-20251102-00023",
+        "category_scores": {
+          "cybersecurity": 10,
+          "data_privacy": 10,
+          "operational": 10,
+          "financial": 10,
+          "regulatory": 10,
+          "reputation": 10,
+          "supplychain": 10
+        },
+        "aggregated_score": 10,
+        "notes": "Simulated risk model response",
+        "confidence": 0.9,
+        "model_version": "risk-sim-v0.1",
+        "timestamp": "2025-11-03T09:13:26.672513"
+      },
+      "timestamp": "2025-11-03T09:13:26.672513"
+    }
+  }
+]

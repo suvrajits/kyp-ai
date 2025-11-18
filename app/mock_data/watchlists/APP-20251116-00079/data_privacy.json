@@ -1,0 +1,23 @@
+{
+  "provider_id": "APP-20251116-00079",
+  "category": "data_privacy",
+  "hits": 2,
+  "entries": [
+    {
+      "severity": 0.3,
+      "detail": "Simulated data_privacy issue for Prathama New Delhi Surgical Centre",
+      "timestamp": "2025-11-16T10:17:21.798415",
+      "source": "simulated_data_privacy_watchlist"
+    },
+    {
+      "severity": 0.3,
+      "detail": "Simulated data_privacy issue for Prathama New Delhi Surgical Centre",
+      "timestamp": "2025-11-16T10:17:21.798415",
+      "source": "simulated_data_privacy_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-16T10:17:21.798415",
+  "raw_simulated": {
+    "note": "Potential PII exposure or privacy gaps detected."
+  }
+}

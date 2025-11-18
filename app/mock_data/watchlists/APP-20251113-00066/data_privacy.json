@@ -1,0 +1,10 @@
+{
+  "provider_id": "APP-20251113-00066",
+  "category": "data_privacy",
+  "hits": 0,
+  "entries": [],
+  "last_reported": null,
+  "raw_simulated": {
+    "note": "Potential PII exposure or privacy gaps detected."
+  }
+}

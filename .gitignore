@@ -235,3 +235,5 @@ chroma/
 chroma_db/
 faiss_index/
 embeddings/
+# Ignore all FAISS store data
+app/data/faiss_store/

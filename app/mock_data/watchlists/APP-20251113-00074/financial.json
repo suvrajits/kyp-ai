@@ -1,0 +1,17 @@
+{
+  "provider_id": "APP-20251113-00074",
+  "category": "financial",
+  "hits": 1,
+  "entries": [
+    {
+      "severity": 0.5,
+      "detail": "Simulated financial issue for Kiran Nagpur Medical Centre",
+      "timestamp": "2025-11-13T19:34:40.031490",
+      "source": "simulated_financial_watchlist"
+    }
+  ],
+  "last_reported": "2025-11-13T19:34:40.031490",
+  "raw_simulated": {
+    "note": "Financial irregularities or delays noted."
+  }
+}
