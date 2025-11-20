@@ -15,7 +15,10 @@ It combines **vector search, fine-tuned medical LLM reasoning, multimodal proces
 </p>
 
 ---
-
+### 📄 Product Deck
+👉 **View the full MedInsight-AI Pitch Deck:**  
+https://docs.google.com/presentation/d/1ZE6wiYVtLNzT9W0xf8NO1HeCVgxVCULH/edit?usp=sharing&ouid=107671787358501675553&rtpof=true&sd=true
+---
 ## 📌 Table of Contents
 - [Overview](#overview)
 - [Core Value Proposition](#core-value-proposition)
